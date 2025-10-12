@@ -1,0 +1,93 @@
+blueprint:
+  name: Sync two covers by position (bi-directional)
+  description: >
+    Keeps two covers in sync: when either cover's position changes, the other
+    one follows to the same percent. Includes loop protection and a minimum
+    delta to avoid jitter.
+  domain: automation
+  source_url: https://example.com/blueprints/sync_two_covers_by_position
+  input:
+    cover_one:
+      name: First cover
+      description: The first cover entity to sync
+      selector:
+        entity:
+          domain: cover
+    cover_two:
+      name: Second cover
+      description: The second cover entity to sync
+      selector:
+        entity:
+          domain: cover
+    min_delta:
+      name: Minimum change to react (percent)
+      description: >
+        Only sync when the position difference is at least this many percent.
+        Use 0 to mirror every change.
+      default: 2
+      selector:
+        number:
+          min: 0
+          max: 100
+          step: 1
+          mode: box
+          unit_of_measurement: "%"
+
+mode: single
+
+variables:
+  c1: !input cover_one
+  c2: !input cover_two
+  min_delta: !input min_delta
+
+triggers:
+  # Position change on either cover triggers the automation
+  - trigger: state
+    entity_id: !input cover_one
+    attribute: current_position
+  - trigger: state
+    entity_id: !input cover_two
+    attribute: current_position
+
+conditions:
+  # Ignore attribute-less states and our own context to prevent loops
+  - condition: template
+    value_template: >
+      {{ trigger is not none
+         and trigger.to_state is not none
+         and trigger.to_state.attributes is not none
+         and (trigger.to_state.attributes.current_position is number) }}
+  - condition: template
+    value_template: >
+      {{ trigger.to_state.context.id != this.context.id }}
+
+actions:
+  - choose:
+      # If cover_one moved, mirror to cover_two
+      - conditions: "{{ trigger.entity_id == c1 }}"
+        sequence:
+          - variables:
+              src_pos: "{{ state_attr(c1, 'current_position') | int(-1) }}"
+              dst_pos: "{{ state_attr(c2, 'current_position') | int(-1) }}"
+          - condition: template
+            value_template: >
+              {{ src_pos >= 0 and dst_pos >= 0 and (src_pos - dst_pos)|abs >= (min_delta | int) }}
+          - action: cover.set_cover_position
+            target:
+              entity_id: !input cover_two
+            data:
+              position: "{{ src_pos }}"
+      # If cover_two moved, mirror to cover_one
+      - conditions: "{{ trigger.entity_id == c2 }}"
+        sequence:
+          - variables:
+              src_pos: "{{ state_attr(c2, 'current_position') | int(-1) }}"
+              dst_pos: "{{ state_attr(c1, 'current_position') | int(-1) }}"
+          - condition: template
+            value_template: >
+              {{ src_pos >= 0 and dst_pos >= 0 and (src_pos - dst_pos)|abs >= (min_delta | int) }}
+          - action: cover.set_cover_position
+            target:
+              entity_id: !input cover_one
+            data:
+              position: "{{ src_pos }}"
