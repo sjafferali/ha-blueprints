@@ -1,42 +1,26 @@
 blueprint:
-  name: One-way cover sync (controller → multiple followers)
+  name: One-way cover sync (controller → multiple followers) — no-template-conditions
   description: >
     Mirrors a controller cover to one or more follower covers. Controller moves → all
-    followers mirror. Follower changes do NOT affect the controller. Mirrors position and
-    (optionally) open/close. Uses modern "actions" syntax (2024.8+).
+    followers mirror. Follower changes do NOT affect the controller. Uses modern actions (2024.8+).
   domain: automation
   input:
     controller_cover:
       name: Controller cover
-      description: The cover whose changes should be mirrored
       selector:
         entity:
           domain: cover
     follower_covers:
       name: Follower covers
-      description: Select one or more covers that will follow the controller
+      description: One or more covers that will follow the controller
       selector:
         entity:
           domain: cover
           multiple: true
-    min_delta:
-      name: Minimum position delta (%)
-      description: >
-        Only mirror position to a follower when the difference is at least this many percent.
-        Use 0 to mirror every position change.
-      default: 2
-      selector:
-        number:
-          min: 0
-          max: 100
-          step: 1
-          mode: box
-          unit_of_measurement: "%"
     mirror_open_close:
-      name: Also mirror open/close commands
+      name: Also mirror open/close state
       description: >
         If enabled, when the controller opens/closes, all followers will open/close too.
-        Helpful if your covers don’t report fine-grained position.
       default: true
       selector:
         boolean: {}
@@ -46,18 +30,17 @@ mode: restart
 variables:
   ctrl: !input controller_cover
   followers: !input follower_covers
-  min_delta: !input min_delta
   mirror_open_close: !input mirror_open_close
 
 trigger:
-  # Position changes from controller → followers
-  - id: position
+  # Fires only when the controller's position attribute changes (so it's present and numeric)
+  - id: pos
     platform: state
     entity_id: !input controller_cover
     attribute: current_position
 
-  # Optionally mirror open/close state from controller → followers
-  - id: oc_state
+  # Optionally mirror open/close/transition states
+  - id: oc
     platform: state
     entity_id: !input controller_cover
     to:
@@ -69,70 +52,61 @@ trigger:
 condition: []
 
 action:
+  # 1) Always mirror position when the attribute-based trigger fires.
+  # This trigger only fires when current_position changes, so the attribute is available.
   - choose:
-      # === Position sync (preferred when controller exposes current_position) ===
       - conditions:
-          - condition: trigger
-            id: position
-        sequence:
-          - variables:
-              src_pos: "{{ state_attr(ctrl, 'current_position') | int(-1) }}"
           - condition: template
-            value_template: "{{ src_pos >= 0 }}"
-          # Iterate followers; only update those that differ by >= min_delta,
-          # whose position is unknown, and skip if follower == controller (just in case).
-          - repeat:
-              for_each: "{{ followers }}"
-              sequence:
-                - variables:
-                    f: "{{ repeat.item }}"
-                    dst_pos: "{{ state_attr(f, 'current_position') | int(-1) }}"
-                - condition: template
-                  value_template: >
-                    {{ f != ctrl and (dst_pos < 0 or (src_pos - dst_pos) | abs >= (min_delta | int)) }}
-                - action: cover.set_cover_position
-                  target:
-                    entity_id: "{{ f }}"
-                  data:
-                    position: "{{ src_pos }}"
+            value_template: "{{ trigger is not none and trigger.id == 'pos' }}"
+        sequence:
+          - action: cover.set_cover_position
+            target:
+              entity_id: !input follower_covers
+            data:
+              position: "{{ trigger.to_state.attributes.current_position | int }}"
 
-      # === Open/close state mirroring (fallback or in addition) ===
+  # 2) Optionally mirror open/close state (no templates used in these conditions).
+  - choose:
       - conditions:
-          - condition: trigger
-            id: oc_state
+          - condition: state
+            entity_id: !input controller_cover
+            state: "open"
           - condition: template
             value_template: "{{ mirror_open_close }}"
         sequence:
-          - choose:
-              - conditions:
-                  - condition: state
-                    entity_id: !input controller_cover
-                    state: "open"
-                sequence:
-                  - action: cover.open_cover
-                    target:
-                      entity_id: !input follower_covers
-              - conditions:
-                  - condition: state
-                    entity_id: !input controller_cover
-                    state: "opening"
-                sequence:
-                  - action: cover.open_cover
-                    target:
-                      entity_id: !input follower_covers
-              - conditions:
-                  - condition: state
-                    entity_id: !input controller_cover
-                    state: "closed"
-                sequence:
-                  - action: cover.close_cover
-                    target:
-                      entity_id: !input follower_covers
-              - conditions:
-                  - condition: state
-                    entity_id: !input controller_cover
-                    state: "closing"
-                sequence:
-                  - action: cover.close_cover
-                    target:
-                      entity_id: !input follower_covers
+          - action: cover.open_cover
+            target:
+              entity_id: !input follower_covers
+
+      - conditions:
+          - condition: state
+            entity_id: !input controller_cover
+            state: "opening"
+          - condition: template
+            value_template: "{{ mirror_open_close }}"
+        sequence:
+          - action: cover.open_cover
+            target:
+              entity_id: !input follower_covers
+
+      - conditions:
+          - condition: state
+            entity_id: !input controller_cover
+            state: "closed"
+          - condition: template
+            value_template: "{{ mirror_open_close }}"
+        sequence:
+          - action: cover.close_cover
+            target:
+              entity_id: !input follower_covers
+
+      - conditions:
+          - condition: state
+            entity_id: !input controller_cover
+            state: "closing"
+          - condition: template
+            value_template: "{{ mirror_open_close }}"
+        sequence:
+          - action: cover.close_cover
+            target:
+              entity_id: !input follower_covers
