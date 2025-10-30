@@ -26,8 +26,7 @@ action:
           - condition: template
             value_template: "{{ state_attr(trigger.entity_id, 'is_privacy_on') == true }}"
         sequence:
-          - action: call_service
-            service: unifiprotect.set_camera_led
+          - service: unifiprotect.set_camera_led
             data:
               entity_id: !input camera
               led_level: "off"
@@ -35,8 +34,7 @@ action:
           - condition: template
             value_template: "{{ state_attr(trigger.entity_id, 'is_privacy_on') == false }}"
         sequence:
-          - action: call_service
-            service: unifiprotect.set_camera_led
+          - service: unifiprotect.set_camera_led
             data:
               entity_id: !input camera
               led_level: "on"
