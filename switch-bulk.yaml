@@ -1,0 +1,611 @@
+
+blueprint:
+  name: Inovelli VZM31-SN (Z2M) – Full Device Configuration
+  description: |
+    Configure all exposed settings for Inovelli VZM31-SN Blue Series Dimmer switches via Zigbee2MQTT.
+    Select settings from the UI and apply them to one or more devices.
+  domain: script
+  input:
+    target_devices:
+      name: Target Switches
+      description: Select the devices you want to configure.
+      selector:
+        entity:
+          domain: light
+          multiple: true
+    mqtt_base_topic:
+      name: MQTT Base Topic
+      description: Default is "zigbee2mqtt"
+      default: zigbee2mqtt
+      selector:
+        text: {{}}
+    delay_between_devices:
+      name: Delay Between Devices (seconds)
+      default: 0.5
+      selector:
+        number:
+          min: 0
+          max: 10
+          step: 0.1
+  dimmingSpeedUpRemote:
+        name: dimmingSpeedUpRemote
+        default: null
+        selector:
+          number:
+            min: 0
+            max: 255
+            step: 1
+  dimmingSpeedUpLocal:
+        name: dimmingSpeedUpLocal
+        default: null
+        selector:
+          number:
+            min: 0
+            max: 255
+            step: 1
+  dimmingSpeedDownRemote:
+        name: dimmingSpeedDownRemote
+        default: null
+        selector:
+          number:
+            min: 0
+            max: 255
+            step: 1
+  dimmingSpeedDownLocal:
+        name: dimmingSpeedDownLocal
+        default: null
+        selector:
+          number:
+            min: 0
+            max: 255
+            step: 1
+  rampRateOffToOnRemote:
+        name: rampRateOffToOnRemote
+        default: null
+        selector:
+          number:
+            min: 0
+            max: 255
+            step: 1
+  rampRateOffToOnLocal:
+        name: rampRateOffToOnLocal
+        default: null
+        selector:
+          number:
+            min: 0
+            max: 255
+            step: 1
+  rampRateOnToOffRemote:
+        name: rampRateOnToOffRemote
+        default: null
+        selector:
+          number:
+            min: 0
+            max: 255
+            step: 1
+  rampRateOnToOffLocal:
+        name: rampRateOnToOffLocal
+        default: null
+        selector:
+          number:
+            min: 0
+            max: 255
+            step: 1
+  defaultLevelLocal:
+        name: defaultLevelLocal
+        default: null
+        selector:
+          number:
+            min: 0
+            max: 254
+            step: 1
+  defaultLevelRemote:
+        name: defaultLevelRemote
+        default: null
+        selector:
+          number:
+            min: 0
+            max: 254
+            step: 1
+  loadLevelIndicatorTimeout:
+        name: loadLevelIndicatorTimeout
+        default: null
+        selector:
+          number:
+            min: 0
+            max: 255
+            step: 1
+  autoTimerOff:
+        name: autoTimerOff
+        default: null
+        selector:
+          number:
+            min: 0
+            max: 32767
+            step: 1
+  brightnessLevelForDoubleTapUp:
+        name: brightnessLevelForDoubleTapUp
+        default: null
+        selector:
+          number:
+            min: 0
+            max: 254
+            step: 1
+  brightnessLevelForDoubleTapDown:
+        name: brightnessLevelForDoubleTapDown
+        default: null
+        selector:
+          number:
+            min: 0
+            max: 254
+            step: 1
+  ledIntensityWhenOn:
+        name: ledIntensityWhenOn
+        default: null
+        selector:
+          number:
+            min: 0
+            max: 100
+            step: 1
+  ledIntensityWhenOff:
+        name: ledIntensityWhenOff
+        default: null
+        selector:
+          number:
+            min: 0
+            max: 100
+            step: 1
+  defaultLed1IntensityWhenOn:
+        name: defaultLed1IntensityWhenOn
+        default: null
+        selector:
+          number:
+            min: 0
+            max: 100
+            step: 1
+  defaultLed1IntensityWhenOff:
+        name: defaultLed1IntensityWhenOff
+        default: null
+        selector:
+          number:
+            min: 0
+            max: 100
+            step: 1
+  defaultLed2IntensityWhenOn:
+        name: defaultLed2IntensityWhenOn
+        default: null
+        selector:
+          number:
+            min: 0
+            max: 100
+            step: 1
+  defaultLed2IntensityWhenOff:
+        name: defaultLed2IntensityWhenOff
+        default: null
+        selector:
+          number:
+            min: 0
+            max: 100
+            step: 1
+  defaultLed3IntensityWhenOn:
+        name: defaultLed3IntensityWhenOn
+        default: null
+        selector:
+          number:
+            min: 0
+            max: 100
+            step: 1
+  defaultLed3IntensityWhenOff:
+        name: defaultLed3IntensityWhenOff
+        default: null
+        selector:
+          number:
+            min: 0
+            max: 100
+            step: 1
+  defaultLed4IntensityWhenOn:
+        name: defaultLed4IntensityWhenOn
+        default: null
+        selector:
+          number:
+            min: 0
+            max: 100
+            step: 1
+  defaultLed4IntensityWhenOff:
+        name: defaultLed4IntensityWhenOff
+        default: null
+        selector:
+          number:
+            min: 0
+            max: 100
+            step: 1
+  defaultLed5IntensityWhenOn:
+        name: defaultLed5IntensityWhenOn
+        default: null
+        selector:
+          number:
+            min: 0
+            max: 100
+            step: 1
+  defaultLed5IntensityWhenOff:
+        name: defaultLed5IntensityWhenOff
+        default: null
+        selector:
+          number:
+            min: 0
+            max: 100
+            step: 1
+  defaultLed6IntensityWhenOn:
+        name: defaultLed6IntensityWhenOn
+        default: null
+        selector:
+          number:
+            min: 0
+            max: 100
+            step: 1
+  defaultLed6IntensityWhenOff:
+        name: defaultLed6IntensityWhenOff
+        default: null
+        selector:
+          number:
+            min: 0
+            max: 100
+            step: 1
+  defaultLed7IntensityWhenOn:
+        name: defaultLed7IntensityWhenOn
+        default: null
+        selector:
+          number:
+            min: 0
+            max: 100
+            step: 1
+  defaultLed7IntensityWhenOff:
+        name: defaultLed7IntensityWhenOff
+        default: null
+        selector:
+          number:
+            min: 0
+            max: 100
+            step: 1
+  minimumLevel:
+        name: minimumLevel
+        default: null
+        selector:
+          number:
+            min: 1
+            max: 99
+            step: 1
+  maximumLevel:
+        name: maximumLevel
+        default: null
+        selector:
+          number:
+            min: 1
+            max: 100
+            step: 1
+  quickStartLevel:
+        name: quickStartLevel
+        default: null
+        selector:
+          number:
+            min: 1
+            max: 99
+            step: 1
+  quickStartTime:
+        name: quickStartTime
+        default: null
+        selector:
+          number:
+            min: 1
+            max: 100
+            step: 1
+  activePowerReports:
+        name: activePowerReports
+        default: null
+        selector:
+          number:
+            min: 1
+            max: 3600
+            step: 1
+  activeEnergyReports:
+        name: activeEnergyReports
+        default: null
+        selector:
+          number:
+            min: 1
+            max: 3600
+            step: 1
+  periodicPowerAndEnergyReports:
+        name: periodicPowerAndEnergyReports
+        default: null
+        selector:
+          number:
+            min: 1
+            max: 3600
+            step: 1
+  identify_timeout:
+        name: identify_timeout
+        default: null
+        selector:
+          number:
+            min: 1
+            max: 30
+            step: 1
+  invertSwitch:
+        name: invertSwitch
+        default: null
+        selector:
+          select:
+            options:
+              - 0
+              - 1
+  smartBulbMode:
+        name: smartBulbMode
+        default: null
+        selector:
+          select:
+            options:
+              - 0
+              - 1
+  bindingOffToOnSyncLevel:
+        name: bindingOffToOnSyncLevel
+        default: null
+        selector:
+          select:
+            options:
+              - 0
+              - 1
+  localProtection:
+        name: localProtection
+        default: null
+        selector:
+          select:
+            options:
+              - 0
+              - 1
+  remoteProtection:
+        name: remoteProtection
+        default: null
+        selector:
+          select:
+            options:
+              - 0
+              - 1
+  relayClick:
+        name: relayClick
+        default: null
+        selector:
+          select:
+            options:
+              - 0
+              - 1
+  doubleTapClearNotifications:
+        name: doubleTapClearNotifications
+        default: null
+        selector:
+          select:
+            options:
+              - 0
+              - 1
+  fanLedLevelType:
+        name: fanLedLevelType
+        default: null
+        selector:
+          select:
+            options:
+              - 0
+              - 1
+  ledColorWhenOn:
+        name: ledColorWhenOn
+        default: null
+        selector:
+          text: {}
+  ledColorWhenOff:
+        name: ledColorWhenOff
+        default: null
+        selector:
+          text: {}
+  defaultLed1ColorWhenOn:
+        name: defaultLed1ColorWhenOn
+        default: null
+        selector:
+          text: {}
+  defaultLed1ColorWhenOff:
+        name: defaultLed1ColorWhenOff
+        default: null
+        selector:
+          text: {}
+  defaultLed2ColorWhenOn:
+        name: defaultLed2ColorWhenOn
+        default: null
+        selector:
+          text: {}
+  defaultLed2ColorWhenOff:
+        name: defaultLed2ColorWhenOff
+        default: null
+        selector:
+          text: {}
+  defaultLed3ColorWhenOn:
+        name: defaultLed3ColorWhenOn
+        default: null
+        selector:
+          text: {}
+  defaultLed3ColorWhenOff:
+        name: defaultLed3ColorWhenOff
+        default: null
+        selector:
+          text: {}
+  defaultLed4ColorWhenOn:
+        name: defaultLed4ColorWhenOn
+        default: null
+        selector:
+          text: {}
+  defaultLed4ColorWhenOff:
+        name: defaultLed4ColorWhenOff
+        default: null
+        selector:
+          text: {}
+  defaultLed5ColorWhenOn:
+        name: defaultLed5ColorWhenOn
+        default: null
+        selector:
+          text: {}
+  defaultLed5ColorWhenOff:
+        name: defaultLed5ColorWhenOff
+        default: null
+        selector:
+          text: {}
+  defaultLed6ColorWhenOn:
+        name: defaultLed6ColorWhenOn
+        default: null
+        selector:
+          text: {}
+  defaultLed6ColorWhenOff:
+        name: defaultLed6ColorWhenOff
+        default: null
+        selector:
+          text: {}
+  defaultLed7ColorWhenOn:
+        name: defaultLed7ColorWhenOn
+        default: null
+        selector:
+          text: {}
+  defaultLed7ColorWhenOff:
+        name: defaultLed7ColorWhenOff
+        default: null
+        selector:
+          text: {}
+  ledColorForFanControlMode:
+        name: ledColorForFanControlMode
+        default: null
+        selector:
+          text: {}
+  outputMode:
+        name: outputMode
+        default: null
+        selector:
+          text: {}
+  switchType:
+        name: switchType
+        default: null
+        selector:
+          text: {}
+  powerType:
+        name: powerType
+        default: null
+        selector:
+          text: {}
+  fanControlMode:
+        name: fanControlMode
+        default: null
+        selector:
+          text: {}
+  dimmingMode:
+        name: dimmingMode
+        default: null
+        selector:
+          text: {}
+
+  variables:
+    devices: !input target_devices
+    base_topic: !input mqtt_base_topic
+    delay_secs: !input delay_between_devices
+
+    settings_payload: >-
+      {{
+      {{%- set fields = namespace(pairs=[]) -%}}
+      {% if dimmingSpeedUpRemote is not none %}{{ fields.pairs.append('\"dimmingSpeedUpRemote\": ' ~ dimmingSpeedUpRemote) }}{% endif %}
+      {% if dimmingSpeedUpLocal is not none %}{{ fields.pairs.append('\"dimmingSpeedUpLocal\": ' ~ dimmingSpeedUpLocal) }}{% endif %}
+      {% if dimmingSpeedDownRemote is not none %}{{ fields.pairs.append('\"dimmingSpeedDownRemote\": ' ~ dimmingSpeedDownRemote) }}{% endif %}
+      {% if dimmingSpeedDownLocal is not none %}{{ fields.pairs.append('\"dimmingSpeedDownLocal\": ' ~ dimmingSpeedDownLocal) }}{% endif %}
+      {% if rampRateOffToOnRemote is not none %}{{ fields.pairs.append('\"rampRateOffToOnRemote\": ' ~ rampRateOffToOnRemote) }}{% endif %}
+      {% if rampRateOffToOnLocal is not none %}{{ fields.pairs.append('\"rampRateOffToOnLocal\": ' ~ rampRateOffToOnLocal) }}{% endif %}
+      {% if rampRateOnToOffRemote is not none %}{{ fields.pairs.append('\"rampRateOnToOffRemote\": ' ~ rampRateOnToOffRemote) }}{% endif %}
+      {% if rampRateOnToOffLocal is not none %}{{ fields.pairs.append('\"rampRateOnToOffLocal\": ' ~ rampRateOnToOffLocal) }}{% endif %}
+      {% if defaultLevelLocal is not none %}{{ fields.pairs.append('\"defaultLevelLocal\": ' ~ defaultLevelLocal) }}{% endif %}
+      {% if defaultLevelRemote is not none %}{{ fields.pairs.append('\"defaultLevelRemote\": ' ~ defaultLevelRemote) }}{% endif %}
+      {% if loadLevelIndicatorTimeout is not none %}{{ fields.pairs.append('\"loadLevelIndicatorTimeout\": ' ~ loadLevelIndicatorTimeout) }}{% endif %}
+      {% if autoTimerOff is not none %}{{ fields.pairs.append('\"autoTimerOff\": ' ~ autoTimerOff) }}{% endif %}
+      {% if brightnessLevelForDoubleTapUp is not none %}{{ fields.pairs.append('\"brightnessLevelForDoubleTapUp\": ' ~ brightnessLevelForDoubleTapUp) }}{% endif %}
+      {% if brightnessLevelForDoubleTapDown is not none %}{{ fields.pairs.append('\"brightnessLevelForDoubleTapDown\": ' ~ brightnessLevelForDoubleTapDown) }}{% endif %}
+      {% if ledIntensityWhenOn is not none %}{{ fields.pairs.append('\"ledIntensityWhenOn\": ' ~ ledIntensityWhenOn) }}{% endif %}
+      {% if ledIntensityWhenOff is not none %}{{ fields.pairs.append('\"ledIntensityWhenOff\": ' ~ ledIntensityWhenOff) }}{% endif %}
+      {% if defaultLed1IntensityWhenOn is not none %}{{ fields.pairs.append('\"defaultLed1IntensityWhenOn\": ' ~ defaultLed1IntensityWhenOn) }}{% endif %}
+      {% if defaultLed1IntensityWhenOff is not none %}{{ fields.pairs.append('\"defaultLed1IntensityWhenOff\": ' ~ defaultLed1IntensityWhenOff) }}{% endif %}
+      {% if defaultLed2IntensityWhenOn is not none %}{{ fields.pairs.append('\"defaultLed2IntensityWhenOn\": ' ~ defaultLed2IntensityWhenOn) }}{% endif %}
+      {% if defaultLed2IntensityWhenOff is not none %}{{ fields.pairs.append('\"defaultLed2IntensityWhenOff\": ' ~ defaultLed2IntensityWhenOff) }}{% endif %}
+      {% if defaultLed3IntensityWhenOn is not none %}{{ fields.pairs.append('\"defaultLed3IntensityWhenOn\": ' ~ defaultLed3IntensityWhenOn) }}{% endif %}
+      {% if defaultLed3IntensityWhenOff is not none %}{{ fields.pairs.append('\"defaultLed3IntensityWhenOff\": ' ~ defaultLed3IntensityWhenOff) }}{% endif %}
+      {% if defaultLed4IntensityWhenOn is not none %}{{ fields.pairs.append('\"defaultLed4IntensityWhenOn\": ' ~ defaultLed4IntensityWhenOn) }}{% endif %}
+      {% if defaultLed4IntensityWhenOff is not none %}{{ fields.pairs.append('\"defaultLed4IntensityWhenOff\": ' ~ defaultLed4IntensityWhenOff) }}{% endif %}
+      {% if defaultLed5IntensityWhenOn is not none %}{{ fields.pairs.append('\"defaultLed5IntensityWhenOn\": ' ~ defaultLed5IntensityWhenOn) }}{% endif %}
+      {% if defaultLed5IntensityWhenOff is not none %}{{ fields.pairs.append('\"defaultLed5IntensityWhenOff\": ' ~ defaultLed5IntensityWhenOff) }}{% endif %}
+      {% if defaultLed6IntensityWhenOn is not none %}{{ fields.pairs.append('\"defaultLed6IntensityWhenOn\": ' ~ defaultLed6IntensityWhenOn) }}{% endif %}
+      {% if defaultLed6IntensityWhenOff is not none %}{{ fields.pairs.append('\"defaultLed6IntensityWhenOff\": ' ~ defaultLed6IntensityWhenOff) }}{% endif %}
+      {% if defaultLed7IntensityWhenOn is not none %}{{ fields.pairs.append('\"defaultLed7IntensityWhenOn\": ' ~ defaultLed7IntensityWhenOn) }}{% endif %}
+      {% if defaultLed7IntensityWhenOff is not none %}{{ fields.pairs.append('\"defaultLed7IntensityWhenOff\": ' ~ defaultLed7IntensityWhenOff) }}{% endif %}
+      {% if minimumLevel is not none %}{{ fields.pairs.append('\"minimumLevel\": ' ~ minimumLevel) }}{% endif %}
+      {% if maximumLevel is not none %}{{ fields.pairs.append('\"maximumLevel\": ' ~ maximumLevel) }}{% endif %}
+      {% if quickStartLevel is not none %}{{ fields.pairs.append('\"quickStartLevel\": ' ~ quickStartLevel) }}{% endif %}
+      {% if quickStartTime is not none %}{{ fields.pairs.append('\"quickStartTime\": ' ~ quickStartTime) }}{% endif %}
+      {% if activePowerReports is not none %}{{ fields.pairs.append('\"activePowerReports\": ' ~ activePowerReports) }}{% endif %}
+      {% if activeEnergyReports is not none %}{{ fields.pairs.append('\"activeEnergyReports\": ' ~ activeEnergyReports) }}{% endif %}
+      {% if periodicPowerAndEnergyReports is not none %}{{ fields.pairs.append('\"periodicPowerAndEnergyReports\": ' ~ periodicPowerAndEnergyReports) }}{% endif %}
+      {% if identify_timeout is not none %}{{ fields.pairs.append('\"identify_timeout\": ' ~ identify_timeout) }}{% endif %}
+      {% if invertSwitch is not none %}{{ fields.pairs.append('\"invertSwitch\": ' ~ invertSwitch) }}{% endif %}
+      {% if smartBulbMode is not none %}{{ fields.pairs.append('\"smartBulbMode\": ' ~ smartBulbMode) }}{% endif %}
+      {% if bindingOffToOnSyncLevel is not none %}{{ fields.pairs.append('\"bindingOffToOnSyncLevel\": ' ~ bindingOffToOnSyncLevel) }}{% endif %}
+      {% if localProtection is not none %}{{ fields.pairs.append('\"localProtection\": ' ~ localProtection) }}{% endif %}
+      {% if remoteProtection is not none %}{{ fields.pairs.append('\"remoteProtection\": ' ~ remoteProtection) }}{% endif %}
+      {% if relayClick is not none %}{{ fields.pairs.append('\"relayClick\": ' ~ relayClick) }}{% endif %}
+      {% if doubleTapClearNotifications is not none %}{{ fields.pairs.append('\"doubleTapClearNotifications\": ' ~ doubleTapClearNotifications) }}{% endif %}
+      {% if fanLedLevelType is not none %}{{ fields.pairs.append('\"fanLedLevelType\": ' ~ fanLedLevelType) }}{% endif %}
+      {% if ledColorWhenOn is not none %}{{ fields.pairs.append('\"ledColorWhenOn\": ' ~ ledColorWhenOn) }}{% endif %}
+      {% if ledColorWhenOff is not none %}{{ fields.pairs.append('\"ledColorWhenOff\": ' ~ ledColorWhenOff) }}{% endif %}
+      {% if defaultLed1ColorWhenOn is not none %}{{ fields.pairs.append('\"defaultLed1ColorWhenOn\": ' ~ defaultLed1ColorWhenOn) }}{% endif %}
+      {% if defaultLed1ColorWhenOff is not none %}{{ fields.pairs.append('\"defaultLed1ColorWhenOff\": ' ~ defaultLed1ColorWhenOff) }}{% endif %}
+      {% if defaultLed2ColorWhenOn is not none %}{{ fields.pairs.append('\"defaultLed2ColorWhenOn\": ' ~ defaultLed2ColorWhenOn) }}{% endif %}
+      {% if defaultLed2ColorWhenOff is not none %}{{ fields.pairs.append('\"defaultLed2ColorWhenOff\": ' ~ defaultLed2ColorWhenOff) }}{% endif %}
+      {% if defaultLed3ColorWhenOn is not none %}{{ fields.pairs.append('\"defaultLed3ColorWhenOn\": ' ~ defaultLed3ColorWhenOn) }}{% endif %}
+      {% if defaultLed3ColorWhenOff is not none %}{{ fields.pairs.append('\"defaultLed3ColorWhenOff\": ' ~ defaultLed3ColorWhenOff) }}{% endif %}
+      {% if defaultLed4ColorWhenOn is not none %}{{ fields.pairs.append('\"defaultLed4ColorWhenOn\": ' ~ defaultLed4ColorWhenOn) }}{% endif %}
+      {% if defaultLed4ColorWhenOff is not none %}{{ fields.pairs.append('\"defaultLed4ColorWhenOff\": ' ~ defaultLed4ColorWhenOff) }}{% endif %}
+      {% if defaultLed5ColorWhenOn is not none %}{{ fields.pairs.append('\"defaultLed5ColorWhenOn\": ' ~ defaultLed5ColorWhenOn) }}{% endif %}
+      {% if defaultLed5ColorWhenOff is not none %}{{ fields.pairs.append('\"defaultLed5ColorWhenOff\": ' ~ defaultLed5ColorWhenOff) }}{% endif %}
+      {% if defaultLed6ColorWhenOn is not none %}{{ fields.pairs.append('\"defaultLed6ColorWhenOn\": ' ~ defaultLed6ColorWhenOn) }}{% endif %}
+      {% if defaultLed6ColorWhenOff is not none %}{{ fields.pairs.append('\"defaultLed6ColorWhenOff\": ' ~ defaultLed6ColorWhenOff) }}{% endif %}
+      {% if defaultLed7ColorWhenOn is not none %}{{ fields.pairs.append('\"defaultLed7ColorWhenOn\": ' ~ defaultLed7ColorWhenOn) }}{% endif %}
+      {% if defaultLed7ColorWhenOff is not none %}{{ fields.pairs.append('\"defaultLed7ColorWhenOff\": ' ~ defaultLed7ColorWhenOff) }}{% endif %}
+      {% if ledColorForFanControlMode is not none %}{{ fields.pairs.append('\"ledColorForFanControlMode\": ' ~ ledColorForFanControlMode) }}{% endif %}
+      {% if outputMode is not none %}{{ fields.pairs.append('\"outputMode\": ' ~ outputMode) }}{% endif %}
+      {% if switchType is not none %}{{ fields.pairs.append('\"switchType\": ' ~ switchType) }}{% endif %}
+      {% if powerType is not none %}{{ fields.pairs.append('\"powerType\": ' ~ powerType) }}{% endif %}
+      {% if fanControlMode is not none %}{{ fields.pairs.append('\"fanControlMode\": ' ~ fanControlMode) }}{% endif %}
+      {% if dimmingMode is not none %}{{ fields.pairs.append('\"dimmingMode\": ' ~ dimmingMode) }}{% endif %}
+      {{ fields.pairs | join(', ') }}
+      }}
+
+  sequence:
+    - choose:
+        - conditions: "{{ settings_payload | trim == '' }}"
+          sequence:
+            - service: persistent_notification.create
+              data:
+                title: "Inovelli VZM31-SN Configuration"
+                message: "No settings selected. Aborting."
+            - stop: {{}}
+    - repeat:
+        for_each: device in devices
+        sequence:
+          - service: mqtt.publish
+            data:
+              topic: "{{ base_topic }}/{{ device.entity_id.split('.')[1] }}/set"
+              payload: >-
+                {{ "{" }}{{ settings_payload }}{{ "}" }}
+          - delay:
+              seconds: "{{ delay_secs }}"
+    - service: persistent_notification.create
+      data:
+        title: "Inovelli Configuration Complete"
+        message: "Applied configuration to devices: {{ devices | map(attribute='entity_id') | join(', ') }}"
+mode: single
