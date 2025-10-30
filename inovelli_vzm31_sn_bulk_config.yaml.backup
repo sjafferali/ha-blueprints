@@ -1078,218 +1078,218 @@ sequence:
                 payload_json:
                   doubleTapUpToParam55: !input double_tap_up_enabled
 
-            - alias: Set double tap down
+        - alias: Set double tap down
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              doubleTapDownToParam56: !input double_tap_down_enabled
+
+        - alias: Set double tap up level
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              brightnessLevelForDoubleTapUp: !input double_tap_up_level
+
+        - alias: Set double tap down level
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              brightnessLevelForDoubleTapDown: !input double_tap_down_level
+
+        - alias: Set double tap clear notifications
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              doubleTapClearNotifications: !input double_tap_clear_notifications
+
+        - alias: Set dimming speeds
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              dimmingSpeedUpRemote: !input dimming_speed_up_remote
+              dimmingSpeedUpLocal: !input dimming_speed_up_local
+              dimmingSpeedDownRemote: !input dimming_speed_down_remote
+              dimmingSpeedDownLocal: !input dimming_speed_down_local
+
+        - alias: Set ramp rates
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              rampRateOffToOnRemote: !input ramp_rate_off_to_on_remote
+              rampRateOffToOnLocal: !input ramp_rate_off_to_on_local
+              rampRateOnToOffRemote: !input ramp_rate_on_to_off_remote
+              rampRateOnToOffLocal: !input ramp_rate_on_to_off_local
+
+        - alias: Set min/max levels
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              minimumLevel: !input minimum_level
+              maximumLevel: !input maximum_level
+
+        - alias: Set default levels
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              defaultLevelLocal: !input default_level_local
+              defaultLevelRemote: !input default_level_remote
+
+        - alias: Set state after power restored
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              stateAfterPowerRestored: !input state_after_power_restored
+
+        - alias: Set load type
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              loadType: !input load_type
+
+        - alias: Set switch mode
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              switchMode: !input switch_mode
+
+        - alias: Set smart bulb mode
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              smartBulbMode: !input smart_bulb_mode
+
+        - alias: Set quick start settings
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              quickStartTime: !input quick_start_time
+              quickStartLevel: !input quick_start_level
+
+        - alias: Set leading/trailing edge
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              leadingTrailingEdge: !input leading_trailing_edge
+
+        - alias: Set protection settings
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              localProtection: !input local_protection
+              remoteProtection: !input remote_protection
+
+        - alias: Set firmware update indicator
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              firmwareUpdateInProgressIndicator: !input firmware_update_indicator
+
+        - alias: Set relay click
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              relayClick: !input relay_click
+
+        - alias: Set disable clear notifications on startup
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              disableClearNotificationsStartup: !input disable_clear_notifications_startup
+
+        - alias: Configure individual LED 1 if enabled
+          if:
+            - condition: template
+              value_template: "{{ configure_individual_leds }}"
+          then:
+            - alias: Set LED 1 configuration
               service: mqtt.publish
               data:
-                topic: "{{ device_topic }}"
+                topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
                 payload_json:
-                  doubleTapDownToParam56: !input double_tap_down_enabled
+                  defaultLed1ColorWhenOn: !input default_led1_color_when_on
+                  defaultLed1ColorWhenOff: !input default_led1_color_when_off
+                  defaultLed1IntensityWhenOn: !input default_led1_intensity_when_on
+                  defaultLed1IntensityWhenOff: !input default_led1_intensity_when_off
 
-            - alias: Set double tap up level
-              service: mqtt.publish
-              data:
-                topic: "{{ device_topic }}"
-                payload_json:
-                  brightnessLevelForDoubleTapUp: !input double_tap_up_level
+        - alias: Set LED bar scaling
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              ledBarScaling: !input led_bar_scaling
 
-            - alias: Set double tap down level
-              service: mqtt.publish
-              data:
-                topic: "{{ device_topic }}"
-                payload_json:
-                  brightnessLevelForDoubleTapDown: !input double_tap_down_level
+        - alias: Set output mode
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              outputMode: !input output_mode
 
-            - alias: Set double tap clear notifications
-              service: mqtt.publish
-              data:
-                topic: "{{ device_topic }}"
-                payload_json:
-                  doubleTapClearNotifications: !input double_tap_clear_notifications
+        - alias: Set invert switch
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              invertSwitch: !input invert_switch
 
-            - alias: Set dimming speeds
-              service: mqtt.publish
-              data:
-                topic: "{{ device_topic }}"
-                payload_json:
-                  dimmingSpeedUpRemote: !input dimming_speed_up_remote
-                  dimmingSpeedUpLocal: !input dimming_speed_up_local
-                  dimmingSpeedDownRemote: !input dimming_speed_down_remote
-                  dimmingSpeedDownLocal: !input dimming_speed_down_local
+        - alias: Set auto timer off
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              autoTimerOff: !input auto_timer_off
 
-            - alias: Set ramp rates
-              service: mqtt.publish
-              data:
-                topic: "{{ device_topic }}"
-                payload_json:
-                  rampRateOffToOnRemote: !input ramp_rate_off_to_on_remote
-                  rampRateOffToOnLocal: !input ramp_rate_off_to_on_local
-                  rampRateOnToOffRemote: !input ramp_rate_on_to_off_remote
-                  rampRateOnToOffLocal: !input ramp_rate_on_to_off_local
+        - alias: Set binding off to on sync level
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              bindingOffToOnSyncLevel: !input binding_off_to_on_sync_level
 
-            - alias: Set min/max levels
-              service: mqtt.publish
-              data:
-                topic: "{{ device_topic }}"
-                payload_json:
-                  minimumLevel: !input minimum_level
-                  maximumLevel: !input maximum_level
+        - alias: Set aux switch unique scenes
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              auxSwitchUniqueScenes: !input aux_switch_unique_scenes
 
-            - alias: Set default levels
-              service: mqtt.publish
-              data:
-                topic: "{{ device_topic }}"
-                payload_json:
-                  defaultLevelLocal: !input default_level_local
-                  defaultLevelRemote: !input default_level_remote
+        - alias: Set power reporting
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              activePowerReports: !input active_power_reports
+              periodicPowerAndEnergyReports: !input periodic_power_energy_reports
+              activeEnergyReports: !input active_energy_reports
 
-            - alias: Set state after power restored
-              service: mqtt.publish
-              data:
-                topic: "{{ device_topic }}"
-                payload_json:
-                  stateAfterPowerRestored: !input state_after_power_restored
-
-            - alias: Set load type
-              service: mqtt.publish
-              data:
-                topic: "{{ device_topic }}"
-                payload_json:
-                  loadType: !input load_type
-
-            - alias: Set switch mode
-              service: mqtt.publish
-              data:
-                topic: "{{ device_topic }}"
-                payload_json:
-                  switchMode: !input switch_mode
-
-            - alias: Set smart bulb mode
-              service: mqtt.publish
-              data:
-                topic: "{{ device_topic }}"
-                payload_json:
-                  smartBulbMode: !input smart_bulb_mode
-
-            - alias: Set quick start settings
-              service: mqtt.publish
-              data:
-                topic: "{{ device_topic }}"
-                payload_json:
-                  quickStartTime: !input quick_start_time
-                  quickStartLevel: !input quick_start_level
-
-            - alias: Set leading/trailing edge
-              service: mqtt.publish
-              data:
-                topic: "{{ device_topic }}"
-                payload_json:
-                  leadingTrailingEdge: !input leading_trailing_edge
-
-            - alias: Set protection settings
-              service: mqtt.publish
-              data:
-                topic: "{{ device_topic }}"
-                payload_json:
-                  localProtection: !input local_protection
-                  remoteProtection: !input remote_protection
-
-            - alias: Set firmware update indicator
-              service: mqtt.publish
-              data:
-                topic: "{{ device_topic }}"
-                payload_json:
-                  firmwareUpdateInProgressIndicator: !input firmware_update_indicator
-
-            - alias: Set relay click
-              service: mqtt.publish
-              data:
-                topic: "{{ device_topic }}"
-                payload_json:
-                  relayClick: !input relay_click
-
-            - alias: Set disable clear notifications on startup
-              service: mqtt.publish
-              data:
-                topic: "{{ device_topic }}"
-                payload_json:
-                  disableClearNotificationsStartup: !input disable_clear_notifications_startup
-
-            - alias: Configure individual LED 1 if enabled
-              if:
-                - condition: template
-                  value_template: "{{ configure_individual_leds }}"
-              then:
-                - alias: Set LED 1 configuration
-                  service: mqtt.publish
-                  data:
-                    topic: "{{ device_topic }}"
-                    payload_json:
-                      defaultLed1ColorWhenOn: !input default_led1_color_when_on
-                      defaultLed1ColorWhenOff: !input default_led1_color_when_off
-                      defaultLed1IntensityWhenOn: !input default_led1_intensity_when_on
-                      defaultLed1IntensityWhenOff: !input default_led1_intensity_when_off
-
-            - alias: Set LED bar scaling
-              service: mqtt.publish
-              data:
-                topic: "{{ device_topic }}"
-                payload_json:
-                  ledBarScaling: !input led_bar_scaling
-
-            - alias: Set output mode
-              service: mqtt.publish
-              data:
-                topic: "{{ device_topic }}"
-                payload_json:
-                  outputMode: !input output_mode
-
-            - alias: Set invert switch
-              service: mqtt.publish
-              data:
-                topic: "{{ device_topic }}"
-                payload_json:
-                  invertSwitch: !input invert_switch
-
-            - alias: Set auto timer off
-              service: mqtt.publish
-              data:
-                topic: "{{ device_topic }}"
-                payload_json:
-                  autoTimerOff: !input auto_timer_off
-
-            - alias: Set binding off to on sync level
-              service: mqtt.publish
-              data:
-                topic: "{{ device_topic }}"
-                payload_json:
-                  bindingOffToOnSyncLevel: !input binding_off_to_on_sync_level
-
-            - alias: Set aux switch unique scenes
-              service: mqtt.publish
-              data:
-                topic: "{{ device_topic }}"
-                payload_json:
-                  auxSwitchUniqueScenes: !input aux_switch_unique_scenes
-
-            - alias: Set power reporting
-              service: mqtt.publish
-              data:
-                topic: "{{ device_topic }}"
-                payload_json:
-                  activePowerReports: !input active_power_reports
-                  periodicPowerAndEnergyReports: !input periodic_power_energy_reports
-                  activeEnergyReports: !input active_energy_reports
-
-            - alias: Set fan control settings
-              service: mqtt.publish
-              data:
-                topic: "{{ device_topic }}"
-                payload_json:
-                  fanControlMode: !input fan_control_mode
-                  lowLevelForFanControlMode: !input low_level_for_fan_control
-                  medLevelForFanControlMode: !input med_level_for_fan_control
-                  highLevelForFanControlMode: !input high_level_for_fan_control
-                  ledColorForFanControlMode: !input led_color_for_fan_control
+        - alias: Set fan control settings
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              fanControlMode: !input fan_control_mode
+              lowLevelForFanControlMode: !input low_level_for_fan_control
+              medLevelForFanControlMode: !input med_level_for_fan_control
+              highLevelForFanControlMode: !input high_level_for_fan_control
+              ledColorForFanControlMode: !input led_color_for_fan_control
 
             - delay:
                 milliseconds: 100
