@@ -1,3 +1,4 @@
+
 blueprint:
   name: Inovelli VZM31-SN (Z2M) – Full Device Configuration
   description: |
@@ -629,3 +630,4 @@ blueprint:
       data:
         title: "Inovelli Configuration Complete"
         message: "Applied configuration to devices: {{ devices | map(attribute='entity_id') | join(', ') }}"
+mode: single
