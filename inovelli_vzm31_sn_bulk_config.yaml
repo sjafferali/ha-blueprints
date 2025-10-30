@@ -9,7 +9,7 @@ blueprint:
     # LED Color Settings
     led_color_when_on:
       name: LED Color When On
-      description: LED strip color when switch is on
+      description: Set the color of the LED Indicator when the load is on
       default: "170"
       selector:
         select:
@@ -35,7 +35,7 @@ blueprint:
 
     led_color_when_off:
       name: LED Color When Off
-      description: LED strip color when switch is off
+      description: Set the color of the LED Indicator when the load is off
       default: "170"
       selector:
         select:
@@ -62,7 +62,7 @@ blueprint:
     # LED Intensity Settings
     led_intensity_when_on:
       name: LED Intensity When On
-      description: LED brightness when switch is on (0-100%)
+      description: Set the intensity of the LED Indicator when the load is on
       default: 75
       selector:
         number:
@@ -73,7 +73,7 @@ blueprint:
 
     led_intensity_when_off:
       name: LED Intensity When Off
-      description: LED brightness when switch is off (0-100%)
+      description: Set the intensity of the LED Indicator when the load is off
       default: 25
       selector:
         number:
@@ -85,7 +85,7 @@ blueprint:
     # LED Mode
     on_off_led_mode:
       name: LED Display Mode
-      description: Show all LEDs or just one
+      description: When the device is in On/Off mode, use full LED bar or just one LED
       default: "All"
       selector:
         select:
@@ -96,7 +96,7 @@ blueprint:
     # Button Configuration
     button_delay:
       name: Button Press Delay
-      description: Delay before processing button press
+      description: This will set the button press delay. 0 = no delay (Disables Button Press Events), Default = 500ms
       default: "500ms"
       selector:
         select:
@@ -124,7 +124,7 @@ blueprint:
 
     single_tap_behavior:
       name: Single Tap Behavior
-      description: How single tap behaves
+      description: Behavior of single tapping the on or off button. Old behavior turns the switch on or off. New behavior cycles through the levels set by P131-133
       default: "Disabled"
       selector:
         select:
@@ -137,7 +137,7 @@ blueprint:
     # Double Tap Configuration
     double_tap_up_enabled:
       name: Enable Double Tap Up
-      description: Enable double tap up to full brightness
+      description: Enable or Disable setting level to parameter 55 on double-tap UP
       default: "Enabled"
       selector:
         select:
@@ -147,7 +147,7 @@ blueprint:
 
     double_tap_down_enabled:
       name: Enable Double Tap Down
-      description: Enable double tap down to turn off
+      description: Enable or Disable setting level to parameter 56 on double-tap DOWN
       default: "Enabled"
       selector:
         select:
@@ -157,7 +157,7 @@ blueprint:
 
     double_tap_up_level:
       name: Double Tap Up Brightness Level
-      description: Brightness level for double tap up (0-255)
+      description: Set this level on double-tap UP (if enabled by P53). 255 = send ON command
       default: 255
       selector:
         number:
@@ -167,7 +167,7 @@ blueprint:
 
     double_tap_down_level:
       name: Double Tap Down Brightness Level
-      description: Brightness level for double tap down (0-255)
+      description: Set this level on double-tap DOWN (if enabled by P54)
       default: 0
       selector:
         number:
@@ -177,7 +177,7 @@ blueprint:
 
     double_tap_clear_notifications:
       name: Double Tap Config Button to Clear Notifications
-      description: Clear LED notifications with config button double tap
+      description: Double-Tap the Config button to clear notifications
       default: "Enabled"
       selector:
         select:
@@ -188,7 +188,7 @@ blueprint:
     # Dimming Speed Settings
     dimming_speed_up_remote:
       name: Remote Dimming Speed Up
-      description: Speed for dimming up via Z-Wave (0-127, in 100ms increments)
+      description: Changes the speed that the light dims up when controlled from the hub. Setting of 0 turns light immediately on. Every number represents 100ms
       default: 25
       selector:
         number:
@@ -198,7 +198,7 @@ blueprint:
 
     dimming_speed_up_local:
       name: Local Dimming Speed Up
-      description: Speed for dimming up at switch (0-127, in 100ms increments)
+      description: Changes the speed that the light dims up when controlled at the switch. Every number represents 100ms
       default: 25
       selector:
         number:
@@ -208,7 +208,7 @@ blueprint:
 
     dimming_speed_down_remote:
       name: Remote Dimming Speed Down
-      description: Speed for dimming down via Z-Wave (0-127, in 100ms increments)
+      description: Changes the speed that the light dims down when controlled from the hub. Every number represents 100ms
       default: 25
       selector:
         number:
@@ -218,7 +218,7 @@ blueprint:
 
     dimming_speed_down_local:
       name: Local Dimming Speed Down
-      description: Speed for dimming down at switch (0-127, in 100ms increments)
+      description: Changes the speed that the light dims down when controlled at the switch. Every number represents 100ms
       default: 25
       selector:
         number:
@@ -229,7 +229,7 @@ blueprint:
     # Ramp Rate Settings
     ramp_rate_off_to_on_remote:
       name: Remote Ramp Rate Off to On
-      description: Speed to turn on via Z-Wave (0-127, 0=instant)
+      description: Changes the speed that the light turns on when controlled from the hub. A setting of 0 turns the light immediately on. Every number represents 100ms
       default: 2
       selector:
         number:
@@ -239,7 +239,7 @@ blueprint:
 
     ramp_rate_off_to_on_local:
       name: Local Ramp Rate Off to On
-      description: Speed to turn on at switch (0-127, 0=instant)
+      description: Changes the speed that the light turns on when controlled at the switch. A setting of 0 turns the light immediately on. Every number represents 100ms
       default: 2
       selector:
         number:
@@ -249,7 +249,7 @@ blueprint:
 
     ramp_rate_on_to_off_remote:
       name: Remote Ramp Rate On to Off
-      description: Speed to turn off via Z-Wave (0-127, 0=instant)
+      description: Changes the speed that the light turns off when controlled from the hub. A setting of 0 turns the light immediately off. Every number represents 100ms
       default: 2
       selector:
         number:
@@ -259,7 +259,7 @@ blueprint:
 
     ramp_rate_on_to_off_local:
       name: Local Ramp Rate On to Off
-      description: Speed to turn off at switch (0-127, 0=instant)
+      description: Changes the speed that the light turns off when controlled at the switch. A setting of 0 turns the light immediately off. Every number represents 100ms
       default: 2
       selector:
         number:
@@ -270,7 +270,7 @@ blueprint:
     # Min/Max Level Settings
     minimum_level:
       name: Minimum Brightness Level
-      description: Minimum dimmer level (1-254)
+      description: The minimum level that the dimmer allows the bulb to be dimmed to. Useful when the user has an LED bulb that does not turn on or flickers at a lower level
       default: 1
       selector:
         number:
@@ -280,7 +280,7 @@ blueprint:
 
     maximum_level:
       name: Maximum Brightness Level
-      description: Maximum dimmer level (2-255)
+      description: The maximum level that the dimmer allows the bulb to be dimmed to. Useful when the user has an LED bulb that reaches its maximum level before the dimmer value of 99
       default: 255
       selector:
         number:
@@ -291,7 +291,7 @@ blueprint:
     # Power Settings
     default_level_local:
       name: Default Level (Local)
-      description: Default brightness when turned on at switch (0-255, 0=previous)
+      description: Default level for the load when it is turned on at the switch. A setting of 255 means that the switch will return to the level that it was on before it was turned off
       default: 0
       selector:
         number:
@@ -301,7 +301,7 @@ blueprint:
 
     default_level_remote:
       name: Default Level (Remote)
-      description: Default brightness when turned on via Z-Wave (0-255, 0=previous)
+      description: Default level for the load when it is turned on from the hub. A setting of 255 means that the switch will return to the level that it was on before it was turned off
       default: 0
       selector:
         number:
@@ -312,7 +312,7 @@ blueprint:
     # State After Power Restored
     state_after_power_restored:
       name: State After Power Restored
-      description: Behavior after power is restored
+      description: The state the switch should return to when power is restored after power failure. 0 = off, 1-254 = level, 255 = previous
       default: "0"
       selector:
         select:
@@ -350,7 +350,7 @@ blueprint:
     # Smart Bulb Mode
     smart_bulb_mode:
       name: Smart Bulb Mode
-      description: Disable relay for smart bulbs
+      description: For use with Smart Bulbs that need constant power and are controlled via commands rather than power
       default: "Disabled"
       selector:
         select:
@@ -361,7 +361,7 @@ blueprint:
     # Quick Start
     quick_start_time:
       name: Quick Start Time
-      description: Higher power at startup time (0-60)
+      description: Duration of full power output while lamp transitions from Off to On. In 60th of second. 0 = disable, 1 = 1/60s, 60 = 1s
       default: 0
       selector:
         number:
@@ -372,7 +372,7 @@ blueprint:
 
     quick_start_level:
       name: Quick Start Level
-      description: Higher power at startup level (0-255)
+      description: Level of power output during Quick Start Light time (P23)
       default: 0
       selector:
         number:
@@ -394,7 +394,7 @@ blueprint:
     # Protection Settings
     local_protection:
       name: Local Protection
-      description: Disable physical switch control
+      description: Ability to control switch from the wall
       default: "Disabled"
       selector:
         select:
@@ -404,7 +404,7 @@ blueprint:
 
     remote_protection:
       name: Remote Protection
-      description: Disable Z-Wave control
+      description: Ability to control switch from the hub
       default: "Disabled"
       selector:
         select:
@@ -421,7 +421,7 @@ blueprint:
     # Firmware Update Indicator
     firmware_update_indicator:
       name: Firmware Update In Progress Indicator
-      description: Show LED progress during firmware updates
+      description: Display progress on LED bar during firmware update
       default: "Enabled"
       selector:
         select:
@@ -432,7 +432,7 @@ blueprint:
     # Relay Click
     relay_click:
       name: Relay Click Sound
-      description: Enable relay click sound in on/off mode
+      description: In neutral on/off setups, the default is to have a clicking sound to notify you that the relay is open or closed
       default: "Enabled"
       selector:
         select:
@@ -503,7 +503,7 @@ blueprint:
     # LED Bar Scaling
     led_bar_scaling:
       name: LED Bar Scaling Mode
-      description: LED bar brightness scaling method
+      description: Method used for scaling
       default: "Gen3 method (VZM-style)"
       selector:
         select:
@@ -514,7 +514,7 @@ blueprint:
     # Output Mode
     output_mode:
       name: Output Mode
-      description: Switch output mode configuration
+      description: Use device as a Dimmer or an On/Off switch
       default: "Dimmer"
       selector:
         select:
@@ -525,7 +525,7 @@ blueprint:
     # Invert Switch
     invert_switch:
       name: Invert Switch Orientation
-      description: Invert up/down switch orientation
+      description: Inverts the orientation of the switch. Useful when installed upside down
       default: "No"
       selector:
         select:
@@ -536,7 +536,7 @@ blueprint:
     # Auto Timer Off
     auto_timer_off:
       name: Auto Timer Off
-      description: Auto shut-off timer in seconds (0=disabled)
+      description: Automatically turns the switch off after this many seconds. When the switch is turned on a timer is started. When the timer expires, the switch is turned off. 0 = Auto off is disabled
       default: 0
       selector:
         number:
@@ -548,7 +548,7 @@ blueprint:
     # Binding Off to On Sync Level
     binding_off_to_on_sync_level:
       name: Binding Off to On Sync Level
-      description: Send Move_To_Level to bound devices when turning on
+      description: Send Move_To_Level using Default Level with Off/On to bound devices
       default: "Disabled"
       selector:
         select:
@@ -559,7 +559,7 @@ blueprint:
     # Aux Switch Unique Scenes
     aux_switch_unique_scenes:
       name: Aux Switch Unique Scenes
-      description: Enable unique scene IDs for aux switch
+      description: Have unique scene numbers for scenes activated with the aux switch
       default: "Disabled"
       selector:
         select:
@@ -570,7 +570,7 @@ blueprint:
     # Power Reporting Settings
     active_power_reports:
       name: Active Power Reports
-      description: Power change percentage to trigger report (0=disabled)
+      description: Percent power level change that will result in a new power report being sent. 0 = Disabled
       default: 10
       selector:
         number:
@@ -581,7 +581,7 @@ blueprint:
 
     periodic_power_energy_reports:
       name: Periodic Power & Energy Reports
-      description: Reporting interval in seconds (0=disabled)
+      description: Time period between consecutive power & energy reports being sent (in seconds)
       default: 3600
       selector:
         number:
@@ -592,7 +592,7 @@ blueprint:
 
     active_energy_reports:
       name: Active Energy Reports
-      description: Energy change in 0.01 kWh to trigger report
+      description: Energy level change which will result in sending a new energy report. 0 = disabled, 1-32767 = 0.01kWh-327.67kWh
       default: 10
       selector:
         number:
@@ -604,7 +604,7 @@ blueprint:
     # Fan Control Mode
     fan_control_mode:
       name: Fan Control Mode
-      description: Enable fan speed control features
+      description: Which mode to use when binding EP3 (config button) to another device (like a fan module)
       default: "Disabled"
       selector:
         select:
