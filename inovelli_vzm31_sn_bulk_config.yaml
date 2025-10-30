@@ -1,6 +1,6 @@
 blueprint:
   name: Inovelli VZM31-SN Bulk Configuration
-  description: Configure multiple Inovelli VZM31-SN switches with the same settings
+  description: Comprehensive configuration for multiple Inovelli VZM31-SN switches. Includes LED settings, button behavior, dimming, power reporting, fan control, and advanced features. All parameters from Zigbee2MQTT are supported.
   domain: script
   author: Home Assistant Community
   homeassistant:
@@ -451,6 +451,224 @@ blueprint:
             - "Disabled"
             - "Enabled"
 
+    # Individual LED Configuration (Optional - Advanced)
+    configure_individual_leds:
+      name: Configure Individual LEDs
+      description: Enable individual LED customization (Advanced)
+      default: false
+      selector:
+        boolean:
+
+    # LED 1 Settings
+    default_led1_color_when_on:
+      name: LED 1 Color When On
+      description: Individual LED 1 color when on (255=sync with default)
+      default: 255
+      selector:
+        number:
+          min: 0
+          max: 255
+          mode: slider
+
+    default_led1_color_when_off:
+      name: LED 1 Color When Off
+      description: Individual LED 1 color when off (255=sync with default)
+      default: 255
+      selector:
+        number:
+          min: 0
+          max: 255
+          mode: slider
+
+    default_led1_intensity_when_on:
+      name: LED 1 Intensity When On
+      description: Individual LED 1 brightness when on (101=sync with default)
+      default: 101
+      selector:
+        number:
+          min: 0
+          max: 101
+          mode: slider
+
+    default_led1_intensity_when_off:
+      name: LED 1 Intensity When Off
+      description: Individual LED 1 brightness when off (101=sync with default)
+      default: 101
+      selector:
+        number:
+          min: 0
+          max: 101
+          mode: slider
+
+    # LED Bar Scaling
+    led_bar_scaling:
+      name: LED Bar Scaling Mode
+      description: LED bar brightness scaling method
+      default: "Gen3 method (VZM-style)"
+      selector:
+        select:
+          options:
+            - "Gen3 method (VZM-style)"
+            - "Gen2 method (LZW-style)"
+
+    # Output Mode
+    output_mode:
+      name: Output Mode
+      description: Switch output mode configuration
+      default: "Dimmer"
+      selector:
+        select:
+          options:
+            - "Dimmer"
+            - "On/Off"
+
+    # Invert Switch
+    invert_switch:
+      name: Invert Switch Orientation
+      description: Invert up/down switch orientation
+      default: "No"
+      selector:
+        select:
+          options:
+            - "No"
+            - "Yes"
+
+    # Auto Timer Off
+    auto_timer_off:
+      name: Auto Timer Off
+      description: Auto shut-off timer in seconds (0=disabled)
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 32767
+          unit_of_measurement: "seconds"
+          mode: box
+
+    # Binding Off to On Sync Level
+    binding_off_to_on_sync_level:
+      name: Binding Off to On Sync Level
+      description: Send Move_To_Level to bound devices when turning on
+      default: "Disabled"
+      selector:
+        select:
+          options:
+            - "Disabled"
+            - "Enabled"
+
+    # Aux Switch Unique Scenes
+    aux_switch_unique_scenes:
+      name: Aux Switch Unique Scenes
+      description: Enable unique scene IDs for aux switch
+      default: "Disabled"
+      selector:
+        select:
+          options:
+            - "Disabled"
+            - "Enabled"
+
+    # Power Reporting Settings
+    active_power_reports:
+      name: Active Power Reports
+      description: Power change percentage to trigger report (0=disabled)
+      default: 10
+      selector:
+        number:
+          min: 0
+          max: 100
+          unit_of_measurement: "%"
+          mode: slider
+
+    periodic_power_energy_reports:
+      name: Periodic Power & Energy Reports
+      description: Reporting interval in seconds (0=disabled)
+      default: 3600
+      selector:
+        number:
+          min: 0
+          max: 32767
+          unit_of_measurement: "seconds"
+          mode: box
+
+    active_energy_reports:
+      name: Active Energy Reports
+      description: Energy change in 0.01 kWh to trigger report
+      default: 10
+      selector:
+        number:
+          min: 0
+          max: 32767
+          unit_of_measurement: "0.01 kWh"
+          mode: box
+
+    # Fan Control Mode
+    fan_control_mode:
+      name: Fan Control Mode
+      description: Enable fan speed control features
+      default: "Disabled"
+      selector:
+        select:
+          options:
+            - "Disabled"
+            - "Multi Tap"
+            - "Cycle"
+
+    low_level_for_fan_control:
+      name: Fan Control Low Speed Level
+      description: Dimmer level for low fan speed (2-254)
+      default: 33
+      selector:
+        number:
+          min: 2
+          max: 254
+          mode: slider
+
+    med_level_for_fan_control:
+      name: Fan Control Medium Speed Level
+      description: Dimmer level for medium fan speed (2-254)
+      default: 66
+      selector:
+        number:
+          min: 2
+          max: 254
+          mode: slider
+
+    high_level_for_fan_control:
+      name: Fan Control High Speed Level
+      description: Dimmer level for high fan speed (2-254)
+      default: 99
+      selector:
+        number:
+          min: 2
+          max: 254
+          mode: slider
+
+    led_color_for_fan_control:
+      name: LED Color for Fan Control Mode
+      description: LED color when in fan control mode
+      default: "127"
+      selector:
+        select:
+          options:
+            - label: "Red"
+              value: "0"
+            - label: "Orange"
+              value: "21"
+            - label: "Yellow"
+              value: "42"
+            - label: "Green"
+              value: "85"
+            - label: "Cyan"
+              value: "127"
+            - label: "Blue"
+              value: "170"
+            - label: "Violet"
+              value: "212"
+            - label: "Pink"
+              value: "234"
+            - label: "White"
+              value: "255"
+
 fields:
   target_devices:
     name: Target Devices
@@ -661,6 +879,83 @@ sequence:
             topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
             payload_json:
               disableClearNotificationsStartup: !input disable_clear_notifications_startup
+
+        - alias: Configure individual LED 1 if enabled
+          if:
+            - condition: template
+              value_template: "{{ configure_individual_leds }}"
+          then:
+            - alias: Set LED 1 configuration
+              service: mqtt.publish
+              data:
+                topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+                payload_json:
+                  defaultLed1ColorWhenOn: !input default_led1_color_when_on
+                  defaultLed1ColorWhenOff: !input default_led1_color_when_off
+                  defaultLed1IntensityWhenOn: !input default_led1_intensity_when_on
+                  defaultLed1IntensityWhenOff: !input default_led1_intensity_when_off
+
+        - alias: Set LED bar scaling
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              ledBarScaling: !input led_bar_scaling
+
+        - alias: Set output mode
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              outputMode: !input output_mode
+
+        - alias: Set invert switch
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              invertSwitch: !input invert_switch
+
+        - alias: Set auto timer off
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              autoTimerOff: !input auto_timer_off
+
+        - alias: Set binding off to on sync level
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              bindingOffToOnSyncLevel: !input binding_off_to_on_sync_level
+
+        - alias: Set aux switch unique scenes
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              auxSwitchUniqueScenes: !input aux_switch_unique_scenes
+
+        - alias: Set power reporting
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              activePowerReports: !input active_power_reports
+              periodicPowerAndEnergyReports: !input periodic_power_energy_reports
+              activeEnergyReports: !input active_energy_reports
+
+        - alias: Set fan control settings
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              fanControlMode: !input fan_control_mode
+              lowLevelForFanControlMode: !input low_level_for_fan_control
+              medLevelForFanControlMode: !input med_level_for_fan_control
+              highLevelForFanControlMode: !input high_level_for_fan_control
+              ledColorForFanControlMode: !input led_color_for_fan_control
 
         - delay:
             milliseconds: 100
