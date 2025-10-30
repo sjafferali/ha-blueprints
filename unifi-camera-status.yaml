@@ -1,0 +1,42 @@
+blueprint:
+  name: Sync UniFi Protect Camera Privacy Mode with Status LED
+  description: >
+    Keeps the status LED of a UniFi Protect camera in sync with its privacy mode:
+    - Privacy Mode ON  → LED OFF
+    - Privacy Mode OFF → LED ON
+  domain: automation
+  input:
+    camera:
+      name: Camera
+      description: The UniFi Protect camera to monitor.
+      selector:
+        entity:
+          domain: camera
+          integration: unifiprotect
+
+mode: restart
+trigger:
+  - platform: state
+    entity_id: !input camera
+    attribute: is_privacy_on
+
+action:
+  - choose:
+      - conditions:
+          - condition: template
+            value_template: "{{ state_attr(trigger.entity_id, 'is_privacy_on') == true }}"
+        sequence:
+          - action: call_service
+            service: unifiprotect.set_camera_led
+            data:
+              entity_id: !input camera
+              led_level: "off"
+      - conditions:
+          - condition: template
+            value_template: "{{ state_attr(trigger.entity_id, 'is_privacy_on') == false }}"
+        sequence:
+          - action: call_service
+            service: unifiprotect.set_camera_led
+            data:
+              entity_id: !input camera
+              led_level: "on"
