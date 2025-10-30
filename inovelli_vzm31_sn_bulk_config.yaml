@@ -859,176 +859,176 @@ sequence:
               {% set change_list = [] %}
               {# LED Settings #}
               {% if current_led_color_on | string != input_led_color_when_on | string and current_led_color_on != 'unknown' %}
-                {% set change_list = change_list + ['LED Color On: ' + (color_names[current_led_color_on] | default(current_led_color_on)) + ' → ' + (color_names[input_led_color_when_on] | default(input_led_color_when_on))] %}
+                {% set change_list = change_list + ['LED Color On: ' ~ (color_names[current_led_color_on] | default(current_led_color_on | string) | string) ~ ' → ' ~ (color_names[input_led_color_when_on] | default(input_led_color_when_on | string) | string)] %}
               {% endif %}
               {% if current_led_color_off | string != input_led_color_when_off | string and current_led_color_off != 'unknown' %}
-                {% set change_list = change_list + ['LED Color Off: ' + (color_names[current_led_color_off] | default(current_led_color_off)) + ' → ' + (color_names[input_led_color_when_off] | default(input_led_color_when_off))] %}
+                {% set change_list = change_list + ['LED Color Off: ' ~ (color_names[current_led_color_off] | default(current_led_color_off | string) | string) ~ ' → ' ~ (color_names[input_led_color_when_off] | default(input_led_color_when_off | string) | string)] %}
               {% endif %}
               {% if current_led_intensity_on | string != input_led_intensity_when_on | string and current_led_intensity_on != 'unknown' %}
-                {% set change_list = change_list + ['LED Intensity On: ' + current_led_intensity_on | string + '% → ' + input_led_intensity_when_on | string + '%'] %}
+                {% set change_list = change_list + ['LED Intensity On: ' ~ (current_led_intensity_on | string) ~ '% → ' ~ (input_led_intensity_when_on | string) ~ '%'] %}
               {% endif %}
               {% if current_led_intensity_off | string != input_led_intensity_when_off | string and current_led_intensity_off != 'unknown' %}
-                {% set change_list = change_list + ['LED Intensity Off: ' + current_led_intensity_off | string + '% → ' + input_led_intensity_when_off | string + '%'] %}
+                {% set change_list = change_list + ['LED Intensity Off: ' ~ (current_led_intensity_off | string) ~ '% → ' ~ (input_led_intensity_when_off | string) ~ '%'] %}
               {% endif %}
               {% if current_on_off_led_mode != input_on_off_led_mode and current_on_off_led_mode != 'unknown' %}
-                {% set change_list = change_list + ['LED Mode: ' + current_on_off_led_mode + ' → ' + input_on_off_led_mode] %}
+                {% set change_list = change_list + ['LED Mode: ' ~ current_on_off_led_mode ~ ' → ' ~ input_on_off_led_mode] %}
               {% endif %}
               {# Button Settings #}
               {% if current_button_delay != input_button_delay and current_button_delay != 'unknown' %}
-                {% set change_list = change_list + ['Button Delay: ' + current_button_delay + ' → ' + input_button_delay] %}
+                {% set change_list = change_list + ['Button Delay: ' ~ current_button_delay ~ ' → ' ~ input_button_delay] %}
               {% endif %}
               {% if current_single_tap_behavior != input_single_tap_behavior and current_single_tap_behavior != 'unknown' %}
-                {% set change_list = change_list + ['Single Tap: ' + current_single_tap_behavior + ' → ' + input_single_tap_behavior] %}
+                {% set change_list = change_list + ['Single Tap: ' ~ current_single_tap_behavior ~ ' → ' ~ input_single_tap_behavior] %}
               {% endif %}
               {% if current_double_tap_up != input_double_tap_up_enabled and current_double_tap_up != 'unknown' %}
-                {% set change_list = change_list + ['Double Tap Up: ' + current_double_tap_up + ' → ' + input_double_tap_up_enabled] %}
+                {% set change_list = change_list + ['Double Tap Up: ' ~ current_double_tap_up ~ ' → ' ~ input_double_tap_up_enabled] %}
               {% endif %}
               {% if current_double_tap_down != input_double_tap_down_enabled and current_double_tap_down != 'unknown' %}
-                {% set change_list = change_list + ['Double Tap Down: ' + current_double_tap_down + ' → ' + input_double_tap_down_enabled] %}
+                {% set change_list = change_list + ['Double Tap Down: ' ~ current_double_tap_down ~ ' → ' ~ input_double_tap_down_enabled] %}
               {% endif %}
               {% if current_double_tap_up_level | string != input_double_tap_up_level | string and current_double_tap_up_level != 'unknown' %}
-                {% set change_list = change_list + ['Double Tap Up Level: ' + current_double_tap_up_level | string + ' → ' + input_double_tap_up_level | string] %}
+                {% set change_list = change_list + ['Double Tap Up Level: ' ~ (current_double_tap_up_level | string) ~ ' → ' ~ (input_double_tap_up_level | string)] %}
               {% endif %}
               {% if current_double_tap_down_level | string != input_double_tap_down_level | string and current_double_tap_down_level != 'unknown' %}
-                {% set change_list = change_list + ['Double Tap Down Level: ' + current_double_tap_down_level | string + ' → ' + input_double_tap_down_level | string] %}
+                {% set change_list = change_list + ['Double Tap Down Level: ' ~ (current_double_tap_down_level | string) ~ ' → ' ~ (input_double_tap_down_level | string)] %}
               {% endif %}
               {% if current_double_tap_clear != input_double_tap_clear_notifications and current_double_tap_clear != 'unknown' %}
-                {% set change_list = change_list + ['Double Tap Clear: ' + current_double_tap_clear + ' → ' + input_double_tap_clear_notifications] %}
+                {% set change_list = change_list + ['Double Tap Clear: ' ~ current_double_tap_clear ~ ' → ' ~ input_double_tap_clear_notifications] %}
               {% endif %}
               {# Dimming/Ramp Settings #}
               {% if current_dimming_speed_up_remote | string != input_dimming_speed_up_remote | string and current_dimming_speed_up_remote != 'unknown' %}
-                {% set change_list = change_list + ['Dimming Up Remote: ' + current_dimming_speed_up_remote | string + ' → ' + input_dimming_speed_up_remote | string] %}
+                {% set change_list = change_list + ['Dimming Up Remote: ' ~ (current_dimming_speed_up_remote | string) ~ ' → ' ~ (input_dimming_speed_up_remote | string)] %}
               {% endif %}
               {% if current_dimming_speed_up_local | string != input_dimming_speed_up_local | string and current_dimming_speed_up_local != 'unknown' %}
-                {% set change_list = change_list + ['Dimming Up Local: ' + current_dimming_speed_up_local | string + ' → ' + input_dimming_speed_up_local | string] %}
+                {% set change_list = change_list + ['Dimming Up Local: ' ~ (current_dimming_speed_up_local | string) ~ ' → ' ~ (input_dimming_speed_up_local | string)] %}
               {% endif %}
               {% if current_dimming_speed_down_remote | string != input_dimming_speed_down_remote | string and current_dimming_speed_down_remote != 'unknown' %}
-                {% set change_list = change_list + ['Dimming Down Remote: ' + current_dimming_speed_down_remote | string + ' → ' + input_dimming_speed_down_remote | string] %}
+                {% set change_list = change_list + ['Dimming Down Remote: ' ~ (current_dimming_speed_down_remote | string) ~ ' → ' ~ (input_dimming_speed_down_remote | string)] %}
               {% endif %}
               {% if current_dimming_speed_down_local | string != input_dimming_speed_down_local | string and current_dimming_speed_down_local != 'unknown' %}
-                {% set change_list = change_list + ['Dimming Down Local: ' + current_dimming_speed_down_local | string + ' → ' + input_dimming_speed_down_local | string] %}
+                {% set change_list = change_list + ['Dimming Down Local: ' ~ (current_dimming_speed_down_local | string) ~ ' → ' ~ (input_dimming_speed_down_local | string)] %}
               {% endif %}
               {% if current_ramp_rate_off_on_remote | string != input_ramp_rate_off_to_on_remote | string and current_ramp_rate_off_on_remote != 'unknown' %}
-                {% set change_list = change_list + ['Ramp Off→On Remote: ' + current_ramp_rate_off_on_remote | string + ' → ' + input_ramp_rate_off_to_on_remote | string] %}
+                {% set change_list = change_list + ['Ramp Off→On Remote: ' ~ (current_ramp_rate_off_on_remote | string) ~ ' → ' ~ (input_ramp_rate_off_to_on_remote | string)] %}
               {% endif %}
               {% if current_ramp_rate_off_on_local | string != input_ramp_rate_off_to_on_local | string and current_ramp_rate_off_on_local != 'unknown' %}
-                {% set change_list = change_list + ['Ramp Off→On Local: ' + current_ramp_rate_off_on_local | string + ' → ' + input_ramp_rate_off_to_on_local | string] %}
+                {% set change_list = change_list + ['Ramp Off→On Local: ' ~ (current_ramp_rate_off_on_local | string) ~ ' → ' ~ (input_ramp_rate_off_to_on_local | string)] %}
               {% endif %}
               {% if current_ramp_rate_on_off_remote | string != input_ramp_rate_on_to_off_remote | string and current_ramp_rate_on_off_remote != 'unknown' %}
-                {% set change_list = change_list + ['Ramp On→Off Remote: ' + current_ramp_rate_on_off_remote | string + ' → ' + input_ramp_rate_on_to_off_remote | string] %}
+                {% set change_list = change_list + ['Ramp On→Off Remote: ' ~ (current_ramp_rate_on_off_remote | string) ~ ' → ' ~ (input_ramp_rate_on_to_off_remote | string)] %}
               {% endif %}
               {% if current_ramp_rate_on_off_local | string != input_ramp_rate_on_to_off_local | string and current_ramp_rate_on_off_local != 'unknown' %}
-                {% set change_list = change_list + ['Ramp On→Off Local: ' + current_ramp_rate_on_off_local | string + ' → ' + input_ramp_rate_on_to_off_local | string] %}
+                {% set change_list = change_list + ['Ramp On→Off Local: ' ~ (current_ramp_rate_on_off_local | string) ~ ' → ' ~ (input_ramp_rate_on_to_off_local | string)] %}
               {% endif %}
               {# Level Settings #}
               {% if current_minimum_level | string != input_minimum_level | string and current_minimum_level != 'unknown' %}
-                {% set change_list = change_list + ['Minimum Level: ' + current_minimum_level | string + ' → ' + input_minimum_level | string] %}
+                {% set change_list = change_list + ['Minimum Level: ' ~ (current_minimum_level | string) ~ ' → ' ~ (input_minimum_level | string)] %}
               {% endif %}
               {% if current_maximum_level | string != input_maximum_level | string and current_maximum_level != 'unknown' %}
-                {% set change_list = change_list + ['Maximum Level: ' + current_maximum_level | string + ' → ' + input_maximum_level | string] %}
+                {% set change_list = change_list + ['Maximum Level: ' ~ (current_maximum_level | string) ~ ' → ' ~ (input_maximum_level | string)] %}
               {% endif %}
               {% if current_default_level_local | string != input_default_level_local | string and current_default_level_local != 'unknown' %}
-                {% set change_list = change_list + ['Default Level Local: ' + current_default_level_local | string + ' → ' + input_default_level_local | string] %}
+                {% set change_list = change_list + ['Default Level Local: ' ~ (current_default_level_local | string) ~ ' → ' ~ (input_default_level_local | string)] %}
               {% endif %}
               {% if current_default_level_remote | string != input_default_level_remote | string and current_default_level_remote != 'unknown' %}
-                {% set change_list = change_list + ['Default Level Remote: ' + current_default_level_remote | string + ' → ' + input_default_level_remote | string] %}
+                {% set change_list = change_list + ['Default Level Remote: ' ~ (current_default_level_remote | string) ~ ' → ' ~ (input_default_level_remote | string)] %}
               {% endif %}
               {# Power/Mode Settings #}
               {% if current_state_after_power | string != input_state_after_power_restored | string and current_state_after_power != 'unknown' %}
-                {% set change_list = change_list + ['Power Restore: ' + current_state_after_power | string + ' → ' + input_state_after_power_restored | string] %}
+                {% set change_list = change_list + ['Power Restore: ' ~ (current_state_after_power | string) ~ ' → ' ~ (input_state_after_power_restored | string)] %}
               {% endif %}
               {% if current_load_type != input_load_type and current_load_type != 'unknown' %}
-                {% set change_list = change_list + ['Load Type: ' + current_load_type + ' → ' + input_load_type] %}
+                {% set change_list = change_list + ['Load Type: ' ~ current_load_type ~ ' → ' ~ input_load_type] %}
               {% endif %}
               {% if current_switch_mode != input_switch_mode and current_switch_mode != 'unknown' %}
-                {% set change_list = change_list + ['Switch Mode: ' + current_switch_mode + ' → ' + input_switch_mode] %}
+                {% set change_list = change_list + ['Switch Mode: ' ~ current_switch_mode ~ ' → ' ~ input_switch_mode] %}
               {% endif %}
               {% if current_smart_bulb_mode != input_smart_bulb_mode and current_smart_bulb_mode != 'unknown' %}
-                {% set change_list = change_list + ['Smart Bulb Mode: ' + current_smart_bulb_mode + ' → ' + input_smart_bulb_mode] %}
+                {% set change_list = change_list + ['Smart Bulb Mode: ' ~ current_smart_bulb_mode ~ ' → ' ~ input_smart_bulb_mode] %}
               {% endif %}
               {% if current_quick_start_time | string != input_quick_start_time | string and current_quick_start_time != 'unknown' %}
-                {% set change_list = change_list + ['Quick Start Time: ' + current_quick_start_time | string + ' → ' + input_quick_start_time | string] %}
+                {% set change_list = change_list + ['Quick Start Time: ' ~ (current_quick_start_time | string) ~ ' → ' ~ (input_quick_start_time | string)] %}
               {% endif %}
               {% if current_quick_start_level | string != input_quick_start_level | string and current_quick_start_level != 'unknown' %}
-                {% set change_list = change_list + ['Quick Start Level: ' + current_quick_start_level | string + ' → ' + input_quick_start_level | string] %}
+                {% set change_list = change_list + ['Quick Start Level: ' ~ (current_quick_start_level | string) ~ ' → ' ~ (input_quick_start_level | string)] %}
               {% endif %}
               {% if current_leading_trailing_edge != input_leading_trailing_edge and current_leading_trailing_edge != 'unknown' %}
-                {% set change_list = change_list + ['Leading/Trailing: ' + current_leading_trailing_edge + ' → ' + input_leading_trailing_edge] %}
+                {% set change_list = change_list + ['Leading/Trailing: ' ~ current_leading_trailing_edge ~ ' → ' ~ input_leading_trailing_edge] %}
               {% endif %}
               {# Protection Settings #}
               {% if current_local_protection != input_local_protection and current_local_protection != 'unknown' %}
-                {% set change_list = change_list + ['Local Protection: ' + current_local_protection + ' → ' + input_local_protection] %}
+                {% set change_list = change_list + ['Local Protection: ' ~ current_local_protection ~ ' → ' ~ input_local_protection] %}
               {% endif %}
               {% if current_remote_protection != input_remote_protection and current_remote_protection != 'unknown' %}
-                {% set change_list = change_list + ['Remote Protection: ' + current_remote_protection + ' → ' + input_remote_protection] %}
+                {% set change_list = change_list + ['Remote Protection: ' ~ current_remote_protection ~ ' → ' ~ input_remote_protection] %}
               {% endif %}
               {# Advanced Settings #}
               {% if current_firmware_update_indicator != input_firmware_update_indicator and current_firmware_update_indicator != 'unknown' %}
-                {% set change_list = change_list + ['FW Update Indicator: ' + current_firmware_update_indicator + ' → ' + input_firmware_update_indicator] %}
+                {% set change_list = change_list + ['FW Update Indicator: ' ~ current_firmware_update_indicator ~ ' → ' ~ input_firmware_update_indicator] %}
               {% endif %}
               {% if current_relay_click != input_relay_click and current_relay_click != 'unknown' %}
-                {% set change_list = change_list + ['Relay Click: ' + current_relay_click + ' → ' + input_relay_click] %}
+                {% set change_list = change_list + ['Relay Click: ' ~ current_relay_click ~ ' → ' ~ input_relay_click] %}
               {% endif %}
               {% if current_disable_clear_notifications != input_disable_clear_notifications_startup and current_disable_clear_notifications != 'unknown' %}
-                {% set change_list = change_list + ['Disable Clear Notif: ' + current_disable_clear_notifications + ' → ' + input_disable_clear_notifications_startup] %}
+                {% set change_list = change_list + ['Disable Clear Notif: ' ~ current_disable_clear_notifications ~ ' → ' ~ input_disable_clear_notifications_startup] %}
               {% endif %}
               {% if current_led_bar_scaling != input_led_bar_scaling and current_led_bar_scaling != 'unknown' %}
-                {% set change_list = change_list + ['LED Bar Scaling: ' + current_led_bar_scaling + ' → ' + input_led_bar_scaling] %}
+                {% set change_list = change_list + ['LED Bar Scaling: ' ~ current_led_bar_scaling ~ ' → ' ~ input_led_bar_scaling] %}
               {% endif %}
               {% if current_output_mode != input_output_mode and current_output_mode != 'unknown' %}
-                {% set change_list = change_list + ['Output Mode: ' + current_output_mode + ' → ' + input_output_mode] %}
+                {% set change_list = change_list + ['Output Mode: ' ~ current_output_mode ~ ' → ' ~ input_output_mode] %}
               {% endif %}
               {% if current_invert_switch != input_invert_switch and current_invert_switch != 'unknown' %}
-                {% set change_list = change_list + ['Invert Switch: ' + current_invert_switch + ' → ' + input_invert_switch] %}
+                {% set change_list = change_list + ['Invert Switch: ' ~ current_invert_switch ~ ' → ' ~ input_invert_switch] %}
               {% endif %}
               {% if current_auto_timer_off | string != input_auto_timer_off | string and current_auto_timer_off != 'unknown' %}
-                {% set change_list = change_list + ['Auto Timer Off: ' + current_auto_timer_off | string + ' → ' + input_auto_timer_off | string] %}
+                {% set change_list = change_list + ['Auto Timer Off: ' ~ (current_auto_timer_off | string) ~ ' → ' ~ (input_auto_timer_off | string)] %}
               {% endif %}
               {% if current_binding_off_on_sync != input_binding_off_to_on_sync_level and current_binding_off_on_sync != 'unknown' %}
-                {% set change_list = change_list + ['Binding Sync: ' + current_binding_off_on_sync + ' → ' + input_binding_off_to_on_sync_level] %}
+                {% set change_list = change_list + ['Binding Sync: ' ~ current_binding_off_on_sync ~ ' → ' ~ input_binding_off_to_on_sync_level] %}
               {% endif %}
               {% if current_aux_switch_scenes != input_aux_switch_unique_scenes and current_aux_switch_scenes != 'unknown' %}
-                {% set change_list = change_list + ['Aux Switch Scenes: ' + current_aux_switch_scenes + ' → ' + input_aux_switch_unique_scenes] %}
+                {% set change_list = change_list + ['Aux Switch Scenes: ' ~ current_aux_switch_scenes ~ ' → ' ~ input_aux_switch_unique_scenes] %}
               {% endif %}
               {# Power Reporting #}
               {% if current_active_power_reports | string != input_active_power_reports | string and current_active_power_reports != 'unknown' %}
-                {% set change_list = change_list + ['Active Power Reports: ' + current_active_power_reports | string + ' → ' + input_active_power_reports | string] %}
+                {% set change_list = change_list + ['Active Power Reports: ' ~ (current_active_power_reports | string) ~ ' → ' ~ (input_active_power_reports | string)] %}
               {% endif %}
               {% if current_periodic_power_reports | string != input_periodic_power_energy_reports | string and current_periodic_power_reports != 'unknown' %}
-                {% set change_list = change_list + ['Periodic Reports: ' + current_periodic_power_reports | string + ' → ' + input_periodic_power_energy_reports | string] %}
+                {% set change_list = change_list + ['Periodic Reports: ' ~ (current_periodic_power_reports | string) ~ ' → ' ~ (input_periodic_power_energy_reports | string)] %}
               {% endif %}
               {% if current_active_energy_reports | string != input_active_energy_reports | string and current_active_energy_reports != 'unknown' %}
-                {% set change_list = change_list + ['Active Energy Reports: ' + current_active_energy_reports | string + ' → ' + input_active_energy_reports | string] %}
+                {% set change_list = change_list + ['Active Energy Reports: ' ~ (current_active_energy_reports | string) ~ ' → ' ~ (input_active_energy_reports | string)] %}
               {% endif %}
               {# Fan Control #}
               {% if current_fan_control_mode != input_fan_control_mode and current_fan_control_mode != 'unknown' %}
-                {% set change_list = change_list + ['Fan Control Mode: ' + current_fan_control_mode + ' → ' + input_fan_control_mode] %}
+                {% set change_list = change_list + ['Fan Control Mode: ' ~ current_fan_control_mode ~ ' → ' ~ input_fan_control_mode] %}
               {% endif %}
               {% if current_low_level_fan | string != input_low_level_for_fan_control | string and current_low_level_fan != 'unknown' %}
-                {% set change_list = change_list + ['Fan Low Level: ' + current_low_level_fan | string + ' → ' + input_low_level_for_fan_control | string] %}
+                {% set change_list = change_list + ['Fan Low Level: ' ~ (current_low_level_fan | string) ~ ' → ' ~ (input_low_level_for_fan_control | string)] %}
               {% endif %}
               {% if current_med_level_fan | string != input_med_level_for_fan_control | string and current_med_level_fan != 'unknown' %}
-                {% set change_list = change_list + ['Fan Med Level: ' + current_med_level_fan | string + ' → ' + input_med_level_for_fan_control | string] %}
+                {% set change_list = change_list + ['Fan Med Level: ' ~ (current_med_level_fan | string) ~ ' → ' ~ (input_med_level_for_fan_control | string)] %}
               {% endif %}
               {% if current_high_level_fan | string != input_high_level_for_fan_control | string and current_high_level_fan != 'unknown' %}
-                {% set change_list = change_list + ['Fan High Level: ' + current_high_level_fan | string + ' → ' + input_high_level_for_fan_control | string] %}
+                {% set change_list = change_list + ['Fan High Level: ' ~ (current_high_level_fan | string) ~ ' → ' ~ (input_high_level_for_fan_control | string)] %}
               {% endif %}
               {% if current_led_color_fan | string != input_led_color_for_fan_control | string and current_led_color_fan != 'unknown' %}
-                {% set change_list = change_list + ['Fan LED Color: ' + (color_names[current_led_color_fan] | default(current_led_color_fan)) + ' → ' + (color_names[input_led_color_for_fan_control] | default(input_led_color_for_fan_control))] %}
+                {% set change_list = change_list + ['Fan LED Color: ' ~ (color_names[current_led_color_fan] | default(current_led_color_fan | string) | string) ~ ' → ' ~ (color_names[input_led_color_for_fan_control] | default(input_led_color_for_fan_control | string) | string)] %}
               {% endif %}
               {# Individual LEDs #}
               {% if input_configure_individual_leds %}
                 {% if current_led1_color_on | string != input_default_led1_color_when_on | string and current_led1_color_on != 'unknown' %}
-                  {% set change_list = change_list + ['LED1 Color On: ' + current_led1_color_on | string + ' → ' + input_default_led1_color_when_on | string] %}
+                  {% set change_list = change_list + ['LED1 Color On: ' ~ (current_led1_color_on | string) ~ ' → ' ~ (input_default_led1_color_when_on | string)] %}
                 {% endif %}
                 {% if current_led1_color_off | string != input_default_led1_color_when_off | string and current_led1_color_off != 'unknown' %}
-                  {% set change_list = change_list + ['LED1 Color Off: ' + current_led1_color_off | string + ' → ' + input_default_led1_color_when_off | string] %}
+                  {% set change_list = change_list + ['LED1 Color Off: ' ~ (current_led1_color_off | string) ~ ' → ' ~ (input_default_led1_color_when_off | string)] %}
                 {% endif %}
                 {% if current_led1_intensity_on | string != input_default_led1_intensity_when_on | string and current_led1_intensity_on != 'unknown' %}
-                  {% set change_list = change_list + ['LED1 Intensity On: ' + current_led1_intensity_on | string + ' → ' + input_default_led1_intensity_when_on | string] %}
+                  {% set change_list = change_list + ['LED1 Intensity On: ' ~ (current_led1_intensity_on | string) ~ ' → ' ~ (input_default_led1_intensity_when_on | string)] %}
                 {% endif %}
                 {% if current_led1_intensity_off | string != input_default_led1_intensity_when_off | string and current_led1_intensity_off != 'unknown' %}
-                  {% set change_list = change_list + ['LED1 Intensity Off: ' + current_led1_intensity_off | string + ' → ' + input_default_led1_intensity_when_off | string] %}
+                  {% set change_list = change_list + ['LED1 Intensity Off: ' ~ (current_led1_intensity_off | string) ~ ' → ' ~ (input_default_led1_intensity_when_off | string)] %}
                 {% endif %}
               {% endif %}
               {{ change_list }}
