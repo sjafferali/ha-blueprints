@@ -398,112 +398,134 @@ blueprint:
         name: ledColorWhenOn
         default: null
         selector:
-          text: {}
+          selector:
+            text:
   ledColorWhenOff:
         name: ledColorWhenOff
         default: null
         selector:
-          text: {}
+          selector:
+            text:
   defaultLed1ColorWhenOn:
         name: defaultLed1ColorWhenOn
         default: null
         selector:
-          text: {}
+          selector:
+            text:
   defaultLed1ColorWhenOff:
         name: defaultLed1ColorWhenOff
         default: null
         selector:
-          text: {}
+          selector:
+            text:
   defaultLed2ColorWhenOn:
         name: defaultLed2ColorWhenOn
         default: null
         selector:
-          text: {}
+          selector:
+            text:
   defaultLed2ColorWhenOff:
         name: defaultLed2ColorWhenOff
         default: null
         selector:
-          text: {}
+          selector:
+            text:
   defaultLed3ColorWhenOn:
         name: defaultLed3ColorWhenOn
         default: null
         selector:
-          text: {}
+          selector:
+            text:
   defaultLed3ColorWhenOff:
         name: defaultLed3ColorWhenOff
         default: null
         selector:
-          text: {}
+          selector:
+            text:
   defaultLed4ColorWhenOn:
         name: defaultLed4ColorWhenOn
         default: null
         selector:
-          text: {}
+          selector:
+            text:
   defaultLed4ColorWhenOff:
         name: defaultLed4ColorWhenOff
         default: null
         selector:
-          text: {}
+          selector:
+            text:
   defaultLed5ColorWhenOn:
         name: defaultLed5ColorWhenOn
         default: null
         selector:
-          text: {}
+          selector:
+            text:
   defaultLed5ColorWhenOff:
         name: defaultLed5ColorWhenOff
         default: null
         selector:
-          text: {}
+          selector:
+            text:
   defaultLed6ColorWhenOn:
         name: defaultLed6ColorWhenOn
         default: null
         selector:
-          text: {}
+          selector:
+            text:
   defaultLed6ColorWhenOff:
         name: defaultLed6ColorWhenOff
         default: null
         selector:
-          text: {}
+          selector:
+            text:
   defaultLed7ColorWhenOn:
         name: defaultLed7ColorWhenOn
         default: null
         selector:
-          text: {}
+          selector:
+            text:
   defaultLed7ColorWhenOff:
         name: defaultLed7ColorWhenOff
         default: null
         selector:
-          text: {}
+          selector:
+            text:
   ledColorForFanControlMode:
         name: ledColorForFanControlMode
         default: null
         selector:
-          text: {}
+          selector:
+            text:
   outputMode:
         name: outputMode
         default: null
         selector:
-          text: {}
+          selector:
+            text:
   switchType:
         name: switchType
         default: null
         selector:
-          text: {}
+          selector:
+            text:
   powerType:
         name: powerType
         default: null
         selector:
-          text: {}
+          selector:
+            text:
   fanControlMode:
         name: fanControlMode
         default: null
         selector:
-          text: {}
+          selector:
+            text:
   dimmingMode:
         name: dimmingMode
         default: null
         selector:
-          text: {}
+          selector:
+            text:
 
   variables:
     devices: !input target_devices
@@ -607,4 +629,3 @@ blueprint:
       data:
         title: "Inovelli Configuration Complete"
         message: "Applied configuration to devices: {{ devices | map(attribute='entity_id') | join(', ') }}"
-mode: single
