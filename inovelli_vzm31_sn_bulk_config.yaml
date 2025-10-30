@@ -1275,7 +1275,7 @@ sequence:
             - alias: Configure individual LED 1 if enabled
               if:
                 - condition: template
-                  value_template: "{{ configure_individual_leds }}"
+                  value_template: "{{ input_configure_individual_leds }}"
               then:
                 - alias: Set LED 1 configuration
                   service: mqtt.publish
