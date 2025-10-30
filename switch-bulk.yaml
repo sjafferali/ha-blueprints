@@ -615,7 +615,7 @@ blueprint:
               data:
                 title: "Inovelli VZM31-SN Configuration"
                 message: "No settings selected. Aborting."
-            - stop: {{}}
+            - stop: true
     - repeat:
         for_each: device in devices
         sequence:
