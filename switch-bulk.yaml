@@ -1,4 +1,3 @@
-
 blueprint:
   name: Inovelli VZM31-SN (Z2M) – Full Device Configuration
   description: |
@@ -18,7 +17,8 @@ blueprint:
       description: Default is "zigbee2mqtt"
       default: zigbee2mqtt
       selector:
-        text: {{}}
+          selector:
+            text:
     delay_between_devices:
       name: Delay Between Devices (seconds)
       default: 0.5
