@@ -10,54 +10,54 @@ blueprint:
     led_color_when_on:
       name: LED Color When On
       description: LED strip color when switch is on
-      default: 170
+      default: "170"
       selector:
         select:
           options:
             - label: "Red"
-              value: 0
+              value: "0"
             - label: "Orange"
-              value: 21
+              value: "21"
             - label: "Yellow"
-              value: 42
+              value: "42"
             - label: "Green"
-              value: 85
+              value: "85"
             - label: "Cyan"
-              value: 127
+              value: "127"
             - label: "Blue"
-              value: 170
+              value: "170"
             - label: "Violet"
-              value: 212
+              value: "212"
             - label: "Pink"
-              value: 234
+              value: "234"
             - label: "White"
-              value: 255
+              value: "255"
 
     led_color_when_off:
       name: LED Color When Off
       description: LED strip color when switch is off
-      default: 170
+      default: "170"
       selector:
         select:
           options:
             - label: "Red"
-              value: 0
+              value: "0"
             - label: "Orange"
-              value: 21
+              value: "21"
             - label: "Yellow"
-              value: 42
+              value: "42"
             - label: "Green"
-              value: 85
+              value: "85"
             - label: "Cyan"
-              value: 127
+              value: "127"
             - label: "Blue"
-              value: 170
+              value: "170"
             - label: "Violet"
-              value: 212
+              value: "212"
             - label: "Pink"
-              value: 234
+              value: "234"
             - label: "White"
-              value: 255
+              value: "255"
 
     # LED Intensity Settings
     led_intensity_when_on:
@@ -313,16 +313,16 @@ blueprint:
     state_after_power_restored:
       name: State After Power Restored
       description: Behavior after power is restored
-      default: 0
+      default: "0"
       selector:
         select:
           options:
             - label: "Off"
-              value: 0
+              value: "0"
             - label: "On"
-              value: 1
+              value: "1"
             - label: "Previous State"
-              value: 2
+              value: "2"
 
     # Load Type
     load_type:
