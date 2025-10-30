@@ -1,0 +1,670 @@
+blueprint:
+  name: Inovelli VZM31-SN Bulk Configuration
+  description: Configure multiple Inovelli VZM31-SN switches with the same settings
+  domain: script
+  author: Home Assistant Community
+  homeassistant:
+    min_version: 2024.1.0
+  input:
+    # LED Color Settings
+    led_color_when_on:
+      name: LED Color When On
+      description: LED strip color when switch is on
+      default: 170
+      selector:
+        select:
+          options:
+            - label: "Red"
+              value: 0
+            - label: "Orange"
+              value: 21
+            - label: "Yellow"
+              value: 42
+            - label: "Green"
+              value: 85
+            - label: "Cyan"
+              value: 127
+            - label: "Blue"
+              value: 170
+            - label: "Violet"
+              value: 212
+            - label: "Pink"
+              value: 234
+            - label: "White"
+              value: 255
+
+    led_color_when_off:
+      name: LED Color When Off
+      description: LED strip color when switch is off
+      default: 170
+      selector:
+        select:
+          options:
+            - label: "Red"
+              value: 0
+            - label: "Orange"
+              value: 21
+            - label: "Yellow"
+              value: 42
+            - label: "Green"
+              value: 85
+            - label: "Cyan"
+              value: 127
+            - label: "Blue"
+              value: 170
+            - label: "Violet"
+              value: 212
+            - label: "Pink"
+              value: 234
+            - label: "White"
+              value: 255
+
+    # LED Intensity Settings
+    led_intensity_when_on:
+      name: LED Intensity When On
+      description: LED brightness when switch is on (0-100%)
+      default: 75
+      selector:
+        number:
+          min: 0
+          max: 100
+          unit_of_measurement: "%"
+          mode: slider
+
+    led_intensity_when_off:
+      name: LED Intensity When Off
+      description: LED brightness when switch is off (0-100%)
+      default: 25
+      selector:
+        number:
+          min: 0
+          max: 100
+          unit_of_measurement: "%"
+          mode: slider
+
+    # LED Mode
+    on_off_led_mode:
+      name: LED Display Mode
+      description: Show all LEDs or just one
+      default: "All"
+      selector:
+        select:
+          options:
+            - "All"
+            - "One"
+
+    # Button Configuration
+    button_delay:
+      name: Button Press Delay
+      description: Delay before processing button press
+      default: "500ms"
+      selector:
+        select:
+          options:
+            - label: "None"
+              value: "0ms"
+            - label: "100ms"
+              value: "100ms"
+            - label: "200ms"
+              value: "200ms"
+            - label: "300ms"
+              value: "300ms"
+            - label: "400ms"
+              value: "400ms"
+            - label: "500ms"
+              value: "500ms"
+            - label: "600ms"
+              value: "600ms"
+            - label: "700ms"
+              value: "700ms"
+            - label: "800ms"
+              value: "800ms"
+            - label: "900ms"
+              value: "900ms"
+
+    single_tap_behavior:
+      name: Single Tap Behavior
+      description: How single tap behaves
+      default: "Disabled"
+      selector:
+        select:
+          options:
+            - "Disabled"
+            - "Old Behavior"
+            - "New Behavior"
+            - "Down Always Off"
+
+    # Double Tap Configuration
+    double_tap_up_enabled:
+      name: Enable Double Tap Up
+      description: Enable double tap up to full brightness
+      default: "Enabled"
+      selector:
+        select:
+          options:
+            - "Disabled"
+            - "Enabled"
+
+    double_tap_down_enabled:
+      name: Enable Double Tap Down
+      description: Enable double tap down to turn off
+      default: "Enabled"
+      selector:
+        select:
+          options:
+            - "Disabled"
+            - "Enabled"
+
+    double_tap_up_level:
+      name: Double Tap Up Brightness Level
+      description: Brightness level for double tap up (0-255)
+      default: 255
+      selector:
+        number:
+          min: 0
+          max: 255
+          mode: slider
+
+    double_tap_down_level:
+      name: Double Tap Down Brightness Level
+      description: Brightness level for double tap down (0-255)
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 255
+          mode: slider
+
+    double_tap_clear_notifications:
+      name: Double Tap Config Button to Clear Notifications
+      description: Clear LED notifications with config button double tap
+      default: "Enabled"
+      selector:
+        select:
+          options:
+            - "Disabled"
+            - "Enabled"
+
+    # Dimming Speed Settings
+    dimming_speed_up_remote:
+      name: Remote Dimming Speed Up
+      description: Speed for dimming up via Z-Wave (0-127, in 100ms increments)
+      default: 25
+      selector:
+        number:
+          min: 0
+          max: 127
+          mode: slider
+
+    dimming_speed_up_local:
+      name: Local Dimming Speed Up
+      description: Speed for dimming up at switch (0-127, in 100ms increments)
+      default: 25
+      selector:
+        number:
+          min: 0
+          max: 127
+          mode: slider
+
+    dimming_speed_down_remote:
+      name: Remote Dimming Speed Down
+      description: Speed for dimming down via Z-Wave (0-127, in 100ms increments)
+      default: 25
+      selector:
+        number:
+          min: 0
+          max: 127
+          mode: slider
+
+    dimming_speed_down_local:
+      name: Local Dimming Speed Down
+      description: Speed for dimming down at switch (0-127, in 100ms increments)
+      default: 25
+      selector:
+        number:
+          min: 0
+          max: 127
+          mode: slider
+
+    # Ramp Rate Settings
+    ramp_rate_off_to_on_remote:
+      name: Remote Ramp Rate Off to On
+      description: Speed to turn on via Z-Wave (0-127, 0=instant)
+      default: 2
+      selector:
+        number:
+          min: 0
+          max: 127
+          mode: slider
+
+    ramp_rate_off_to_on_local:
+      name: Local Ramp Rate Off to On
+      description: Speed to turn on at switch (0-127, 0=instant)
+      default: 2
+      selector:
+        number:
+          min: 0
+          max: 127
+          mode: slider
+
+    ramp_rate_on_to_off_remote:
+      name: Remote Ramp Rate On to Off
+      description: Speed to turn off via Z-Wave (0-127, 0=instant)
+      default: 2
+      selector:
+        number:
+          min: 0
+          max: 127
+          mode: slider
+
+    ramp_rate_on_to_off_local:
+      name: Local Ramp Rate On to Off
+      description: Speed to turn off at switch (0-127, 0=instant)
+      default: 2
+      selector:
+        number:
+          min: 0
+          max: 127
+          mode: slider
+
+    # Min/Max Level Settings
+    minimum_level:
+      name: Minimum Brightness Level
+      description: Minimum dimmer level (1-254)
+      default: 1
+      selector:
+        number:
+          min: 1
+          max: 254
+          mode: slider
+
+    maximum_level:
+      name: Maximum Brightness Level
+      description: Maximum dimmer level (2-255)
+      default: 255
+      selector:
+        number:
+          min: 2
+          max: 255
+          mode: slider
+
+    # Power Settings
+    default_level_local:
+      name: Default Level (Local)
+      description: Default brightness when turned on at switch (0-255, 0=previous)
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 255
+          mode: slider
+
+    default_level_remote:
+      name: Default Level (Remote)
+      description: Default brightness when turned on via Z-Wave (0-255, 0=previous)
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 255
+          mode: slider
+
+    # State After Power Restored
+    state_after_power_restored:
+      name: State After Power Restored
+      description: Behavior after power is restored
+      default: 0
+      selector:
+        select:
+          options:
+            - label: "Off"
+              value: 0
+            - label: "On"
+              value: 1
+            - label: "Previous State"
+              value: 2
+
+    # Load Type
+    load_type:
+      name: Load Type
+      description: Type of load connected to switch
+      default: "Single Pole (0)"
+      selector:
+        select:
+          options:
+            - "Single Pole (0)"
+            - "3-Way Dumb Switch (1)"
+            - "3-Way Aux Switch (2)"
+
+    # Switch Mode
+    switch_mode:
+      name: Switch Mode
+      description: Dimmer or On/Off mode
+      default: "Dimmer"
+      selector:
+        select:
+          options:
+            - "Dimmer"
+            - "On/Off"
+
+    # Smart Bulb Mode
+    smart_bulb_mode:
+      name: Smart Bulb Mode
+      description: Disable relay for smart bulbs
+      default: "Disabled"
+      selector:
+        select:
+          options:
+            - "Disabled"
+            - "Enabled"
+
+    # Quick Start
+    quick_start_time:
+      name: Quick Start Time
+      description: Higher power at startup time (0-60)
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 60
+          unit_of_measurement: "ms"
+          mode: slider
+
+    quick_start_level:
+      name: Quick Start Level
+      description: Higher power at startup level (0-255)
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 255
+          mode: slider
+
+    # Leading/Trailing Edge
+    leading_trailing_edge:
+      name: Leading/Trailing Edge
+      description: Dimmer type for compatibility
+      default: "Leading"
+      selector:
+        select:
+          options:
+            - "Leading"
+            - "Trailing"
+
+    # Protection Settings
+    local_protection:
+      name: Local Protection
+      description: Disable physical switch control
+      default: "Disabled"
+      selector:
+        select:
+          options:
+            - "Disabled"
+            - "Enabled"
+
+    remote_protection:
+      name: Remote Protection
+      description: Disable Z-Wave control
+      default: "Disabled"
+      selector:
+        select:
+          options:
+            - label: "Disabled"
+              value: "Disabled"
+            - label: "Enabled"
+              value: "Enabled"
+            - label: "No Command Disable Local"
+              value: "NoCommandDisableLocal"
+            - label: "No Command Enable Local"
+              value: "NoCommandEnableLocal"
+
+    # Firmware Update Indicator
+    firmware_update_indicator:
+      name: Firmware Update In Progress Indicator
+      description: Show LED progress during firmware updates
+      default: "Enabled"
+      selector:
+        select:
+          options:
+            - "Disabled"
+            - "Enabled"
+
+    # Relay Click
+    relay_click:
+      name: Relay Click Sound
+      description: Enable relay click sound in on/off mode
+      default: "Enabled"
+      selector:
+        select:
+          options:
+            - "Disabled"
+            - "Enabled"
+
+    # Disable Clear Notifications Startup
+    disable_clear_notifications_startup:
+      name: Disable Clear Notifications on Startup
+      description: Keep LED notifications after power cycle
+      default: "Disabled"
+      selector:
+        select:
+          options:
+            - "Disabled"
+            - "Enabled"
+
+fields:
+  target_devices:
+    name: Target Devices
+    description: Select the Inovelli VZM31-SN switches to configure
+    required: true
+    selector:
+      entity:
+        multiple: true
+        filter:
+          - integration: mqtt
+            domain: light
+          - integration: mqtt
+            domain: switch
+
+sequence:
+  - alias: Configure each selected device
+    repeat:
+      for_each: "{{ target_devices }}"
+      sequence:
+        - alias: Set LED color when on
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              ledColorWhenOn: !input led_color_when_on
+
+        - alias: Set LED color when off
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              ledColorWhenOff: !input led_color_when_off
+
+        - alias: Set LED intensity when on
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              ledIntensityWhenOn: !input led_intensity_when_on
+
+        - alias: Set LED intensity when off
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              ledIntensityWhenOff: !input led_intensity_when_off
+
+        - alias: Set LED mode
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              onOffLedMode: !input on_off_led_mode
+
+        - alias: Set button delay
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              buttonDelay: !input button_delay
+
+        - alias: Set single tap behavior
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              singleTapBehavior: !input single_tap_behavior
+
+        - alias: Set double tap up
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              doubleTapUpToParam55: !input double_tap_up_enabled
+
+        - alias: Set double tap down
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              doubleTapDownToParam56: !input double_tap_down_enabled
+
+        - alias: Set double tap up level
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              brightnessLevelForDoubleTapUp: !input double_tap_up_level
+
+        - alias: Set double tap down level
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              brightnessLevelForDoubleTapDown: !input double_tap_down_level
+
+        - alias: Set double tap clear notifications
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              doubleTapClearNotifications: !input double_tap_clear_notifications
+
+        - alias: Set dimming speeds
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              dimmingSpeedUpRemote: !input dimming_speed_up_remote
+              dimmingSpeedUpLocal: !input dimming_speed_up_local
+              dimmingSpeedDownRemote: !input dimming_speed_down_remote
+              dimmingSpeedDownLocal: !input dimming_speed_down_local
+
+        - alias: Set ramp rates
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              rampRateOffToOnRemote: !input ramp_rate_off_to_on_remote
+              rampRateOffToOnLocal: !input ramp_rate_off_to_on_local
+              rampRateOnToOffRemote: !input ramp_rate_on_to_off_remote
+              rampRateOnToOffLocal: !input ramp_rate_on_to_off_local
+
+        - alias: Set min/max levels
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              minimumLevel: !input minimum_level
+              maximumLevel: !input maximum_level
+
+        - alias: Set default levels
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              defaultLevelLocal: !input default_level_local
+              defaultLevelRemote: !input default_level_remote
+
+        - alias: Set state after power restored
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              stateAfterPowerRestored: !input state_after_power_restored
+
+        - alias: Set load type
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              loadType: !input load_type
+
+        - alias: Set switch mode
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              switchMode: !input switch_mode
+
+        - alias: Set smart bulb mode
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              smartBulbMode: !input smart_bulb_mode
+
+        - alias: Set quick start settings
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              quickStartTime: !input quick_start_time
+              quickStartLevel: !input quick_start_level
+
+        - alias: Set leading/trailing edge
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              leadingTrailingEdge: !input leading_trailing_edge
+
+        - alias: Set protection settings
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              localProtection: !input local_protection
+              remoteProtection: !input remote_protection
+
+        - alias: Set firmware update indicator
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              firmwareUpdateInProgressIndicator: !input firmware_update_indicator
+
+        - alias: Set relay click
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              relayClick: !input relay_click
+
+        - alias: Set disable clear notifications on startup
+          service: mqtt.publish
+          data:
+            topic: "zigbee2mqtt/{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') }}/set"
+            payload_json:
+              disableClearNotificationsStartup: !input disable_clear_notifications_startup
+
+        - delay:
+            milliseconds: 100
+
+mode: parallel
+max: 10
+icon: mdi:light-switch
