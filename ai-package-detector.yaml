@@ -1,0 +1,292 @@
+blueprint:
+  name: AI Package Detector
+  description: >
+    📦🔍 AI Package Detector: Detects and notifies you when packages appear or disappear at your doorstep using camera snapshots and the Google Generative AI integration. 
+    This automation analyzes images from your cameras and compares them to the previous state, sending notifications when changes in package count are detected. It can be triggered by a 
+    time schedule or by optional motion sensors.
+
+
+    **Version:** 1.2 (2025-03-18)
+        - Added package status helper to track package presence as an on/off state
+        - Fixed issues with package detection accuracy
+        - Enhanced prompt response consistency
+    **Version:** 1.1 (2025-02-18)
+        - Updated prompt
+    **Version:** 1.0 (2025-02-12)
+
+
+    **Key Features:**
+
+    *   **Intelligent Package Detection:** Leverages Google's Generative AI to accurately identify packages in camera snapshots.
+    
+    *   **Customizable Analysis Area:** Allows you to specify details about the monitored area for improved accuracy (e.g., "Focus on the blue door and welcome mat.").
+    
+    *   **Flexible Triggering:** Runs on a user-defined schedule (e.g., every 30 minutes) and/or can be triggered by motion sensors.
+    
+    *   **Multiple Camera Support:** Monitors multiple cameras simultaneously.
+    
+    *   **Detailed Notifications:** Provides notifications with a description of the detected packages and an image of the best view of the packages.
+    
+    *   **Persistent State Tracking:** Remembers the previous package count and description to ensure accurate change detection.
+    
+    *   **Error Handling:** Includes error handling for cases where the AI model returns an unexpected response.
+    
+    *   **Mobile App Notifications**: Sends push notifications to the Home Assistant mobile app.
+
+
+
+    **Requirements:**
+
+    *   **Google Generative AI Integration:** Must be configured in Home Assistant.
+        Setup Guide: https://www.home-assistant.io/integrations/google_generative_ai_conversation/
+    *   **Home Assistant Mobile App:** Required for receiving notifications.
+
+    *   **`/config/www/` directory:** This directory must exist for storing temporary camera snapshots. It is typically created automatically. If it doesn't exist, create it manually.
+
+
+    **Important Notes:**
+
+    *   The accuracy of package detection depends on the quality of your camera images and the capabilities of the Google Generative AI model. For best results, configure 
+    the Google Generative AI integration to use the Gemini 2.0 Flash model.
+    
+    *   **API Usage:** This blueprint utilizes the Google Generative AI API, which offers a free tier suitable for typical home use. Users can optionally choose a paid plan 
+    for higher usage limits or enhanced privacy features. Refer to Google's Generative AI documentation for details on pricing and tiers.
+    
+    *   Adjust the `Check Interval` and `Image Analysis Details` to optimize performance and accuracy for your specific setup.
+    
+    *   The `Package Description Helper` input_text entity *must* be created with a maximum length of 255 characters to prevent truncation of the AI-generated context.
+    
+    *   This blueprint uses the `/config/www/` directory (accessible via `/local/` in URLs) to store temporary images. These images are *not* automatically deleted.
+
+  domain: automation
+  input:
+    camera_entities:
+      name: Cameras
+      description: |-
+        Select the cameras monitoring your delivery area.
+      selector:
+        entity:
+          multiple: true
+          domain: camera
+    motion_sensor_entities:
+      name: Optional Motion Sensors
+      description: |-
+        (Optional) Select motion sensors linked to the cameras. This triggers detection on motion.
+      default: []
+      selector:
+        entity:
+          multiple: true
+          domain: binary_sensor
+    image_prompt_user_details:
+      name: Image Analysis Details
+      description: |-
+        Provide details for the analysis (e.g. "Focus on the blue door and welcome mat.").
+      default: "Focus on the area around the door and doormat."
+      selector:
+        text:
+          multiline: true
+    time_pattern_minutes:
+      name: Check Interval (Minutes)
+      description: |-
+        How often to check for packages. For example, `/30` runs the check every 30 minutes.
+      default: "/15"
+      selector:
+        text:
+    notification_target:
+      name: Notification Target
+      description: >
+        Specify one or more targets for notifications.
+      default: []
+      selector:
+        device:
+          integration: mobile_app
+          multiple: true
+    previous_package_count_helper:
+      name: Package Count Helper
+      description: |-
+        Select an input_number entity to store the last package count.
+        Create via Helpers: https://my.home-assistant.io/redirect/helpers/
+      default: input_number.previous_package_count
+      selector:
+        entity:
+          domain: input_number
+    previous_package_description_helper:
+      name: Package Description Helper (Internal)
+      description: |-
+        Select an input_text entity to store LLM context. Must be created with **max=255 characters** to avoid truncation.
+        Create via Helpers: https://my.home-assistant.io/redirect/helpers/
+      default: input_text.previous_package_description
+      selector:
+        entity:
+          domain: input_text
+    package_status_helper:
+      name: Package Status Helper
+      description: |-
+        Select an input_boolean entity to track whether packages are waiting to be picked up.
+        Will be ON when packages are present, OFF when no packages are present.
+        Create via Helpers: https://my.home-assistant.io/redirect/helpers/
+      default: input_boolean.packages_waiting
+      selector:
+        entity:
+          domain: input_boolean
+
+variables:
+  camera_entities: !input camera_entities
+  motion_sensor_entities: !input motion_sensor_entities
+  image_prompt_user_details: !input image_prompt_user_details
+  time_pattern_minutes: !input time_pattern_minutes
+  notification_target: !input notification_target
+  previous_package_count_helper: !input previous_package_count_helper
+  previous_package_description_helper: !input previous_package_description_helper
+  package_status_helper: !input package_status_helper
+  image_filenames: >
+    {% set ns = namespace(files=[]) %}
+    {% for camera in camera_entities %}
+      {% set camera_name = camera | replace('camera.camera_', '') | replace('camera.', '') | replace('.', '_') | replace(' ', '_') %}
+      {% set ns.files = ns.files + ['/config/www/' ~ camera_name ~ '_package.jpg'] %}
+    {% endfor %}
+    {{ ns.files }}
+  image_prompt: >-
+    Analyze these door area images and determine package status with HIGH CERTAINTY. Images are provided in order:
+    {{ image_filenames }}    
+    
+    Previous state: {{ states(previous_package_count_helper)|int(0) }} packages (details: {{ states(previous_package_description_helper) }})
+    {{ image_prompt_user_details }}
+    
+    INSTRUCTIONS:
+    1. Only report a package if you're absolutely certain it's a delivery package (boxes, envelopes, etc)
+    2. If uncertain about an object's nature, default to "no package"
+    3. Count MUST REFLECT ACTUAL packages visible now, not previous state
+    4. If you see no packages, count MUST be 0 regardless of previous count
+    5. Cross-verify between images for consistency
+    
+    Respond with ONE LINE formatted as:
+    count|human_notification|machine_context|best_image_filename
+    Where:
+    - count: integer (0-10) - ACTUAL current package count visible in images
+    - human_notification: brief natural language for alerts
+    - machine_context: machine-parseable details (max 255chars)
+    - best_image_filename: Full filename of most definitive image or 'none'
+    
+    Example responses (DO NOT REPEAT THESE):
+    0|No packages visible|clear_area|none
+    1|Brown box by door|📦confirmed_brown_box|/config/www/front_door_package.jpg
+    2|Two packages: envelope and box|📦multiple_packages|/config/www/front_door_package.jpg
+
+trigger:
+  - platform: time_pattern
+    minutes: !input time_pattern_minutes
+    id: time_trigger
+  - platform: state
+    entity_id: !input motion_sensor_entities
+    to: "on"
+    id: motion_trigger
+
+action:
+  - choose:
+      - conditions:
+          - condition: trigger
+            id: motion_trigger
+        sequence:
+          - delay: "00:00:05"
+    default: []
+
+  - parallel:
+      - repeat:
+          for_each: "{{ camera_entities }}"
+          sequence:
+            - service: camera.snapshot
+              data:
+                entity_id: "{{ repeat.item }}"
+                filename: >
+                  {%- set camera_name = repeat.item | replace('.', '_') | replace('camera_', '') | replace(' ', '_') -%}
+                  /config/www/{{ camera_name }}_package.jpg
+              target:
+                entity_id: "{{ repeat.item }}"
+
+  - delay: "00:00:05"
+
+  - service: google_generative_ai_conversation.generate_content
+    data:
+      prompt: "{{ image_prompt }}"
+      filenames: "{{ image_filenames }}"
+    response_variable: ai_response
+
+  - variables:
+      response: >-
+        {% set text = ai_response.text | trim %}
+        {% set lines = text.split('\n') %}
+        {{ lines[0] if lines else '' }}
+      parts: >-
+        {% set split_result = response.split('|') %}
+        {{ split_result if split_result | length >=4 else ['','','Error','Error'] }}
+      count: "{{ parts[0] | int(default=-1) }}"
+      desc: "{{ parts[1] | trim }}"
+      detailed_ctx: "{{ parts[2] | trim | truncate(255) }}"
+      best_image: "{{ parts[3] | trim }}"
+
+  - choose:
+      - conditions:
+          - condition: template
+            value_template: "{{ count == -1 }}"
+        sequence:
+          - service: notify.persistent_notification
+            data:
+              title: "⚠️ Package Detection Error"
+              message: "LLM response parsing failed: {{ response }}"
+      - conditions:
+          - condition: template
+            value_template: "{{ count > (states(previous_package_count_helper) | int(0)) }}"
+        sequence:
+          - repeat:
+              for_each: !input notification_target
+              sequence:
+                - service: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
+                  data:
+                    message: "{{ desc }}"
+                    title: "📦 Package Detected"
+                    data: "{{ {'image': best_image | replace('/config/www/', '/local/'), 'hide-thumbnail': false} if best_image != 'none' else {} }}"
+      - conditions:
+          - condition: template
+            value_template: "{{ count < (states(previous_package_count_helper) | int(0)) }}"
+        sequence:
+          - repeat:
+              for_each: !input notification_target
+              sequence:
+                - service: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
+                  data:
+                    message: "Packages collected"
+                    title: "📦 Package Removed"
+
+  - condition: template
+    value_template: "{{ count != -1 }}"
+  - service: input_number.set_value
+    target:
+      entity_id: "{{ previous_package_count_helper }}"
+    data:
+      value: "{{ count }}"
+  - service: input_text.set_value
+    target:
+      entity_id: "{{ previous_package_description_helper }}"
+    data:
+      value: "{{ detailed_ctx }}"
+  - service: input_boolean.turn_{{ 'on' if count > 0 else 'off' }}
+    target:
+      entity_id: "{{ package_status_helper }}"
+  - choose:
+      - conditions:
+          - condition: template
+            value_template: "{{ desc | lower is match('no packages|packages.*removed|packages.*collected|0 packages') }}"
+        sequence:
+          - service: input_boolean.turn_off
+            target:
+              entity_id: "{{ package_status_helper }}"
+      - conditions:
+          - condition: template
+            value_template: "{{ desc | lower is match('package detected|packages detected') }}"
+        sequence:
+          - service: input_boolean.turn_on
+            target:
+              entity_id: "{{ package_status_helper }}"
+
+mode: single
