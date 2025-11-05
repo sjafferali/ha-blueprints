@@ -1118,44 +1118,54 @@ sequence:
                   sequence:
                     - service: "{{ notify_service }}"
                       data:
-                        title: "🔍 VZM31-SN Preview"
+                        title: "VZM31-SN Preview: {{ device_name }}"
                         message: >
-                          **Switch:** {{ device_name }}
-                          **Entity:** {{ repeat.item }}
+                          Switch: {{ device_name }}
+
+                          Entity: {{ repeat.item }}
+
 
                           {% if change_count | int > 0 %}
-                          **📝 {{ change_count }} changes would be applied:**
+                          {{ change_count }} changes would be applied:
 
                           {% for change in changes %}
-                          • {{ change }}
+                          - {{ change }}
+
                           {% endfor %}
                           {% else %}
-                          ✅ **No changes needed** - device already has these settings
+                          No changes needed - device already has these settings
                           {% endif %}
 
                           ---
-                          *Preview Mode - No changes applied*
+
+                          Preview Mode - No changes applied
+
+                          To apply changes, disable Preview Mode and run again.
               # Use persistent notification as fallback
               default:
                 - service: persistent_notification.create
                   data:
-                    title: "🔍 VZM31-SN Preview: {{ device_name }}"
+                    title: "VZM31-SN Preview: {{ device_name }}"
                     message: >
-                      **Switch:** {{ device_name }}
-                      **Entity:** {{ repeat.item }}
+                      Switch: {{ device_name }}
+
+                      Entity: {{ repeat.item }}
+
 
                       {% if change_count | int > 0 %}
-                      **📝 {{ change_count }} changes would be applied:**
+                      {{ change_count }} changes would be applied:
 
                       {% for change in changes %}
-                      • {{ change }}
+                      - {{ change }}
+
                       {% endfor %}
                       {% else %}
-                      ✅ **No changes needed** - device already has these settings
+                      No changes needed - device already has these settings
                       {% endif %}
 
                       ---
-                      *Preview Mode - No changes applied*
+
+                      Preview Mode - No changes applied
 
                       To apply changes, disable Preview Mode and run again.
                     notification_id: "vzm31_preview_{{ base_entity }}"
@@ -1644,44 +1654,52 @@ sequence:
                     sequence:
                       - service: "{{ notify_service }}"
                         data:
-                          title: "✅ VZM31-SN Configuration Applied"
+                          title: "VZM31-SN Configuration Applied: {{ device_name }}"
                           message: >
-                            **Switch:** {{ device_name }}
-                            **Entity:** {{ repeat.item }}
+                            Switch: {{ device_name }}
+
+                            Entity: {{ repeat.item }}
+
 
                             {% if change_count | int > 0 %}
-                            **✅ {{ change_count }} changes were successfully applied:**
+                            {{ change_count }} changes were successfully applied:
 
                             {% for change in changes %}
-                            • {{ change }}
+                            - {{ change }}
+
                             {% endfor %}
                             {% else %}
-                            ℹ️ **No changes applied** - device already had these settings
+                            No changes applied - device already had these settings
                             {% endif %}
 
                             ---
-                            *Configuration updated successfully*
+
+                            Configuration updated successfully
                 # Use persistent notification as fallback
                 default:
                   - service: persistent_notification.create
                     data:
-                      title: "✅ VZM31-SN Applied: {{ device_name }}"
+                      title: "VZM31-SN Configuration Applied: {{ device_name }}"
                       message: >
-                        **Switch:** {{ device_name }}
-                        **Entity:** {{ repeat.item }}
+                        Switch: {{ device_name }}
+
+                        Entity: {{ repeat.item }}
+
 
                         {% if change_count | int > 0 %}
-                        **✅ {{ change_count }} changes were successfully applied:**
+                        {{ change_count }} changes were successfully applied:
 
                         {% for change in changes %}
-                        • {{ change }}
+                        - {{ change }}
+
                         {% endfor %}
                         {% else %}
-                        ℹ️ **No changes applied** - device already had these settings
+                        No changes applied - device already had these settings
                         {% endif %}
 
                         ---
-                        *Configuration updated successfully*
+
+                        Configuration updated successfully
                       notification_id: "vzm31_applied_{{ base_entity }}"
 
 mode: parallel
