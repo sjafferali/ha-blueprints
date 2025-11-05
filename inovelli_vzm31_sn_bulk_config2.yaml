@@ -11,7 +11,6 @@ blueprint:
     min_version: 2024.1.0
 
   input:
-    # ==================== TARGET SELECTION ====================
     target_switches:
       name: Target Switches
       description: Select the VZM31-SN switches to configure (select the light entities)
@@ -22,10 +21,9 @@ blueprint:
             - integration: mqtt
               domain: light
 
-    # ==================== LED SETTINGS - GLOBAL ====================
     led_color_when_on:
       name: LED Color When On
-      description: LED bar color when switch is on
+      description: LED bar color when switch is on (0-255)
       default: 170
       selector:
         number:
@@ -35,7 +33,7 @@ blueprint:
 
     led_color_when_off:
       name: LED Color When Off
-      description: LED bar color when switch is off
+      description: LED bar color when switch is off (0-255)
       default: 170
       selector:
         number:
@@ -65,7 +63,6 @@ blueprint:
           mode: slider
           unit_of_measurement: "%"
 
-    # ==================== INDIVIDUAL LED CONFIGURATION ====================
     configure_individual_leds:
       name: Configure Individual LEDs
       description: Enable individual LED customization (LEDs 1-7)
@@ -73,7 +70,6 @@ blueprint:
       selector:
         boolean: {}
 
-    # LED 1
     led1_color_when_on:
       name: LED 1 Color When On
       description: Color for LED 1 when on (255 = sync with global)
@@ -114,9 +110,9 @@ blueprint:
           max: 101
           mode: slider
 
-    # LED 2
     led2_color_when_on:
       name: LED 2 Color When On
+      description: Color for LED 2 when on (255 = sync with global)
       default: 255
       selector:
         number:
@@ -126,6 +122,7 @@ blueprint:
 
     led2_color_when_off:
       name: LED 2 Color When Off
+      description: Color for LED 2 when off (255 = sync with global)
       default: 255
       selector:
         number:
@@ -135,6 +132,7 @@ blueprint:
 
     led2_intensity_when_on:
       name: LED 2 Intensity When On
+      description: Intensity for LED 2 when on (101 = sync with global)
       default: 101
       selector:
         number:
@@ -144,6 +142,7 @@ blueprint:
 
     led2_intensity_when_off:
       name: LED 2 Intensity When Off
+      description: Intensity for LED 2 when off (101 = sync with global)
       default: 101
       selector:
         number:
@@ -151,9 +150,9 @@ blueprint:
           max: 101
           mode: slider
 
-    # LED 3
     led3_color_when_on:
       name: LED 3 Color When On
+      description: Color for LED 3 when on (255 = sync with global)
       default: 255
       selector:
         number:
@@ -163,6 +162,7 @@ blueprint:
 
     led3_color_when_off:
       name: LED 3 Color When Off
+      description: Color for LED 3 when off (255 = sync with global)
       default: 255
       selector:
         number:
@@ -172,6 +172,7 @@ blueprint:
 
     led3_intensity_when_on:
       name: LED 3 Intensity When On
+      description: Intensity for LED 3 when on (101 = sync with global)
       default: 101
       selector:
         number:
@@ -181,6 +182,7 @@ blueprint:
 
     led3_intensity_when_off:
       name: LED 3 Intensity When Off
+      description: Intensity for LED 3 when off (101 = sync with global)
       default: 101
       selector:
         number:
@@ -188,9 +190,9 @@ blueprint:
           max: 101
           mode: slider
 
-    # LED 4
     led4_color_when_on:
       name: LED 4 Color When On
+      description: Color for LED 4 when on (255 = sync with global)
       default: 255
       selector:
         number:
@@ -200,6 +202,7 @@ blueprint:
 
     led4_color_when_off:
       name: LED 4 Color When Off
+      description: Color for LED 4 when off (255 = sync with global)
       default: 255
       selector:
         number:
@@ -209,6 +212,7 @@ blueprint:
 
     led4_intensity_when_on:
       name: LED 4 Intensity When On
+      description: Intensity for LED 4 when on (101 = sync with global)
       default: 101
       selector:
         number:
@@ -218,6 +222,7 @@ blueprint:
 
     led4_intensity_when_off:
       name: LED 4 Intensity When Off
+      description: Intensity for LED 4 when off (101 = sync with global)
       default: 101
       selector:
         number:
@@ -225,9 +230,9 @@ blueprint:
           max: 101
           mode: slider
 
-    # LED 5
     led5_color_when_on:
       name: LED 5 Color When On
+      description: Color for LED 5 when on (255 = sync with global)
       default: 255
       selector:
         number:
@@ -237,6 +242,7 @@ blueprint:
 
     led5_color_when_off:
       name: LED 5 Color When Off
+      description: Color for LED 5 when off (255 = sync with global)
       default: 255
       selector:
         number:
@@ -246,6 +252,7 @@ blueprint:
 
     led5_intensity_when_on:
       name: LED 5 Intensity When On
+      description: Intensity for LED 5 when on (101 = sync with global)
       default: 101
       selector:
         number:
@@ -255,6 +262,7 @@ blueprint:
 
     led5_intensity_when_off:
       name: LED 5 Intensity When Off
+      description: Intensity for LED 5 when off (101 = sync with global)
       default: 101
       selector:
         number:
@@ -262,9 +270,9 @@ blueprint:
           max: 101
           mode: slider
 
-    # LED 6
     led6_color_when_on:
       name: LED 6 Color When On
+      description: Color for LED 6 when on (255 = sync with global)
       default: 255
       selector:
         number:
@@ -274,6 +282,7 @@ blueprint:
 
     led6_color_when_off:
       name: LED 6 Color When Off
+      description: Color for LED 6 when off (255 = sync with global)
       default: 255
       selector:
         number:
@@ -283,6 +292,7 @@ blueprint:
 
     led6_intensity_when_on:
       name: LED 6 Intensity When On
+      description: Intensity for LED 6 when on (101 = sync with global)
       default: 101
       selector:
         number:
@@ -292,6 +302,7 @@ blueprint:
 
     led6_intensity_when_off:
       name: LED 6 Intensity When Off
+      description: Intensity for LED 6 when off (101 = sync with global)
       default: 101
       selector:
         number:
@@ -299,9 +310,9 @@ blueprint:
           max: 101
           mode: slider
 
-    # LED 7
     led7_color_when_on:
       name: LED 7 Color When On
+      description: Color for LED 7 when on (255 = sync with global)
       default: 255
       selector:
         number:
@@ -311,6 +322,7 @@ blueprint:
 
     led7_color_when_off:
       name: LED 7 Color When Off
+      description: Color for LED 7 when off (255 = sync with global)
       default: 255
       selector:
         number:
@@ -320,6 +332,7 @@ blueprint:
 
     led7_intensity_when_on:
       name: LED 7 Intensity When On
+      description: Intensity for LED 7 when on (101 = sync with global)
       default: 101
       selector:
         number:
@@ -329,6 +342,7 @@ blueprint:
 
     led7_intensity_when_off:
       name: LED 7 Intensity When Off
+      description: Intensity for LED 7 when off (101 = sync with global)
       default: 101
       selector:
         number:
@@ -336,7 +350,6 @@ blueprint:
           max: 101
           mode: slider
 
-    # ==================== DIMMING SPEEDS ====================
     dimming_speed_up_remote:
       name: Dimming Speed Up (Remote)
       description: Hub-controlled dim-up speed (0-127, each unit = 100ms)
@@ -377,7 +390,6 @@ blueprint:
           max: 127
           mode: slider
 
-    # ==================== RAMP RATES ====================
     ramp_rate_off_to_on_remote:
       name: Ramp Rate Off to On (Remote)
       description: Hub turn-on transition speed (0-127, each unit = 100ms, 0 = instant)
@@ -418,7 +430,6 @@ blueprint:
           max: 127
           mode: slider
 
-    # ==================== BRIGHTNESS LEVELS ====================
     minimum_level:
       name: Minimum Brightness Level
       description: Minimum dimmer level (prevents flickering at low levels)
@@ -459,7 +470,6 @@ blueprint:
           max: 255
           mode: slider
 
-    # ==================== BUTTON BEHAVIOR ====================
     button_delay:
       name: Button Press Delay
       description: Delay for button press events (0ms = disables button events)
@@ -481,11 +491,10 @@ blueprint:
     single_tap_behavior:
       name: Single Tap Behavior
       description: How single tap up/down operates
-      default: "Disabled"
+      default: "Old Behavior"
       selector:
         select:
           options:
-            - "Disabled"
             - "Old Behavior"
             - "New Behavior"
             - "Down Always Off"
@@ -516,7 +525,7 @@ blueprint:
       default: 255
       selector:
         number:
-          min: 0
+          min: 2
           max: 255
           mode: slider
 
@@ -533,14 +542,13 @@ blueprint:
     double_tap_clear_notifications:
       name: Double Tap Config to Clear Notifications
       description: Double-tap config button to clear LED notifications
-      default: "Enabled"
+      default: "Enabled (Default)"
       selector:
         select:
           options:
+            - "Enabled (Default)"
             - "Disabled"
-            - "Enabled"
 
-    # ==================== SWITCH CONFIGURATION ====================
     output_mode:
       name: Output Mode
       description: Dimmer or On/Off switch mode
@@ -554,13 +562,14 @@ blueprint:
     switch_type:
       name: Switch Type
       description: Wiring configuration
-      default: "Single Pole (0)"
+      default: "Single Pole"
       selector:
         select:
           options:
-            - "Single Pole (0)"
-            - "3-Way Dumb Switch (1)"
-            - "3-Way Aux Switch (2)"
+            - "Single Pole"
+            - "3-Way Dumb Switch"
+            - "3-Way Aux Switch"
+            - "Single-Pole Full Sine Wave"
 
     invert_switch:
       name: Invert Switch
@@ -569,8 +578,8 @@ blueprint:
       selector:
         select:
           options:
-            - "No"
             - "Yes"
+            - "No"
 
     smart_bulb_mode:
       name: Smart Bulb Mode
@@ -580,7 +589,7 @@ blueprint:
         select:
           options:
             - "Disabled"
-            - "Enabled"
+            - "Smart Bulb Mode"
 
     led_bar_scaling:
       name: LED Bar Scaling
@@ -615,17 +624,16 @@ blueprint:
     relay_click:
       name: Relay Click Sound
       description: Audible relay click (neutral on/off setups)
-      default: "Enabled"
+      default: "Disabled (Click Sound On)"
       selector:
-        select:
+select:
           options:
-            - "Disabled"
-            - "Enabled"
+            - "Disabled (Click Sound On)"
+            - "Enabled (Click Sound Off)"
 
-    # ==================== POWER & STATE ====================
     state_after_power_restored:
       name: State After Power Restored
-      description: State when power returns
+      description: State when power returns (0=off, 1-254=level, 255=previous)
       default: 0
       selector:
         number:
@@ -657,14 +665,13 @@ blueprint:
     quick_start_level:
       name: Quick Start Level
       description: Power level during quick start
-      default: 0
+      default: 1
       selector:
         number:
-          min: 0
-          max: 255
+          min: 1
+          max: 254
           mode: slider
 
-    # ==================== PROTECTION ====================
     local_protection:
       name: Local Protection
       description: Disable physical switch control
@@ -695,10 +702,9 @@ blueprint:
             - "Disabled"
             - "Enabled"
 
-    # ==================== POWER REPORTING ====================
     active_power_reports:
       name: Active Power Reports
-      description: Power change % to trigger report (0 = disabled)
+      description: Power change percentage to trigger report (0 = disabled)
       default: 10
       selector:
         number:
@@ -729,7 +735,6 @@ blueprint:
           mode: box
           unit_of_measurement: "0.01 kWh"
 
-    # ==================== FAN CONTROL ====================
     fan_control_mode:
       name: Fan Control Mode
       description: Fan binding mode for config button (EP3)
@@ -781,15 +786,24 @@ blueprint:
           max: 255
           mode: slider
 
-    # ==================== ADVANCED ====================
+    fan_led_level_type:
+      name: Fan LED Level Type
+      description: How LED bar displays fan speed
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 10
+          mode: slider
+
     higher_output_in_non_neutral:
       name: Higher Output in Non-Neutral
       description: Increase output for non-neutral setups
-      default: "Disabled"
+      default: "Disabled (default)"
       selector:
         select:
           options:
-            - "Disabled"
+            - "Disabled (default)"
             - "Enabled"
 
     load_level_indicator_timeout:
@@ -799,7 +813,7 @@ blueprint:
       selector:
         select:
           options:
-            - "Do not display"
+            - "Stay Off"
             - "1 Second"
             - "2 Seconds"
             - "3 Seconds"
@@ -810,6 +824,7 @@ blueprint:
             - "8 Seconds"
             - "9 Seconds"
             - "10 Seconds"
+            - "Stay On"
 
 variables:
   target_switches: !input target_switches
@@ -823,7 +838,6 @@ sequence:
             device_name: "{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') | lower }}"
             base_entity: "{{ repeat.item | replace('light.', '') }}"
 
-        # ==================== LED SETTINGS - GLOBAL ====================
         - service: number.set_value
           target:
             entity_id: "number.{{ base_entity }}_ledcolorwhenon"
@@ -848,12 +862,10 @@ sequence:
           data:
             value: !input led_intensity_when_off
 
-        # ==================== INDIVIDUAL LED CONFIGURATION ====================
         - if:
             - condition: template
               value_template: "{{ configure_individual_leds }}"
           then:
-            # LED 1
             - service: number.set_value
               target:
                 entity_id: "number.{{ base_entity }}_defaultled1colorwhenon"
@@ -878,7 +890,6 @@ sequence:
               data:
                 value: !input led1_intensity_when_off
 
-            # LED 2
             - service: number.set_value
               target:
                 entity_id: "number.{{ base_entity }}_defaultled2colorwhenon"
@@ -903,7 +914,6 @@ sequence:
               data:
                 value: !input led2_intensity_when_off
 
-            # LED 3
             - service: number.set_value
               target:
                 entity_id: "number.{{ base_entity }}_defaultled3colorwhenon"
@@ -928,7 +938,6 @@ sequence:
               data:
                 value: !input led3_intensity_when_off
 
-            # LED 4
             - service: number.set_value
               target:
                 entity_id: "number.{{ base_entity }}_defaultled4colorwhenon"
@@ -953,7 +962,6 @@ sequence:
               data:
                 value: !input led4_intensity_when_off
 
-            # LED 5
             - service: number.set_value
               target:
                 entity_id: "number.{{ base_entity }}_defaultled5colorwhenon"
@@ -978,7 +986,6 @@ sequence:
               data:
                 value: !input led5_intensity_when_off
 
-            # LED 6
             - service: number.set_value
               target:
                 entity_id: "number.{{ base_entity }}_defaultled6colorwhenon"
@@ -1003,7 +1010,6 @@ sequence:
               data:
                 value: !input led6_intensity_when_off
 
-            # LED 7
             - service: number.set_value
               target:
                 entity_id: "number.{{ base_entity }}_defaultled7colorwhenon"
@@ -1028,7 +1034,6 @@ sequence:
               data:
                 value: !input led7_intensity_when_off
 
-        # ==================== DIMMING SPEEDS ====================
         - service: number.set_value
           target:
             entity_id: "number.{{ base_entity }}_dimmingspeedupremote"
@@ -1053,7 +1058,6 @@ sequence:
           data:
             value: !input dimming_speed_down_local
 
-        # ==================== RAMP RATES ====================
         - service: number.set_value
           target:
             entity_id: "number.{{ base_entity }}_ramprateofftoonremote"
@@ -1078,7 +1082,6 @@ sequence:
           data:
             value: !input ramp_rate_on_to_off_local
 
-        # ==================== BRIGHTNESS LEVELS ====================
         - service: number.set_value
           target:
             entity_id: "number.{{ base_entity }}_minimumlevel"
@@ -1103,7 +1106,6 @@ sequence:
           data:
             value: !input default_level_remote
 
-        # ==================== BUTTON BEHAVIOR ====================
         - service: select.select_option
           target:
             entity_id: "select.{{ base_entity }}_buttondelay"
@@ -1146,7 +1148,6 @@ sequence:
           data:
             option: !input double_tap_clear_notifications
 
-        # ==================== SWITCH CONFIGURATION ====================
         - service: select.select_option
           target:
             entity_id: "select.{{ base_entity }}_outputmode"
@@ -1195,7 +1196,6 @@ sequence:
           data:
             option: !input relay_click
 
-        # ==================== POWER & STATE ====================
         - service: number.set_value
           target:
             entity_id: "number.{{ base_entity }}_stateafterpowerrestored"
@@ -1220,7 +1220,6 @@ sequence:
           data:
             value: !input quick_start_level
 
-        # ==================== PROTECTION ====================
         - service: select.select_option
           target:
             entity_id: "select.{{ base_entity }}_localprotection"
@@ -1239,7 +1238,6 @@ sequence:
           data:
             option: !input aux_switch_unique_scenes
 
-        # ==================== POWER REPORTING ====================
         - service: number.set_value
           target:
             entity_id: "number.{{ base_entity }}_activepowerreports"
@@ -1258,7 +1256,6 @@ sequence:
           data:
             value: !input active_energy_reports
 
-        # ==================== FAN CONTROL ====================
         - service: select.select_option
           target:
             entity_id: "select.{{ base_entity }}_fancontrolmode"
@@ -1289,7 +1286,12 @@ sequence:
           data:
             value: !input led_color_for_fan_control_mode
 
-        # ==================== ADVANCED ====================
+        - service: number.set_value
+          target:
+            entity_id: "number.{{ base_entity }}_fanledleveltype"
+          data:
+            value: !input fan_led_level_type
+
         - service: select.select_option
           target:
             entity_id: "select.{{ base_entity }}_higheroutputinnonneutral"
