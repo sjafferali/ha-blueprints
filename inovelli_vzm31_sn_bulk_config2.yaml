@@ -1,0 +1,1310 @@
+blueprint:
+  name: Inovelli VZM31-SN Bulk Configuration
+  description: >
+    Apply identical configuration settings to multiple Inovelli VZM31-SN 2-in-1 dimmer switches simultaneously.
+    All settings are exposed as blueprint inputs, allowing complete customization of LED behavior, dimming speeds,
+    button actions, power reporting, fan control, and more.
+  domain: script
+  author: Samir Jafferali
+  source_url: https://github.com/sjafferali/ha-blueprints
+  homeassistant:
+    min_version: 2024.1.0
+
+  input:
+    # ==================== TARGET SELECTION ====================
+    target_switches:
+      name: Target Switches
+      description: Select the VZM31-SN switches to configure (select the light entities)
+      selector:
+        entity:
+          multiple: true
+          filter:
+            - integration: mqtt
+              domain: light
+
+    # ==================== LED SETTINGS - GLOBAL ====================
+    led_color_when_on:
+      name: LED Color When On
+      description: LED bar color when switch is on
+      default: 170
+      selector:
+        number:
+          min: 0
+          max: 255
+          mode: slider
+
+    led_color_when_off:
+      name: LED Color When Off
+      description: LED bar color when switch is off
+      default: 170
+      selector:
+        number:
+          min: 0
+          max: 255
+          mode: slider
+
+    led_intensity_when_on:
+      name: LED Intensity When On
+      description: LED bar brightness when switch is on (0-100%)
+      default: 75
+      selector:
+        number:
+          min: 0
+          max: 100
+          mode: slider
+          unit_of_measurement: "%"
+
+    led_intensity_when_off:
+      name: LED Intensity When Off
+      description: LED bar brightness when switch is off (0-100%)
+      default: 25
+      selector:
+        number:
+          min: 0
+          max: 100
+          mode: slider
+          unit_of_measurement: "%"
+
+    # ==================== INDIVIDUAL LED CONFIGURATION ====================
+    configure_individual_leds:
+      name: Configure Individual LEDs
+      description: Enable individual LED customization (LEDs 1-7)
+      default: false
+      selector:
+        boolean: {}
+
+    # LED 1
+    led1_color_when_on:
+      name: LED 1 Color When On
+      description: Color for LED 1 when on (255 = sync with global)
+      default: 255
+      selector:
+        number:
+          min: 0
+          max: 255
+          mode: slider
+
+    led1_color_when_off:
+      name: LED 1 Color When Off
+      description: Color for LED 1 when off (255 = sync with global)
+      default: 255
+      selector:
+        number:
+          min: 0
+          max: 255
+          mode: slider
+
+    led1_intensity_when_on:
+      name: LED 1 Intensity When On
+      description: Intensity for LED 1 when on (101 = sync with global)
+      default: 101
+      selector:
+        number:
+          min: 0
+          max: 101
+          mode: slider
+
+    led1_intensity_when_off:
+      name: LED 1 Intensity When Off
+      description: Intensity for LED 1 when off (101 = sync with global)
+      default: 101
+      selector:
+        number:
+          min: 0
+          max: 101
+          mode: slider
+
+    # LED 2
+    led2_color_when_on:
+      name: LED 2 Color When On
+      default: 255
+      selector:
+        number:
+          min: 0
+          max: 255
+          mode: slider
+
+    led2_color_when_off:
+      name: LED 2 Color When Off
+      default: 255
+      selector:
+        number:
+          min: 0
+          max: 255
+          mode: slider
+
+    led2_intensity_when_on:
+      name: LED 2 Intensity When On
+      default: 101
+      selector:
+        number:
+          min: 0
+          max: 101
+          mode: slider
+
+    led2_intensity_when_off:
+      name: LED 2 Intensity When Off
+      default: 101
+      selector:
+        number:
+          min: 0
+          max: 101
+          mode: slider
+
+    # LED 3
+    led3_color_when_on:
+      name: LED 3 Color When On
+      default: 255
+      selector:
+        number:
+          min: 0
+          max: 255
+          mode: slider
+
+    led3_color_when_off:
+      name: LED 3 Color When Off
+      default: 255
+      selector:
+        number:
+          min: 0
+          max: 255
+          mode: slider
+
+    led3_intensity_when_on:
+      name: LED 3 Intensity When On
+      default: 101
+      selector:
+        number:
+          min: 0
+          max: 101
+          mode: slider
+
+    led3_intensity_when_off:
+      name: LED 3 Intensity When Off
+      default: 101
+      selector:
+        number:
+          min: 0
+          max: 101
+          mode: slider
+
+    # LED 4
+    led4_color_when_on:
+      name: LED 4 Color When On
+      default: 255
+      selector:
+        number:
+          min: 0
+          max: 255
+          mode: slider
+
+    led4_color_when_off:
+      name: LED 4 Color When Off
+      default: 255
+      selector:
+        number:
+          min: 0
+          max: 255
+          mode: slider
+
+    led4_intensity_when_on:
+      name: LED 4 Intensity When On
+      default: 101
+      selector:
+        number:
+          min: 0
+          max: 101
+          mode: slider
+
+    led4_intensity_when_off:
+      name: LED 4 Intensity When Off
+      default: 101
+      selector:
+        number:
+          min: 0
+          max: 101
+          mode: slider
+
+    # LED 5
+    led5_color_when_on:
+      name: LED 5 Color When On
+      default: 255
+      selector:
+        number:
+          min: 0
+          max: 255
+          mode: slider
+
+    led5_color_when_off:
+      name: LED 5 Color When Off
+      default: 255
+      selector:
+        number:
+          min: 0
+          max: 255
+          mode: slider
+
+    led5_intensity_when_on:
+      name: LED 5 Intensity When On
+      default: 101
+      selector:
+        number:
+          min: 0
+          max: 101
+          mode: slider
+
+    led5_intensity_when_off:
+      name: LED 5 Intensity When Off
+      default: 101
+      selector:
+        number:
+          min: 0
+          max: 101
+          mode: slider
+
+    # LED 6
+    led6_color_when_on:
+      name: LED 6 Color When On
+      default: 255
+      selector:
+        number:
+          min: 0
+          max: 255
+          mode: slider
+
+    led6_color_when_off:
+      name: LED 6 Color When Off
+      default: 255
+      selector:
+        number:
+          min: 0
+          max: 255
+          mode: slider
+
+    led6_intensity_when_on:
+      name: LED 6 Intensity When On
+      default: 101
+      selector:
+        number:
+          min: 0
+          max: 101
+          mode: slider
+
+    led6_intensity_when_off:
+      name: LED 6 Intensity When Off
+      default: 101
+      selector:
+        number:
+          min: 0
+          max: 101
+          mode: slider
+
+    # LED 7
+    led7_color_when_on:
+      name: LED 7 Color When On
+      default: 255
+      selector:
+        number:
+          min: 0
+          max: 255
+          mode: slider
+
+    led7_color_when_off:
+      name: LED 7 Color When Off
+      default: 255
+      selector:
+        number:
+          min: 0
+          max: 255
+          mode: slider
+
+    led7_intensity_when_on:
+      name: LED 7 Intensity When On
+      default: 101
+      selector:
+        number:
+          min: 0
+          max: 101
+          mode: slider
+
+    led7_intensity_when_off:
+      name: LED 7 Intensity When Off
+      default: 101
+      selector:
+        number:
+          min: 0
+          max: 101
+          mode: slider
+
+    # ==================== DIMMING SPEEDS ====================
+    dimming_speed_up_remote:
+      name: Dimming Speed Up (Remote)
+      description: Hub-controlled dim-up speed (0-127, each unit = 100ms)
+      default: 25
+      selector:
+        number:
+          min: 0
+          max: 127
+          mode: slider
+
+    dimming_speed_up_local:
+      name: Dimming Speed Up (Local)
+      description: Switch-controlled dim-up speed (0-127, each unit = 100ms)
+      default: 25
+      selector:
+        number:
+          min: 0
+          max: 127
+          mode: slider
+
+    dimming_speed_down_remote:
+      name: Dimming Speed Down (Remote)
+      description: Hub-controlled dim-down speed (0-127, each unit = 100ms)
+      default: 25
+      selector:
+        number:
+          min: 0
+          max: 127
+          mode: slider
+
+    dimming_speed_down_local:
+      name: Dimming Speed Down (Local)
+      description: Switch-controlled dim-down speed (0-127, each unit = 100ms)
+      default: 25
+      selector:
+        number:
+          min: 0
+          max: 127
+          mode: slider
+
+    # ==================== RAMP RATES ====================
+    ramp_rate_off_to_on_remote:
+      name: Ramp Rate Off to On (Remote)
+      description: Hub turn-on transition speed (0-127, each unit = 100ms, 0 = instant)
+      default: 2
+      selector:
+        number:
+          min: 0
+          max: 127
+          mode: slider
+
+    ramp_rate_off_to_on_local:
+      name: Ramp Rate Off to On (Local)
+      description: Switch turn-on transition speed (0-127, each unit = 100ms, 0 = instant)
+      default: 2
+      selector:
+        number:
+          min: 0
+          max: 127
+          mode: slider
+
+    ramp_rate_on_to_off_remote:
+      name: Ramp Rate On to Off (Remote)
+      description: Hub turn-off transition speed (0-127, each unit = 100ms, 0 = instant)
+      default: 2
+      selector:
+        number:
+          min: 0
+          max: 127
+          mode: slider
+
+    ramp_rate_on_to_off_local:
+      name: Ramp Rate On to Off (Local)
+      description: Switch turn-off transition speed (0-127, each unit = 100ms, 0 = instant)
+      default: 2
+      selector:
+        number:
+          min: 0
+          max: 127
+          mode: slider
+
+    # ==================== BRIGHTNESS LEVELS ====================
+    minimum_level:
+      name: Minimum Brightness Level
+      description: Minimum dimmer level (prevents flickering at low levels)
+      default: 1
+      selector:
+        number:
+          min: 1
+          max: 254
+          mode: slider
+
+    maximum_level:
+      name: Maximum Brightness Level
+      description: Maximum dimmer level
+      default: 255
+      selector:
+        number:
+          min: 2
+          max: 255
+          mode: slider
+
+    default_level_local:
+      name: Default Level (Local)
+      description: Default brightness when turned on at switch (0 = last level, 255 = previous)
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 255
+          mode: slider
+
+    default_level_remote:
+      name: Default Level (Remote)
+      description: Default brightness when turned on from hub (0 = last level, 255 = previous)
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 255
+          mode: slider
+
+    # ==================== BUTTON BEHAVIOR ====================
+    button_delay:
+      name: Button Press Delay
+      description: Delay for button press events (0ms = disables button events)
+      default: "500ms"
+      selector:
+        select:
+          options:
+            - "0ms"
+            - "100ms"
+            - "200ms"
+            - "300ms"
+            - "400ms"
+            - "500ms"
+            - "600ms"
+            - "700ms"
+            - "800ms"
+            - "900ms"
+
+    single_tap_behavior:
+      name: Single Tap Behavior
+      description: How single tap up/down operates
+      default: "Disabled"
+      selector:
+        select:
+          options:
+            - "Disabled"
+            - "Old Behavior"
+            - "New Behavior"
+            - "Down Always Off"
+
+    double_tap_up_to_param55:
+      name: Double Tap Up Enabled
+      description: Enable double-tap UP to set specific brightness
+      default: "Enabled"
+      selector:
+        select:
+          options:
+            - "Disabled"
+            - "Enabled"
+
+    double_tap_down_to_param56:
+      name: Double Tap Down Enabled
+      description: Enable double-tap DOWN to set specific brightness
+      default: "Enabled"
+      selector:
+        select:
+          options:
+            - "Disabled"
+            - "Enabled"
+
+    brightness_level_for_double_tap_up:
+      name: Double Tap Up Brightness
+      description: Brightness level for double-tap UP (255 = send ON command)
+      default: 255
+      selector:
+        number:
+          min: 0
+          max: 255
+          mode: slider
+
+    brightness_level_for_double_tap_down:
+      name: Double Tap Down Brightness
+      description: Brightness level for double-tap DOWN
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 255
+          mode: slider
+
+    double_tap_clear_notifications:
+      name: Double Tap Config to Clear Notifications
+      description: Double-tap config button to clear LED notifications
+      default: "Enabled"
+      selector:
+        select:
+          options:
+            - "Disabled"
+            - "Enabled"
+
+    # ==================== SWITCH CONFIGURATION ====================
+    output_mode:
+      name: Output Mode
+      description: Dimmer or On/Off switch mode
+      default: "Dimmer"
+      selector:
+        select:
+          options:
+            - "Dimmer"
+            - "On/Off"
+
+    switch_type:
+      name: Switch Type
+      description: Wiring configuration
+      default: "Single Pole (0)"
+      selector:
+        select:
+          options:
+            - "Single Pole (0)"
+            - "3-Way Dumb Switch (1)"
+            - "3-Way Aux Switch (2)"
+
+    invert_switch:
+      name: Invert Switch
+      description: Reverse up/down paddle orientation
+      default: "No"
+      selector:
+        select:
+          options:
+            - "No"
+            - "Yes"
+
+    smart_bulb_mode:
+      name: Smart Bulb Mode
+      description: Keep power on for smart bulbs
+      default: "Disabled"
+      selector:
+        select:
+          options:
+            - "Disabled"
+            - "Enabled"
+
+    led_bar_scaling:
+      name: LED Bar Scaling
+      description: LED bar display method
+      default: "Gen3 method (VZM-style)"
+      selector:
+        select:
+          options:
+            - "Gen3 method (VZM-style)"
+            - "Gen2 method (LZW-style)"
+
+    on_off_led_mode:
+      name: On/Off LED Mode
+      description: LED display in On/Off mode
+      default: "All"
+      selector:
+        select:
+          options:
+            - "All"
+            - "One"
+
+    firmware_update_in_progress_indicator:
+      name: Firmware Update Indicator
+      description: Show progress on LED bar during updates
+      default: "Enabled"
+      selector:
+        select:
+          options:
+            - "Disabled"
+            - "Enabled"
+
+    relay_click:
+      name: Relay Click Sound
+      description: Audible relay click (neutral on/off setups)
+      default: "Enabled"
+      selector:
+        select:
+          options:
+            - "Disabled"
+            - "Enabled"
+
+    # ==================== POWER & STATE ====================
+    state_after_power_restored:
+      name: State After Power Restored
+      description: State when power returns
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 255
+          mode: slider
+
+    auto_timer_off:
+      name: Auto Timer Off
+      description: Auto-off timer in seconds (0 = disabled)
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 32767
+          mode: box
+          unit_of_measurement: "s"
+
+    quick_start_time:
+      name: Quick Start Time
+      description: Full power duration when turning on (in 1/60th second, 0 = disabled)
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 60
+          mode: slider
+
+    quick_start_level:
+      name: Quick Start Level
+      description: Power level during quick start
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 255
+          mode: slider
+
+    # ==================== PROTECTION ====================
+    local_protection:
+      name: Local Protection
+      description: Disable physical switch control
+      default: "Disabled"
+      selector:
+        select:
+          options:
+            - "Disabled"
+            - "Enabled"
+
+    binding_off_to_on_sync_level:
+      name: Binding Off to On Sync Level
+      description: Send level to bound devices on OFF/ON
+      default: "Disabled"
+      selector:
+        select:
+          options:
+            - "Disabled"
+            - "Enabled"
+
+    aux_switch_unique_scenes:
+      name: Aux Switch Unique Scenes
+      description: Different scene numbers for aux switch
+      default: "Disabled"
+      selector:
+        select:
+          options:
+            - "Disabled"
+            - "Enabled"
+
+    # ==================== POWER REPORTING ====================
+    active_power_reports:
+      name: Active Power Reports
+      description: Power change % to trigger report (0 = disabled)
+      default: 10
+      selector:
+        number:
+          min: 0
+          max: 100
+          mode: slider
+          unit_of_measurement: "%"
+
+    periodic_power_and_energy_reports:
+      name: Periodic Power Reports
+      description: Time between reports in seconds (0 = disabled)
+      default: 3600
+      selector:
+        number:
+          min: 0
+          max: 32767
+          mode: box
+          unit_of_measurement: "s"
+
+    active_energy_reports:
+      name: Active Energy Reports
+      description: Energy change to trigger report (0 = disabled, units of 0.01 kWh)
+      default: 10
+      selector:
+        number:
+          min: 0
+          max: 32767
+          mode: box
+          unit_of_measurement: "0.01 kWh"
+
+    # ==================== FAN CONTROL ====================
+    fan_control_mode:
+      name: Fan Control Mode
+      description: Fan binding mode for config button (EP3)
+      default: "Disabled"
+      selector:
+        select:
+          options:
+            - "Disabled"
+            - "Multi Tap"
+            - "Cycle"
+
+    low_level_for_fan_control_mode:
+      name: Fan Low Speed Level
+      description: Dimmer level for low fan speed
+      default: 33
+      selector:
+        number:
+          min: 2
+          max: 254
+          mode: slider
+
+    medium_level_for_fan_control_mode:
+      name: Fan Medium Speed Level
+      description: Dimmer level for medium fan speed
+      default: 66
+      selector:
+        number:
+          min: 2
+          max: 254
+          mode: slider
+
+    high_level_for_fan_control_mode:
+      name: Fan High Speed Level
+      description: Dimmer level for high fan speed
+      default: 99
+      selector:
+        number:
+          min: 2
+          max: 254
+          mode: slider
+
+    led_color_for_fan_control_mode:
+      name: LED Color for Fan Mode
+      description: LED color when in fan control mode
+      default: 127
+      selector:
+        number:
+          min: 0
+          max: 255
+          mode: slider
+
+    # ==================== ADVANCED ====================
+    higher_output_in_non_neutral:
+      name: Higher Output in Non-Neutral
+      description: Increase output for non-neutral setups
+      default: "Disabled"
+      selector:
+        select:
+          options:
+            - "Disabled"
+            - "Enabled"
+
+    load_level_indicator_timeout:
+      name: Load Level Indicator Timeout
+      description: How long LED bar shows load level
+      default: "3 Seconds"
+      selector:
+        select:
+          options:
+            - "Do not display"
+            - "1 Second"
+            - "2 Seconds"
+            - "3 Seconds"
+            - "4 Seconds"
+            - "5 Seconds"
+            - "6 Seconds"
+            - "7 Seconds"
+            - "8 Seconds"
+            - "9 Seconds"
+            - "10 Seconds"
+
+variables:
+  target_switches: !input target_switches
+  configure_individual_leds: !input configure_individual_leds
+
+sequence:
+  - repeat:
+      for_each: "{{ target_switches }}"
+      sequence:
+        - variables:
+            device_name: "{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') | lower }}"
+            base_entity: "{{ repeat.item | replace('light.', '') }}"
+
+        # ==================== LED SETTINGS - GLOBAL ====================
+        - service: number.set_value
+          target:
+            entity_id: "number.{{ base_entity }}_ledcolorwhenon"
+          data:
+            value: !input led_color_when_on
+
+        - service: number.set_value
+          target:
+            entity_id: "number.{{ base_entity }}_ledcolorwhenoff"
+          data:
+            value: !input led_color_when_off
+
+        - service: number.set_value
+          target:
+            entity_id: "number.{{ base_entity }}_ledintensitywhenon"
+          data:
+            value: !input led_intensity_when_on
+
+        - service: number.set_value
+          target:
+            entity_id: "number.{{ base_entity }}_ledintensitywhenoff"
+          data:
+            value: !input led_intensity_when_off
+
+        # ==================== INDIVIDUAL LED CONFIGURATION ====================
+        - if:
+            - condition: template
+              value_template: "{{ configure_individual_leds }}"
+          then:
+            # LED 1
+            - service: number.set_value
+              target:
+                entity_id: "number.{{ base_entity }}_defaultled1colorwhenon"
+              data:
+                value: !input led1_color_when_on
+
+            - service: number.set_value
+              target:
+                entity_id: "number.{{ base_entity }}_defaultled1colorwhenoff"
+              data:
+                value: !input led1_color_when_off
+
+            - service: number.set_value
+              target:
+                entity_id: "number.{{ base_entity }}_defaultled1intensitywhenon"
+              data:
+                value: !input led1_intensity_when_on
+
+            - service: number.set_value
+              target:
+                entity_id: "number.{{ base_entity }}_defaultled1intensitywhenoff"
+              data:
+                value: !input led1_intensity_when_off
+
+            # LED 2
+            - service: number.set_value
+              target:
+                entity_id: "number.{{ base_entity }}_defaultled2colorwhenon"
+              data:
+                value: !input led2_color_when_on
+
+            - service: number.set_value
+              target:
+                entity_id: "number.{{ base_entity }}_defaultled2colorwhenoff"
+              data:
+                value: !input led2_color_when_off
+
+            - service: number.set_value
+              target:
+                entity_id: "number.{{ base_entity }}_defaultled2intensitywhenon"
+              data:
+                value: !input led2_intensity_when_on
+
+            - service: number.set_value
+              target:
+                entity_id: "number.{{ base_entity }}_defaultled2intensitywhenoff"
+              data:
+                value: !input led2_intensity_when_off
+
+            # LED 3
+            - service: number.set_value
+              target:
+                entity_id: "number.{{ base_entity }}_defaultled3colorwhenon"
+              data:
+                value: !input led3_color_when_on
+
+            - service: number.set_value
+              target:
+                entity_id: "number.{{ base_entity }}_defaultled3colorwhenoff"
+              data:
+                value: !input led3_color_when_off
+
+            - service: number.set_value
+              target:
+                entity_id: "number.{{ base_entity }}_defaultled3intensitywhenon"
+              data:
+                value: !input led3_intensity_when_on
+
+            - service: number.set_value
+              target:
+                entity_id: "number.{{ base_entity }}_defaultled3intensitywhenoff"
+              data:
+                value: !input led3_intensity_when_off
+
+            # LED 4
+            - service: number.set_value
+              target:
+                entity_id: "number.{{ base_entity }}_defaultled4colorwhenon"
+              data:
+                value: !input led4_color_when_on
+
+            - service: number.set_value
+              target:
+                entity_id: "number.{{ base_entity }}_defaultled4colorwhenoff"
+              data:
+                value: !input led4_color_when_off
+
+            - service: number.set_value
+              target:
+                entity_id: "number.{{ base_entity }}_defaultled4intensitywhenon"
+              data:
+                value: !input led4_intensity_when_on
+
+            - service: number.set_value
+              target:
+                entity_id: "number.{{ base_entity }}_defaultled4intensitywhenoff"
+              data:
+                value: !input led4_intensity_when_off
+
+            # LED 5
+            - service: number.set_value
+              target:
+                entity_id: "number.{{ base_entity }}_defaultled5colorwhenon"
+              data:
+                value: !input led5_color_when_on
+
+            - service: number.set_value
+              target:
+                entity_id: "number.{{ base_entity }}_defaultled5colorwhenoff"
+              data:
+                value: !input led5_color_when_off
+
+            - service: number.set_value
+              target:
+                entity_id: "number.{{ base_entity }}_defaultled5intensitywhenon"
+              data:
+                value: !input led5_intensity_when_on
+
+            - service: number.set_value
+              target:
+                entity_id: "number.{{ base_entity }}_defaultled5intensitywhenoff"
+              data:
+                value: !input led5_intensity_when_off
+
+            # LED 6
+            - service: number.set_value
+              target:
+                entity_id: "number.{{ base_entity }}_defaultled6colorwhenon"
+              data:
+                value: !input led6_color_when_on
+
+            - service: number.set_value
+              target:
+                entity_id: "number.{{ base_entity }}_defaultled6colorwhenoff"
+              data:
+                value: !input led6_color_when_off
+
+            - service: number.set_value
+              target:
+                entity_id: "number.{{ base_entity }}_defaultled6intensitywhenon"
+              data:
+                value: !input led6_intensity_when_on
+
+            - service: number.set_value
+              target:
+                entity_id: "number.{{ base_entity }}_defaultled6intensitywhenoff"
+              data:
+                value: !input led6_intensity_when_off
+
+            # LED 7
+            - service: number.set_value
+              target:
+                entity_id: "number.{{ base_entity }}_defaultled7colorwhenon"
+              data:
+                value: !input led7_color_when_on
+
+            - service: number.set_value
+              target:
+                entity_id: "number.{{ base_entity }}_defaultled7colorwhenoff"
+              data:
+                value: !input led7_color_when_off
+
+            - service: number.set_value
+              target:
+                entity_id: "number.{{ base_entity }}_defaultled7intensitywhenon"
+              data:
+                value: !input led7_intensity_when_on
+
+            - service: number.set_value
+              target:
+                entity_id: "number.{{ base_entity }}_defaultled7intensitywhenoff"
+              data:
+                value: !input led7_intensity_when_off
+
+        # ==================== DIMMING SPEEDS ====================
+        - service: number.set_value
+          target:
+            entity_id: "number.{{ base_entity }}_dimmingspeedupremote"
+          data:
+            value: !input dimming_speed_up_remote
+
+        - service: number.set_value
+          target:
+            entity_id: "number.{{ base_entity }}_dimmingspeeduplocal"
+          data:
+            value: !input dimming_speed_up_local
+
+        - service: number.set_value
+          target:
+            entity_id: "number.{{ base_entity }}_dimmingspeeddownremote"
+          data:
+            value: !input dimming_speed_down_remote
+
+        - service: number.set_value
+          target:
+            entity_id: "number.{{ base_entity }}_dimmingspeeddownlocal"
+          data:
+            value: !input dimming_speed_down_local
+
+        # ==================== RAMP RATES ====================
+        - service: number.set_value
+          target:
+            entity_id: "number.{{ base_entity }}_ramprateofftoonremote"
+          data:
+            value: !input ramp_rate_off_to_on_remote
+
+        - service: number.set_value
+          target:
+            entity_id: "number.{{ base_entity }}_ramprateofftoonlocal"
+          data:
+            value: !input ramp_rate_off_to_on_local
+
+        - service: number.set_value
+          target:
+            entity_id: "number.{{ base_entity }}_ramprateontooffremote"
+          data:
+            value: !input ramp_rate_on_to_off_remote
+
+        - service: number.set_value
+          target:
+            entity_id: "number.{{ base_entity }}_ramprateontoofflocal"
+          data:
+            value: !input ramp_rate_on_to_off_local
+
+        # ==================== BRIGHTNESS LEVELS ====================
+        - service: number.set_value
+          target:
+            entity_id: "number.{{ base_entity }}_minimumlevel"
+          data:
+            value: !input minimum_level
+
+        - service: number.set_value
+          target:
+            entity_id: "number.{{ base_entity }}_maximumlevel"
+          data:
+            value: !input maximum_level
+
+        - service: number.set_value
+          target:
+            entity_id: "number.{{ base_entity }}_defaultlevellocal"
+          data:
+            value: !input default_level_local
+
+        - service: number.set_value
+          target:
+            entity_id: "number.{{ base_entity }}_defaultlevelremote"
+          data:
+            value: !input default_level_remote
+
+        # ==================== BUTTON BEHAVIOR ====================
+        - service: select.select_option
+          target:
+            entity_id: "select.{{ base_entity }}_buttondelay"
+          data:
+            option: !input button_delay
+
+        - service: select.select_option
+          target:
+            entity_id: "select.{{ base_entity }}_singletapbehavior"
+          data:
+            option: !input single_tap_behavior
+
+        - service: select.select_option
+          target:
+            entity_id: "select.{{ base_entity }}_doubletapuptoparam55"
+          data:
+            option: !input double_tap_up_to_param55
+
+        - service: select.select_option
+          target:
+            entity_id: "select.{{ base_entity }}_doubletapdowntoparam56"
+          data:
+            option: !input double_tap_down_to_param56
+
+        - service: number.set_value
+          target:
+            entity_id: "number.{{ base_entity }}_brightnesslevelfordoubletapup"
+          data:
+            value: !input brightness_level_for_double_tap_up
+
+        - service: number.set_value
+          target:
+            entity_id: "number.{{ base_entity }}_brightnesslevelfordoubletapdown"
+          data:
+            value: !input brightness_level_for_double_tap_down
+
+        - service: select.select_option
+          target:
+            entity_id: "select.{{ base_entity }}_doubletapclearnotifications"
+          data:
+            option: !input double_tap_clear_notifications
+
+        # ==================== SWITCH CONFIGURATION ====================
+        - service: select.select_option
+          target:
+            entity_id: "select.{{ base_entity }}_outputmode"
+          data:
+            option: !input output_mode
+
+        - service: select.select_option
+          target:
+            entity_id: "select.{{ base_entity }}_switchtype"
+          data:
+            option: !input switch_type
+
+        - service: select.select_option
+          target:
+            entity_id: "select.{{ base_entity }}_invertswitch"
+          data:
+            option: !input invert_switch
+
+        - service: select.select_option
+          target:
+            entity_id: "select.{{ base_entity }}_smartbulbmode"
+          data:
+            option: !input smart_bulb_mode
+
+        - service: select.select_option
+          target:
+            entity_id: "select.{{ base_entity }}_ledbarscaling"
+          data:
+            option: !input led_bar_scaling
+
+        - service: select.select_option
+          target:
+            entity_id: "select.{{ base_entity }}_onoffledmode"
+          data:
+            option: !input on_off_led_mode
+
+        - service: select.select_option
+          target:
+            entity_id: "select.{{ base_entity }}_firmwareupdateinprogressindicator"
+          data:
+            option: !input firmware_update_in_progress_indicator
+
+        - service: select.select_option
+          target:
+            entity_id: "select.{{ base_entity }}_relayclick"
+          data:
+            option: !input relay_click
+
+        # ==================== POWER & STATE ====================
+        - service: number.set_value
+          target:
+            entity_id: "number.{{ base_entity }}_stateafterpowerrestored"
+          data:
+            value: !input state_after_power_restored
+
+        - service: number.set_value
+          target:
+            entity_id: "number.{{ base_entity }}_autotimeroff"
+          data:
+            value: !input auto_timer_off
+
+        - service: number.set_value
+          target:
+            entity_id: "number.{{ base_entity }}_quickstarttime"
+          data:
+            value: !input quick_start_time
+
+        - service: number.set_value
+          target:
+            entity_id: "number.{{ base_entity }}_quickstartlevel"
+          data:
+            value: !input quick_start_level
+
+        # ==================== PROTECTION ====================
+        - service: select.select_option
+          target:
+            entity_id: "select.{{ base_entity }}_localprotection"
+          data:
+            option: !input local_protection
+
+        - service: select.select_option
+          target:
+            entity_id: "select.{{ base_entity }}_bindingofftoonsynclevel"
+          data:
+            option: !input binding_off_to_on_sync_level
+
+        - service: select.select_option
+          target:
+            entity_id: "select.{{ base_entity }}_auxswitchuniquescenes"
+          data:
+            option: !input aux_switch_unique_scenes
+
+        # ==================== POWER REPORTING ====================
+        - service: number.set_value
+          target:
+            entity_id: "number.{{ base_entity }}_activepowerreports"
+          data:
+            value: !input active_power_reports
+
+        - service: number.set_value
+          target:
+            entity_id: "number.{{ base_entity }}_periodicpowerandenergyreports"
+          data:
+            value: !input periodic_power_and_energy_reports
+
+        - service: number.set_value
+          target:
+            entity_id: "number.{{ base_entity }}_activeenergyreports"
+          data:
+            value: !input active_energy_reports
+
+        # ==================== FAN CONTROL ====================
+        - service: select.select_option
+          target:
+            entity_id: "select.{{ base_entity }}_fancontrolmode"
+          data:
+            option: !input fan_control_mode
+
+        - service: number.set_value
+          target:
+            entity_id: "number.{{ base_entity }}_lowlevelforfancontrolmode"
+          data:
+            value: !input low_level_for_fan_control_mode
+
+        - service: number.set_value
+          target:
+            entity_id: "number.{{ base_entity }}_mediumlevelforfancontrolmode"
+          data:
+            value: !input medium_level_for_fan_control_mode
+
+        - service: number.set_value
+          target:
+            entity_id: "number.{{ base_entity }}_highlevelforfancontrolmode"
+          data:
+            value: !input high_level_for_fan_control_mode
+
+        - service: number.set_value
+          target:
+            entity_id: "number.{{ base_entity }}_ledcolorforfancontrolmode"
+          data:
+            value: !input led_color_for_fan_control_mode
+
+        # ==================== ADVANCED ====================
+        - service: select.select_option
+          target:
+            entity_id: "select.{{ base_entity }}_higheroutputinnonneutral"
+          data:
+            option: !input higher_output_in_non_neutral
+
+        - service: select.select_option
+          target:
+            entity_id: "select.{{ base_entity }}_loadlevelindicatortimeout"
+          data:
+            option: !input load_level_indicator_timeout
+
+        - delay:
+            milliseconds: 100
+
+mode: parallel
+max: 10
+icon: mdi:light-switch-off
