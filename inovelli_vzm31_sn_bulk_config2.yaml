@@ -19,14 +19,12 @@ blueprint:
       selector:
         boolean: {}
 
-    notify_entity:
+    notify_service:
       name: Notification Service (Optional)
-      description: Select a notify service (e.g., notify.mobile_app_phone). Leave empty to use persistent notifications (bell icon).
+      description: Enter the full notify service name (e.g., notify.mobile_app_iphone, notify.telegram, notify.pushover). Leave empty to use persistent notifications (bell icon).
       default: ""
       selector:
-        entity:
-          filter:
-            - domain: notify
+        text:
 
     # ==================== TARGET SELECTION ====================
     target_switches:
@@ -849,8 +847,8 @@ variables:
   target_switches: !input target_switches
   configure_individual_leds: !input configure_individual_leds
   preview_mode: !input preview_mode
-  notify_entity: !input notify_entity
-  use_custom_notify: "{{ notify_entity != '' and notify_entity != none }}"
+  notify_service: !input notify_service
+  use_custom_notify: "{{ notify_service != '' and notify_service != none and notify_service | length > 0 }}"
 
 sequence:
   - repeat:
@@ -1118,9 +1116,7 @@ sequence:
                     - condition: template
                       value_template: "{{ use_custom_notify }}"
                   sequence:
-                    - service: notify.send_message
-                      target:
-                        entity_id: "{{ notify_entity }}"
+                    - service: "{{ notify_service }}"
                       data:
                         title: "🔍 VZM31-SN Preview"
                         message: >
@@ -1646,9 +1642,7 @@ sequence:
                       - condition: template
                         value_template: "{{ use_custom_notify }}"
                     sequence:
-                      - service: notify.send_message
-                        target:
-                          entity_id: "{{ notify_entity }}"
+                      - service: "{{ notify_service }}"
                         data:
                           title: "✅ VZM31-SN Configuration Applied"
                           message: >
