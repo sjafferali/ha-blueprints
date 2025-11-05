@@ -626,7 +626,7 @@ blueprint:
       description: Audible relay click (neutral on/off setups)
       default: "Disabled (Click Sound On)"
       selector:
-        select:
+select:
           options:
             - "Disabled (Click Sound On)"
             - "Enabled (Click Sound Off)"
