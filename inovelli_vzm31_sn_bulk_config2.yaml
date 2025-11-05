@@ -44,7 +44,7 @@ blueprint:
     led_intensity_when_on:
       name: LED Intensity When On
       description: LED bar brightness when switch is on (0-100%)
-      default: 75
+      default: 100
       selector:
         number:
           min: 0
@@ -55,7 +55,7 @@ blueprint:
     led_intensity_when_off:
       name: LED Intensity When Off
       description: LED bar brightness when switch is off (0-100%)
-      default: 25
+      default: 10
       selector:
         number:
           min: 0
@@ -363,7 +363,7 @@ blueprint:
     dimming_speed_up_local:
       name: Dimming Speed Up (Local)
       description: Switch-controlled dim-up speed (0-127, each unit = 100ms)
-      default: 25
+      default: 127
       selector:
         number:
           min: 0
@@ -373,7 +373,7 @@ blueprint:
     dimming_speed_down_remote:
       name: Dimming Speed Down (Remote)
       description: Hub-controlled dim-down speed (0-127, each unit = 100ms)
-      default: 25
+      default: 127
       selector:
         number:
           min: 0
@@ -383,7 +383,7 @@ blueprint:
     dimming_speed_down_local:
       name: Dimming Speed Down (Local)
       description: Switch-controlled dim-down speed (0-127, each unit = 100ms)
-      default: 25
+      default: 127
       selector:
         number:
           min: 0
@@ -393,7 +393,7 @@ blueprint:
     ramp_rate_off_to_on_remote:
       name: Ramp Rate Off to On (Remote)
       description: Hub turn-on transition speed (0-127, each unit = 100ms, 0 = instant)
-      default: 2
+      default: 127
       selector:
         number:
           min: 0
@@ -403,7 +403,7 @@ blueprint:
     ramp_rate_off_to_on_local:
       name: Ramp Rate Off to On (Local)
       description: Switch turn-on transition speed (0-127, each unit = 100ms, 0 = instant)
-      default: 2
+      default: 127
       selector:
         number:
           min: 0
@@ -413,7 +413,7 @@ blueprint:
     ramp_rate_on_to_off_remote:
       name: Ramp Rate On to Off (Remote)
       description: Hub turn-off transition speed (0-127, each unit = 100ms, 0 = instant)
-      default: 2
+      default: 127
       selector:
         number:
           min: 0
@@ -422,8 +422,8 @@ blueprint:
 
     ramp_rate_on_to_off_local:
       name: Ramp Rate On to Off (Local)
-      description: Switch turn-off transition speed (0-127, each unit = 100ms, 0 = instant)
-      default: 2
+      description: Switch turn-on transition speed (0-127, each unit = 100ms, 0 = instant)
+      default: 127
       selector:
         number:
           min: 0
