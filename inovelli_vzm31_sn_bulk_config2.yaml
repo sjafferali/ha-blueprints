@@ -950,148 +950,148 @@ sequence:
             changes: >
               {% set change_list = [] %}
               {% if current_led_color_on | string != input_led_color_on | string %}
-                {% set change_list = change_list + ['LED Color On: ' + current_led_color_on + ' → ' + input_led_color_on | string] %}
+                {% set change_list = change_list + ['LED Color On: ' + (current_led_color_on | string) + ' → ' + (input_led_color_on | string)] %}
               {% endif %}
               {% if current_led_color_off | string != input_led_color_off | string %}
-                {% set change_list = change_list + ['LED Color Off: ' + current_led_color_off + ' → ' + input_led_color_off | string] %}
+                {% set change_list = change_list + ['LED Color Off: ' + (current_led_color_off | string) + ' → ' + (input_led_color_off | string)] %}
               {% endif %}
               {% if current_led_intensity_on | string != input_led_intensity_on | string %}
-                {% set change_list = change_list + ['LED Intensity On: ' + current_led_intensity_on + '% → ' + input_led_intensity_on | string + '%'] %}
+                {% set change_list = change_list + ['LED Intensity On: ' + (current_led_intensity_on | string) + '% → ' + (input_led_intensity_on | string) + '%'] %}
               {% endif %}
               {% if current_led_intensity_off | string != input_led_intensity_off | string %}
-                {% set change_list = change_list + ['LED Intensity Off: ' + current_led_intensity_off + '% → ' + input_led_intensity_off | string + '%'] %}
+                {% set change_list = change_list + ['LED Intensity Off: ' + (current_led_intensity_off | string) + '% → ' + (input_led_intensity_off | string) + '%'] %}
               {% endif %}
               {% if current_dimming_speed_up_remote | string != input_dimming_speed_up_remote | string %}
-                {% set change_list = change_list + ['Dimming Up Remote: ' + current_dimming_speed_up_remote + ' → ' + input_dimming_speed_up_remote | string] %}
+                {% set change_list = change_list + ['Dimming Up Remote: ' + (current_dimming_speed_up_remote | string) + ' → ' + (input_dimming_speed_up_remote | string)] %}
               {% endif %}
               {% if current_dimming_speed_up_local | string != input_dimming_speed_up_local | string %}
-                {% set change_list = change_list + ['Dimming Up Local: ' + current_dimming_speed_up_local + ' → ' + input_dimming_speed_up_local | string] %}
+                {% set change_list = change_list + ['Dimming Up Local: ' + (current_dimming_speed_up_local | string) + ' → ' + (input_dimming_speed_up_local | string)] %}
               {% endif %}
               {% if current_dimming_speed_down_remote | string != input_dimming_speed_down_remote | string %}
-                {% set change_list = change_list + ['Dimming Down Remote: ' + current_dimming_speed_down_remote + ' → ' + input_dimming_speed_down_remote | string] %}
+                {% set change_list = change_list + ['Dimming Down Remote: ' + (current_dimming_speed_down_remote | string) + ' → ' + (input_dimming_speed_down_remote | string)] %}
               {% endif %}
               {% if current_dimming_speed_down_local | string != input_dimming_speed_down_local | string %}
-                {% set change_list = change_list + ['Dimming Down Local: ' + current_dimming_speed_down_local + ' → ' + input_dimming_speed_down_local | string] %}
+                {% set change_list = change_list + ['Dimming Down Local: ' + (current_dimming_speed_down_local | string) + ' → ' + (input_dimming_speed_down_local | string)] %}
               {% endif %}
               {% if current_ramp_off_on_remote | string != input_ramp_rate_off_to_on_remote | string %}
-                {% set change_list = change_list + ['Ramp Off→On Remote: ' + current_ramp_off_on_remote + ' → ' + input_ramp_rate_off_to_on_remote | string] %}
+                {% set change_list = change_list + ['Ramp Off→On Remote: ' + (current_ramp_off_on_remote | string) + ' → ' + (input_ramp_rate_off_to_on_remote | string)] %}
               {% endif %}
               {% if current_ramp_off_on_local | string != input_ramp_rate_off_to_on_local | string %}
-                {% set change_list = change_list + ['Ramp Off→On Local: ' + current_ramp_off_on_local + ' → ' + input_ramp_rate_off_to_on_local | string] %}
+                {% set change_list = change_list + ['Ramp Off→On Local: ' + (current_ramp_off_on_local | string) + ' → ' + (input_ramp_rate_off_to_on_local | string)] %}
               {% endif %}
               {% if current_ramp_on_off_remote | string != input_ramp_rate_on_to_off_remote | string %}
-                {% set change_list = change_list + ['Ramp On→Off Remote: ' + current_ramp_on_off_remote + ' → ' + input_ramp_rate_on_to_off_remote | string] %}
+                {% set change_list = change_list + ['Ramp On→Off Remote: ' + (current_ramp_on_off_remote | string) + ' → ' + (input_ramp_rate_on_to_off_remote | string)] %}
               {% endif %}
               {% if current_ramp_on_off_local | string != input_ramp_rate_on_to_off_local | string %}
-                {% set change_list = change_list + ['Ramp On→Off Local: ' + current_ramp_on_off_local + ' → ' + input_ramp_rate_on_to_off_local | string] %}
+                {% set change_list = change_list + ['Ramp On→Off Local: ' + (current_ramp_on_off_local | string) + ' → ' + (input_ramp_rate_on_to_off_local | string)] %}
               {% endif %}
               {% if current_minimum_level | string != input_minimum_level | string %}
-                {% set change_list = change_list + ['Minimum Level: ' + current_minimum_level + ' → ' + input_minimum_level | string] %}
+                {% set change_list = change_list + ['Minimum Level: ' + (current_minimum_level | string) + ' → ' + (input_minimum_level | string)] %}
               {% endif %}
               {% if current_maximum_level | string != input_maximum_level | string %}
-                {% set change_list = change_list + ['Maximum Level: ' + current_maximum_level + ' → ' + input_maximum_level | string] %}
+                {% set change_list = change_list + ['Maximum Level: ' + (current_maximum_level | string) + ' → ' + (input_maximum_level | string)] %}
               {% endif %}
               {% if current_default_level_local | string != input_default_level_local | string %}
-                {% set change_list = change_list + ['Default Level Local: ' + current_default_level_local + ' → ' + input_default_level_local | string] %}
+                {% set change_list = change_list + ['Default Level Local: ' + (current_default_level_local | string) + ' → ' + (input_default_level_local | string)] %}
               {% endif %}
               {% if current_default_level_remote | string != input_default_level_remote | string %}
-                {% set change_list = change_list + ['Default Level Remote: ' + current_default_level_remote + ' → ' + input_default_level_remote | string] %}
+                {% set change_list = change_list + ['Default Level Remote: ' + (current_default_level_remote | string) + ' → ' + (input_default_level_remote | string)] %}
               {% endif %}
               {% if current_button_delay | string != input_button_delay | string %}
-                {% set change_list = change_list + ['Button Delay: ' + current_button_delay + ' → ' + input_button_delay] %}
+                {% set change_list = change_list + ['Button Delay: ' + (current_button_delay | string) + ' → ' + (input_button_delay | string)] %}
               {% endif %}
               {% if current_single_tap | string != input_single_tap_behavior | string %}
-                {% set change_list = change_list + ['Single Tap: ' + current_single_tap + ' → ' + input_single_tap_behavior] %}
+                {% set change_list = change_list + ['Single Tap: ' + (current_single_tap | string) + ' → ' + (input_single_tap_behavior | string)] %}
               {% endif %}
               {% if current_double_tap_up | string != input_double_tap_up | string %}
-                {% set change_list = change_list + ['Double Tap Up: ' + current_double_tap_up + ' → ' + input_double_tap_up] %}
+                {% set change_list = change_list + ['Double Tap Up: ' + (current_double_tap_up | string) + ' → ' + (input_double_tap_up | string)] %}
               {% endif %}
               {% if current_double_tap_down | string != input_double_tap_down | string %}
-                {% set change_list = change_list + ['Double Tap Down: ' + current_double_tap_down + ' → ' + input_double_tap_down] %}
+                {% set change_list = change_list + ['Double Tap Down: ' + (current_double_tap_down | string) + ' → ' + (input_double_tap_down | string)] %}
               {% endif %}
               {% if current_brightness_double_tap_up | string != input_brightness_double_tap_up | string %}
-                {% set change_list = change_list + ['Double Tap Up Brightness: ' + current_brightness_double_tap_up + ' → ' + input_brightness_double_tap_up | string] %}
+                {% set change_list = change_list + ['Double Tap Up Brightness: ' + (current_brightness_double_tap_up | string) + ' → ' + (input_brightness_double_tap_up | string)] %}
               {% endif %}
               {% if current_brightness_double_tap_down | string != input_brightness_double_tap_down | string %}
-                {% set change_list = change_list + ['Double Tap Down Brightness: ' + current_brightness_double_tap_down + ' → ' + input_brightness_double_tap_down | string] %}
+                {% set change_list = change_list + ['Double Tap Down Brightness: ' + (current_brightness_double_tap_down | string) + ' → ' + (input_brightness_double_tap_down | string)] %}
               {% endif %}
               {% if current_double_tap_clear | string != input_double_tap_clear | string %}
-                {% set change_list = change_list + ['Double Tap Clear: ' + current_double_tap_clear + ' → ' + input_double_tap_clear] %}
+                {% set change_list = change_list + ['Double Tap Clear: ' + (current_double_tap_clear | string) + ' → ' + (input_double_tap_clear | string)] %}
               {% endif %}
               {% if current_output_mode | string != input_output_mode | string %}
-                {% set change_list = change_list + ['Output Mode: ' + current_output_mode + ' → ' + input_output_mode] %}
+                {% set change_list = change_list + ['Output Mode: ' + (current_output_mode | string) + ' → ' + (input_output_mode | string)] %}
               {% endif %}
               {% if current_switch_type | string != input_switch_type | string %}
-                {% set change_list = change_list + ['Switch Type: ' + current_switch_type + ' → ' + input_switch_type] %}
+                {% set change_list = change_list + ['Switch Type: ' + (current_switch_type | string) + ' → ' + (input_switch_type | string)] %}
               {% endif %}
               {% if current_invert_switch | string != input_invert_switch | string %}
-                {% set change_list = change_list + ['Invert Switch: ' + current_invert_switch + ' → ' + input_invert_switch] %}
+                {% set change_list = change_list + ['Invert Switch: ' + (current_invert_switch | string) + ' → ' + (input_invert_switch | string)] %}
               {% endif %}
               {% if current_smart_bulb_mode | string != input_smart_bulb_mode | string %}
-                {% set change_list = change_list + ['Smart Bulb Mode: ' + current_smart_bulb_mode + ' → ' + input_smart_bulb_mode] %}
+                {% set change_list = change_list + ['Smart Bulb Mode: ' + (current_smart_bulb_mode | string) + ' → ' + (input_smart_bulb_mode | string)] %}
               {% endif %}
               {% if current_led_bar_scaling | string != input_led_bar_scaling | string %}
-                {% set change_list = change_list + ['LED Bar Scaling: ' + current_led_bar_scaling + ' → ' + input_led_bar_scaling] %}
+                {% set change_list = change_list + ['LED Bar Scaling: ' + (current_led_bar_scaling | string) + ' → ' + (input_led_bar_scaling | string)] %}
               {% endif %}
               {% if current_on_off_led_mode | string != input_on_off_led_mode | string %}
-                {% set change_list = change_list + ['On/Off LED Mode: ' + current_on_off_led_mode + ' → ' + input_on_off_led_mode] %}
+                {% set change_list = change_list + ['On/Off LED Mode: ' + (current_on_off_led_mode | string) + ' → ' + (input_on_off_led_mode | string)] %}
               {% endif %}
               {% if current_firmware_update | string != input_firmware_update_indicator | string %}
-                {% set change_list = change_list + ['Firmware Update Indicator: ' + current_firmware_update + ' → ' + input_firmware_update_indicator] %}
+                {% set change_list = change_list + ['Firmware Update Indicator: ' + (current_firmware_update | string) + ' → ' + (input_firmware_update_indicator | string)] %}
               {% endif %}
               {% if current_relay_click | string != input_relay_click | string %}
-                {% set change_list = change_list + ['Relay Click: ' + current_relay_click + ' → ' + input_relay_click] %}
+                {% set change_list = change_list + ['Relay Click: ' + (current_relay_click | string) + ' → ' + (input_relay_click | string)] %}
               {% endif %}
               {% if current_state_after_power | string != input_state_after_power | string %}
-                {% set change_list = change_list + ['State After Power: ' + current_state_after_power + ' → ' + input_state_after_power | string] %}
+                {% set change_list = change_list + ['State After Power: ' + (current_state_after_power | string) + ' → ' + (input_state_after_power | string)] %}
               {% endif %}
               {% if current_auto_timer_off | string != input_auto_timer_off | string %}
-                {% set change_list = change_list + ['Auto Timer Off: ' + current_auto_timer_off + 's → ' + input_auto_timer_off | string + 's'] %}
+                {% set change_list = change_list + ['Auto Timer Off: ' + (current_auto_timer_off | string) + 's → ' + (input_auto_timer_off | string) + 's'] %}
               {% endif %}
               {% if current_quick_start_time | string != input_quick_start_time | string %}
-                {% set change_list = change_list + ['Quick Start Time: ' + current_quick_start_time + ' → ' + input_quick_start_time | string] %}
+                {% set change_list = change_list + ['Quick Start Time: ' + (current_quick_start_time | string) + ' → ' + (input_quick_start_time | string)] %}
               {% endif %}
               {% if current_quick_start_level | string != input_quick_start_level | string %}
-                {% set change_list = change_list + ['Quick Start Level: ' + current_quick_start_level + ' → ' + input_quick_start_level | string] %}
+                {% set change_list = change_list + ['Quick Start Level: ' + (current_quick_start_level | string) + ' → ' + (input_quick_start_level | string)] %}
               {% endif %}
               {% if current_local_protection | string != input_local_protection | string %}
-                {% set change_list = change_list + ['Local Protection: ' + current_local_protection + ' → ' + input_local_protection] %}
+                {% set change_list = change_list + ['Local Protection: ' + (current_local_protection | string) + ' → ' + (input_local_protection | string)] %}
               {% endif %}
               {% if current_binding_sync | string != input_binding_sync | string %}
-                {% set change_list = change_list + ['Binding Sync: ' + current_binding_sync + ' → ' + input_binding_sync] %}
+                {% set change_list = change_list + ['Binding Sync: ' + (current_binding_sync | string) + ' → ' + (input_binding_sync | string)] %}
               {% endif %}
               {% if current_aux_switch_scenes | string != input_aux_switch_scenes | string %}
-                {% set change_list = change_list + ['Aux Switch Scenes: ' + current_aux_switch_scenes + ' → ' + input_aux_switch_scenes] %}
+                {% set change_list = change_list + ['Aux Switch Scenes: ' + (current_aux_switch_scenes | string) + ' → ' + (input_aux_switch_scenes | string)] %}
               {% endif %}
               {% if current_active_power_reports | string != input_active_power_reports | string %}
-                {% set change_list = change_list + ['Active Power Reports: ' + current_active_power_reports + '% → ' + input_active_power_reports | string + '%'] %}
+                {% set change_list = change_list + ['Active Power Reports: ' + (current_active_power_reports | string) + '% → ' + (input_active_power_reports | string) + '%'] %}
               {% endif %}
               {% if current_periodic_power_reports | string != input_periodic_power_reports | string %}
-                {% set change_list = change_list + ['Periodic Power Reports: ' + current_periodic_power_reports + 's → ' + input_periodic_power_reports | string + 's'] %}
+                {% set change_list = change_list + ['Periodic Power Reports: ' + (current_periodic_power_reports | string) + 's → ' + (input_periodic_power_reports | string) + 's'] %}
               {% endif %}
               {% if current_active_energy_reports | string != input_active_energy_reports | string %}
-                {% set change_list = change_list + ['Active Energy Reports: ' + current_active_energy_reports + ' → ' + input_active_energy_reports | string] %}
+                {% set change_list = change_list + ['Active Energy Reports: ' + (current_active_energy_reports | string) + ' → ' + (input_active_energy_reports | string)] %}
               {% endif %}
               {% if current_fan_control_mode | string != input_fan_control_mode | string %}
-                {% set change_list = change_list + ['Fan Control Mode: ' + current_fan_control_mode + ' → ' + input_fan_control_mode] %}
+                {% set change_list = change_list + ['Fan Control Mode: ' + (current_fan_control_mode | string) + ' → ' + (input_fan_control_mode | string)] %}
               {% endif %}
               {% if current_fan_low_level | string != input_fan_low_level | string %}
-                {% set change_list = change_list + ['Fan Low Level: ' + current_fan_low_level + ' → ' + input_fan_low_level | string] %}
+                {% set change_list = change_list + ['Fan Low Level: ' + (current_fan_low_level | string) + ' → ' + (input_fan_low_level | string)] %}
               {% endif %}
               {% if current_fan_medium_level | string != input_fan_medium_level | string %}
-                {% set change_list = change_list + ['Fan Medium Level: ' + current_fan_medium_level + ' → ' + input_fan_medium_level | string] %}
+                {% set change_list = change_list + ['Fan Medium Level: ' + (current_fan_medium_level | string) + ' → ' + (input_fan_medium_level | string)] %}
               {% endif %}
               {% if current_fan_high_level | string != input_fan_high_level | string %}
-                {% set change_list = change_list + ['Fan High Level: ' + current_fan_high_level + ' → ' + input_fan_high_level | string] %}
+                {% set change_list = change_list + ['Fan High Level: ' + (current_fan_high_level | string) + ' → ' + (input_fan_high_level | string)] %}
               {% endif %}
               {% if current_fan_led_color | string != input_fan_led_color | string %}
-                {% set change_list = change_list + ['Fan LED Color: ' + current_fan_led_color + ' → ' + input_fan_led_color | string] %}
+                {% set change_list = change_list + ['Fan LED Color: ' + (current_fan_led_color | string) + ' → ' + (input_fan_led_color | string)] %}
               {% endif %}
               {% if current_higher_output | string != input_higher_output | string %}
-                {% set change_list = change_list + ['Higher Output Non-Neutral: ' + current_higher_output + ' → ' + input_higher_output] %}
+                {% set change_list = change_list + ['Higher Output Non-Neutral: ' + (current_higher_output | string) + ' → ' + (input_higher_output | string)] %}
               {% endif %}
               {% if current_load_indicator | string != input_load_indicator_timeout | string %}
-                {% set change_list = change_list + ['Load Indicator Timeout: ' + current_load_indicator + ' → ' + input_load_indicator_timeout] %}
+                {% set change_list = change_list + ['Load Indicator Timeout: ' + (current_load_indicator | string) + ' → ' + (input_load_indicator_timeout | string)] %}
               {% endif %}
               {{ change_list }}
             change_count: "{{ changes | length }}"
