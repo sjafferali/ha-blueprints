@@ -11,6 +11,15 @@ blueprint:
     min_version: 2024.1.0
 
   input:
+    # ==================== EXECUTION MODE ====================
+    preview_mode:
+      name: Preview Mode (Dry Run)
+      description: When enabled, shows what WOULD change without applying. Disable to apply changes. Perfect for detecting configuration drift.
+      default: true
+      selector:
+        boolean: {}
+
+    # ==================== TARGET SELECTION ====================
     target_switches:
       name: Target Switches
       description: Select the VZM31-SN switches to configure (select the light entities)
@@ -21,6 +30,7 @@ blueprint:
             - integration: mqtt
               domain: light
 
+    # ==================== LED SETTINGS - GLOBAL ====================
     led_color_when_on:
       name: LED Color When On
       description: LED bar color when switch is on (0-255)
@@ -829,483 +839,762 @@ blueprint:
 variables:
   target_switches: !input target_switches
   configure_individual_leds: !input configure_individual_leds
+  preview_mode: !input preview_mode
 
 sequence:
   - repeat:
       for_each: "{{ target_switches }}"
       sequence:
         - variables:
-            device_name: "{{ state_attr(repeat.item, 'friendly_name') | replace(' ', '_') | lower }}"
+            device_name: "{{ state_attr(repeat.item, 'friendly_name') }}"
             base_entity: "{{ repeat.item | replace('light.', '') }}"
+            # Input values
+            input_led_color_on: !input led_color_when_on
+            input_led_color_off: !input led_color_when_off
+            input_led_intensity_on: !input led_intensity_when_on
+            input_led_intensity_off: !input led_intensity_when_off
+            input_dimming_speed_up_remote: !input dimming_speed_up_remote
+            input_dimming_speed_up_local: !input dimming_speed_up_local
+            input_dimming_speed_down_remote: !input dimming_speed_down_remote
+            input_dimming_speed_down_local: !input dimming_speed_down_local
+            input_ramp_rate_off_to_on_remote: !input ramp_rate_off_to_on_remote
+            input_ramp_rate_off_to_on_local: !input ramp_rate_off_to_on_local
+            input_ramp_rate_on_to_off_remote: !input ramp_rate_on_to_off_remote
+            input_ramp_rate_on_to_off_local: !input ramp_rate_on_to_off_local
+            input_minimum_level: !input minimum_level
+            input_maximum_level: !input maximum_level
+            input_default_level_local: !input default_level_local
+            input_default_level_remote: !input default_level_remote
+            input_button_delay: !input button_delay
+            input_single_tap_behavior: !input single_tap_behavior
+            input_double_tap_up: !input double_tap_up_to_param55
+            input_double_tap_down: !input double_tap_down_to_param56
+            input_brightness_double_tap_up: !input brightness_level_for_double_tap_up
+            input_brightness_double_tap_down: !input brightness_level_for_double_tap_down
+            input_double_tap_clear: !input double_tap_clear_notifications
+            input_output_mode: !input output_mode
+            input_switch_type: !input switch_type
+            input_invert_switch: !input invert_switch
+            input_smart_bulb_mode: !input smart_bulb_mode
+            input_led_bar_scaling: !input led_bar_scaling
+            input_on_off_led_mode: !input on_off_led_mode
+            input_firmware_update_indicator: !input firmware_update_in_progress_indicator
+            input_relay_click: !input relay_click
+            input_state_after_power: !input state_after_power_restored
+            input_auto_timer_off: !input auto_timer_off
+            input_quick_start_time: !input quick_start_time
+            input_quick_start_level: !input quick_start_level
+            input_local_protection: !input local_protection
+            input_binding_sync: !input binding_off_to_on_sync_level
+            input_aux_switch_scenes: !input aux_switch_unique_scenes
+            input_active_power_reports: !input active_power_reports
+            input_periodic_power_reports: !input periodic_power_and_energy_reports
+            input_active_energy_reports: !input active_energy_reports
+            input_fan_control_mode: !input fan_control_mode
+            input_fan_low_level: !input low_level_for_fan_control_mode
+            input_fan_medium_level: !input medium_level_for_fan_control_mode
+            input_fan_high_level: !input high_level_for_fan_control_mode
+            input_fan_led_color: !input led_color_for_fan_control_mode
+            input_higher_output: !input higher_output_in_non_neutral
+            input_load_indicator_timeout: !input load_level_indicator_timeout
+            # Current values from entities
+            current_led_color_on: "{{ states('number.' + base_entity + '_ledcolorwhenon') }}"
+            current_led_color_off: "{{ states('number.' + base_entity + '_ledcolorwhenoff') }}"
+            current_led_intensity_on: "{{ states('number.' + base_entity + '_ledintensitywhenon') }}"
+            current_led_intensity_off: "{{ states('number.' + base_entity + '_ledintensitywhenoff') }}"
+            current_dimming_speed_up_remote: "{{ states('number.' + base_entity + '_dimmingspeedupremote') }}"
+            current_dimming_speed_up_local: "{{ states('number.' + base_entity + '_dimmingspeeduplocal') }}"
+            current_dimming_speed_down_remote: "{{ states('number.' + base_entity + '_dimmingspeeddownremote') }}"
+            current_dimming_speed_down_local: "{{ states('number.' + base_entity + '_dimmingspeeddownlocal') }}"
+            current_ramp_off_on_remote: "{{ states('number.' + base_entity + '_ramprateofftoonremote') }}"
+            current_ramp_off_on_local: "{{ states('number.' + base_entity + '_ramprateofftoonlocal') }}"
+            current_ramp_on_off_remote: "{{ states('number.' + base_entity + '_ramprateontooffremote') }}"
+            current_ramp_on_off_local: "{{ states('number.' + base_entity + '_ramprateontoofflocal') }}"
+            current_minimum_level: "{{ states('number.' + base_entity + '_minimumlevel') }}"
+            current_maximum_level: "{{ states('number.' + base_entity + '_maximumlevel') }}"
+            current_default_level_local: "{{ states('number.' + base_entity + '_defaultlevellocal') }}"
+            current_default_level_remote: "{{ states('number.' + base_entity + '_defaultlevelremote') }}"
+            current_button_delay: "{{ states('select.' + base_entity + '_buttondelay') }}"
+            current_single_tap: "{{ states('select.' + base_entity + '_singletapbehavior') }}"
+            current_double_tap_up: "{{ states('select.' + base_entity + '_doubletapuptoparam55') }}"
+            current_double_tap_down: "{{ states('select.' + base_entity + '_doubletapdowntoparam56') }}"
+            current_brightness_double_tap_up: "{{ states('number.' + base_entity + '_brightnesslevelfordoubletapup') }}"
+            current_brightness_double_tap_down: "{{ states('number.' + base_entity + '_brightnesslevelfordoubletapdown') }}"
+            current_double_tap_clear: "{{ states('select.' + base_entity + '_doubletapclearnotifications') }}"
+            current_output_mode: "{{ states('select.' + base_entity + '_outputmode') }}"
+            current_switch_type: "{{ states('select.' + base_entity + '_switchtype') }}"
+            current_invert_switch: "{{ states('select.' + base_entity + '_invertswitch') }}"
+            current_smart_bulb_mode: "{{ states('select.' + base_entity + '_smartbulbmode') }}"
+            current_led_bar_scaling: "{{ states('select.' + base_entity + '_ledbarscaling') }}"
+            current_on_off_led_mode: "{{ states('select.' + base_entity + '_onoffledmode') }}"
+            current_firmware_update: "{{ states('select.' + base_entity + '_firmwareupdateinprogressindicator') }}"
+            current_relay_click: "{{ states('select.' + base_entity + '_relayclick') }}"
+            current_state_after_power: "{{ states('number.' + base_entity + '_stateafterpowerrestored') }}"
+            current_auto_timer_off: "{{ states('number.' + base_entity + '_autotimeroff') }}"
+            current_quick_start_time: "{{ states('number.' + base_entity + '_quickstarttime') }}"
+            current_quick_start_level: "{{ states('number.' + base_entity + '_quickstartlevel') }}"
+            current_local_protection: "{{ states('select.' + base_entity + '_localprotection') }}"
+            current_binding_sync: "{{ states('select.' + base_entity + '_bindingofftoonsynclevel') }}"
+            current_aux_switch_scenes: "{{ states('select.' + base_entity + '_auxswitchuniquescenes') }}"
+            current_active_power_reports: "{{ states('number.' + base_entity + '_activepowerreports') }}"
+            current_periodic_power_reports: "{{ states('number.' + base_entity + '_periodicpowerandenergyreports') }}"
+            current_active_energy_reports: "{{ states('number.' + base_entity + '_activeenergyreports') }}"
+            current_fan_control_mode: "{{ states('select.' + base_entity + '_fancontrolmode') }}"
+            current_fan_low_level: "{{ states('number.' + base_entity + '_lowlevelforfancontrolmode') }}"
+            current_fan_medium_level: "{{ states('number.' + base_entity + '_mediumlevelforfancontrolmode') }}"
+            current_fan_high_level: "{{ states('number.' + base_entity + '_highlevelforfancontrolmode') }}"
+            current_fan_led_color: "{{ states('number.' + base_entity + '_ledcolorforfancontrolmode') }}"
+            current_higher_output: "{{ states('select.' + base_entity + '_higheroutputinnonneutral') }}"
+            current_load_indicator: "{{ states('select.' + base_entity + '_loadlevelindicatortimeout') }}"
+            # Build changes list - only include items that differ
+            changes: >
+              {% set change_list = [] %}
+              {% if current_led_color_on | string != input_led_color_on | string %}
+                {% set change_list = change_list + ['LED Color On: ' + current_led_color_on + ' → ' + input_led_color_on | string] %}
+              {% endif %}
+              {% if current_led_color_off | string != input_led_color_off | string %}
+                {% set change_list = change_list + ['LED Color Off: ' + current_led_color_off + ' → ' + input_led_color_off | string] %}
+              {% endif %}
+              {% if current_led_intensity_on | string != input_led_intensity_on | string %}
+                {% set change_list = change_list + ['LED Intensity On: ' + current_led_intensity_on + '% → ' + input_led_intensity_on | string + '%'] %}
+              {% endif %}
+              {% if current_led_intensity_off | string != input_led_intensity_off | string %}
+                {% set change_list = change_list + ['LED Intensity Off: ' + current_led_intensity_off + '% → ' + input_led_intensity_off | string + '%'] %}
+              {% endif %}
+              {% if current_dimming_speed_up_remote | string != input_dimming_speed_up_remote | string %}
+                {% set change_list = change_list + ['Dimming Up Remote: ' + current_dimming_speed_up_remote + ' → ' + input_dimming_speed_up_remote | string] %}
+              {% endif %}
+              {% if current_dimming_speed_up_local | string != input_dimming_speed_up_local | string %}
+                {% set change_list = change_list + ['Dimming Up Local: ' + current_dimming_speed_up_local + ' → ' + input_dimming_speed_up_local | string] %}
+              {% endif %}
+              {% if current_dimming_speed_down_remote | string != input_dimming_speed_down_remote | string %}
+                {% set change_list = change_list + ['Dimming Down Remote: ' + current_dimming_speed_down_remote + ' → ' + input_dimming_speed_down_remote | string] %}
+              {% endif %}
+              {% if current_dimming_speed_down_local | string != input_dimming_speed_down_local | string %}
+                {% set change_list = change_list + ['Dimming Down Local: ' + current_dimming_speed_down_local + ' → ' + input_dimming_speed_down_local | string] %}
+              {% endif %}
+              {% if current_ramp_off_on_remote | string != input_ramp_rate_off_to_on_remote | string %}
+                {% set change_list = change_list + ['Ramp Off→On Remote: ' + current_ramp_off_on_remote + ' → ' + input_ramp_rate_off_to_on_remote | string] %}
+              {% endif %}
+              {% if current_ramp_off_on_local | string != input_ramp_rate_off_to_on_local | string %}
+                {% set change_list = change_list + ['Ramp Off→On Local: ' + current_ramp_off_on_local + ' → ' + input_ramp_rate_off_to_on_local | string] %}
+              {% endif %}
+              {% if current_ramp_on_off_remote | string != input_ramp_rate_on_to_off_remote | string %}
+                {% set change_list = change_list + ['Ramp On→Off Remote: ' + current_ramp_on_off_remote + ' → ' + input_ramp_rate_on_to_off_remote | string] %}
+              {% endif %}
+              {% if current_ramp_on_off_local | string != input_ramp_rate_on_to_off_local | string %}
+                {% set change_list = change_list + ['Ramp On→Off Local: ' + current_ramp_on_off_local + ' → ' + input_ramp_rate_on_to_off_local | string] %}
+              {% endif %}
+              {% if current_minimum_level | string != input_minimum_level | string %}
+                {% set change_list = change_list + ['Minimum Level: ' + current_minimum_level + ' → ' + input_minimum_level | string] %}
+              {% endif %}
+              {% if current_maximum_level | string != input_maximum_level | string %}
+                {% set change_list = change_list + ['Maximum Level: ' + current_maximum_level + ' → ' + input_maximum_level | string] %}
+              {% endif %}
+              {% if current_default_level_local | string != input_default_level_local | string %}
+                {% set change_list = change_list + ['Default Level Local: ' + current_default_level_local + ' → ' + input_default_level_local | string] %}
+              {% endif %}
+              {% if current_default_level_remote | string != input_default_level_remote | string %}
+                {% set change_list = change_list + ['Default Level Remote: ' + current_default_level_remote + ' → ' + input_default_level_remote | string] %}
+              {% endif %}
+              {% if current_button_delay | string != input_button_delay | string %}
+                {% set change_list = change_list + ['Button Delay: ' + current_button_delay + ' → ' + input_button_delay] %}
+              {% endif %}
+              {% if current_single_tap | string != input_single_tap_behavior | string %}
+                {% set change_list = change_list + ['Single Tap: ' + current_single_tap + ' → ' + input_single_tap_behavior] %}
+              {% endif %}
+              {% if current_double_tap_up | string != input_double_tap_up | string %}
+                {% set change_list = change_list + ['Double Tap Up: ' + current_double_tap_up + ' → ' + input_double_tap_up] %}
+              {% endif %}
+              {% if current_double_tap_down | string != input_double_tap_down | string %}
+                {% set change_list = change_list + ['Double Tap Down: ' + current_double_tap_down + ' → ' + input_double_tap_down] %}
+              {% endif %}
+              {% if current_brightness_double_tap_up | string != input_brightness_double_tap_up | string %}
+                {% set change_list = change_list + ['Double Tap Up Brightness: ' + current_brightness_double_tap_up + ' → ' + input_brightness_double_tap_up | string] %}
+              {% endif %}
+              {% if current_brightness_double_tap_down | string != input_brightness_double_tap_down | string %}
+                {% set change_list = change_list + ['Double Tap Down Brightness: ' + current_brightness_double_tap_down + ' → ' + input_brightness_double_tap_down | string] %}
+              {% endif %}
+              {% if current_double_tap_clear | string != input_double_tap_clear | string %}
+                {% set change_list = change_list + ['Double Tap Clear: ' + current_double_tap_clear + ' → ' + input_double_tap_clear] %}
+              {% endif %}
+              {% if current_output_mode | string != input_output_mode | string %}
+                {% set change_list = change_list + ['Output Mode: ' + current_output_mode + ' → ' + input_output_mode] %}
+              {% endif %}
+              {% if current_switch_type | string != input_switch_type | string %}
+                {% set change_list = change_list + ['Switch Type: ' + current_switch_type + ' → ' + input_switch_type] %}
+              {% endif %}
+              {% if current_invert_switch | string != input_invert_switch | string %}
+                {% set change_list = change_list + ['Invert Switch: ' + current_invert_switch + ' → ' + input_invert_switch] %}
+              {% endif %}
+              {% if current_smart_bulb_mode | string != input_smart_bulb_mode | string %}
+                {% set change_list = change_list + ['Smart Bulb Mode: ' + current_smart_bulb_mode + ' → ' + input_smart_bulb_mode] %}
+              {% endif %}
+              {% if current_led_bar_scaling | string != input_led_bar_scaling | string %}
+                {% set change_list = change_list + ['LED Bar Scaling: ' + current_led_bar_scaling + ' → ' + input_led_bar_scaling] %}
+              {% endif %}
+              {% if current_on_off_led_mode | string != input_on_off_led_mode | string %}
+                {% set change_list = change_list + ['On/Off LED Mode: ' + current_on_off_led_mode + ' → ' + input_on_off_led_mode] %}
+              {% endif %}
+              {% if current_firmware_update | string != input_firmware_update_indicator | string %}
+                {% set change_list = change_list + ['Firmware Update Indicator: ' + current_firmware_update + ' → ' + input_firmware_update_indicator] %}
+              {% endif %}
+              {% if current_relay_click | string != input_relay_click | string %}
+                {% set change_list = change_list + ['Relay Click: ' + current_relay_click + ' → ' + input_relay_click] %}
+              {% endif %}
+              {% if current_state_after_power | string != input_state_after_power | string %}
+                {% set change_list = change_list + ['State After Power: ' + current_state_after_power + ' → ' + input_state_after_power | string] %}
+              {% endif %}
+              {% if current_auto_timer_off | string != input_auto_timer_off | string %}
+                {% set change_list = change_list + ['Auto Timer Off: ' + current_auto_timer_off + 's → ' + input_auto_timer_off | string + 's'] %}
+              {% endif %}
+              {% if current_quick_start_time | string != input_quick_start_time | string %}
+                {% set change_list = change_list + ['Quick Start Time: ' + current_quick_start_time + ' → ' + input_quick_start_time | string] %}
+              {% endif %}
+              {% if current_quick_start_level | string != input_quick_start_level | string %}
+                {% set change_list = change_list + ['Quick Start Level: ' + current_quick_start_level + ' → ' + input_quick_start_level | string] %}
+              {% endif %}
+              {% if current_local_protection | string != input_local_protection | string %}
+                {% set change_list = change_list + ['Local Protection: ' + current_local_protection + ' → ' + input_local_protection] %}
+              {% endif %}
+              {% if current_binding_sync | string != input_binding_sync | string %}
+                {% set change_list = change_list + ['Binding Sync: ' + current_binding_sync + ' → ' + input_binding_sync] %}
+              {% endif %}
+              {% if current_aux_switch_scenes | string != input_aux_switch_scenes | string %}
+                {% set change_list = change_list + ['Aux Switch Scenes: ' + current_aux_switch_scenes + ' → ' + input_aux_switch_scenes] %}
+              {% endif %}
+              {% if current_active_power_reports | string != input_active_power_reports | string %}
+                {% set change_list = change_list + ['Active Power Reports: ' + current_active_power_reports + '% → ' + input_active_power_reports | string + '%'] %}
+              {% endif %}
+              {% if current_periodic_power_reports | string != input_periodic_power_reports | string %}
+                {% set change_list = change_list + ['Periodic Power Reports: ' + current_periodic_power_reports + 's → ' + input_periodic_power_reports | string + 's'] %}
+              {% endif %}
+              {% if current_active_energy_reports | string != input_active_energy_reports | string %}
+                {% set change_list = change_list + ['Active Energy Reports: ' + current_active_energy_reports + ' → ' + input_active_energy_reports | string] %}
+              {% endif %}
+              {% if current_fan_control_mode | string != input_fan_control_mode | string %}
+                {% set change_list = change_list + ['Fan Control Mode: ' + current_fan_control_mode + ' → ' + input_fan_control_mode] %}
+              {% endif %}
+              {% if current_fan_low_level | string != input_fan_low_level | string %}
+                {% set change_list = change_list + ['Fan Low Level: ' + current_fan_low_level + ' → ' + input_fan_low_level | string] %}
+              {% endif %}
+              {% if current_fan_medium_level | string != input_fan_medium_level | string %}
+                {% set change_list = change_list + ['Fan Medium Level: ' + current_fan_medium_level + ' → ' + input_fan_medium_level | string] %}
+              {% endif %}
+              {% if current_fan_high_level | string != input_fan_high_level | string %}
+                {% set change_list = change_list + ['Fan High Level: ' + current_fan_high_level + ' → ' + input_fan_high_level | string] %}
+              {% endif %}
+              {% if current_fan_led_color | string != input_fan_led_color | string %}
+                {% set change_list = change_list + ['Fan LED Color: ' + current_fan_led_color + ' → ' + input_fan_led_color | string] %}
+              {% endif %}
+              {% if current_higher_output | string != input_higher_output | string %}
+                {% set change_list = change_list + ['Higher Output Non-Neutral: ' + current_higher_output + ' → ' + input_higher_output] %}
+              {% endif %}
+              {% if current_load_indicator | string != input_load_indicator_timeout | string %}
+                {% set change_list = change_list + ['Load Indicator Timeout: ' + current_load_indicator + ' → ' + input_load_indicator_timeout] %}
+              {% endif %}
+              {{ change_list }}
+            change_count: "{{ changes | length }}"
 
-        - service: number.set_value
-          target:
-            entity_id: "number.{{ base_entity }}_ledcolorwhenon"
-          data:
-            value: !input led_color_when_on
-
-        - service: number.set_value
-          target:
-            entity_id: "number.{{ base_entity }}_ledcolorwhenoff"
-          data:
-            value: !input led_color_when_off
-
-        - service: number.set_value
-          target:
-            entity_id: "number.{{ base_entity }}_ledintensitywhenon"
-          data:
-            value: !input led_intensity_when_on
-
-        - service: number.set_value
-          target:
-            entity_id: "number.{{ base_entity }}_ledintensitywhenoff"
-          data:
-            value: !input led_intensity_when_off
-
+        # ==================== PREVIEW MODE ====================
         - if:
             - condition: template
-              value_template: "{{ configure_individual_leds }}"
+              value_template: "{{ preview_mode }}"
           then:
-            - service: number.set_value
-              target:
-                entity_id: "number.{{ base_entity }}_defaultled1colorwhenon"
+            - service: persistent_notification.create
               data:
-                value: !input led1_color_when_on
-
-            - service: number.set_value
-              target:
-                entity_id: "number.{{ base_entity }}_defaultled1colorwhenoff"
-              data:
-                value: !input led1_color_when_off
-
-            - service: number.set_value
-              target:
-                entity_id: "number.{{ base_entity }}_defaultled1intensitywhenon"
-              data:
-                value: !input led1_intensity_when_on
-
-            - service: number.set_value
-              target:
-                entity_id: "number.{{ base_entity }}_defaultled1intensitywhenoff"
-              data:
-                value: !input led1_intensity_when_off
-
-            - service: number.set_value
-              target:
-                entity_id: "number.{{ base_entity }}_defaultled2colorwhenon"
-              data:
-                value: !input led2_color_when_on
-
-            - service: number.set_value
-              target:
-                entity_id: "number.{{ base_entity }}_defaultled2colorwhenoff"
-              data:
-                value: !input led2_color_when_off
-
-            - service: number.set_value
-              target:
-                entity_id: "number.{{ base_entity }}_defaultled2intensitywhenon"
-              data:
-                value: !input led2_intensity_when_on
-
-            - service: number.set_value
-              target:
-                entity_id: "number.{{ base_entity }}_defaultled2intensitywhenoff"
-              data:
-                value: !input led2_intensity_when_off
-
-            - service: number.set_value
-              target:
-                entity_id: "number.{{ base_entity }}_defaultled3colorwhenon"
-              data:
-                value: !input led3_color_when_on
-
-            - service: number.set_value
-              target:
-                entity_id: "number.{{ base_entity }}_defaultled3colorwhenoff"
-              data:
-                value: !input led3_color_when_off
-
-            - service: number.set_value
-              target:
-                entity_id: "number.{{ base_entity }}_defaultled3intensitywhenon"
-              data:
-                value: !input led3_intensity_when_on
-
-            - service: number.set_value
-              target:
-                entity_id: "number.{{ base_entity }}_defaultled3intensitywhenoff"
-              data:
-                value: !input led3_intensity_when_off
-
-            - service: number.set_value
-              target:
-                entity_id: "number.{{ base_entity }}_defaultled4colorwhenon"
-              data:
-                value: !input led4_color_when_on
-
-            - service: number.set_value
-              target:
-                entity_id: "number.{{ base_entity }}_defaultled4colorwhenoff"
-              data:
-                value: !input led4_color_when_off
-
-            - service: number.set_value
-              target:
-                entity_id: "number.{{ base_entity }}_defaultled4intensitywhenon"
-              data:
-                value: !input led4_intensity_when_on
-
-            - service: number.set_value
-              target:
-                entity_id: "number.{{ base_entity }}_defaultled4intensitywhenoff"
-              data:
-                value: !input led4_intensity_when_off
-
-            - service: number.set_value
-              target:
-                entity_id: "number.{{ base_entity }}_defaultled5colorwhenon"
-              data:
-                value: !input led5_color_when_on
-
-            - service: number.set_value
-              target:
-                entity_id: "number.{{ base_entity }}_defaultled5colorwhenoff"
-              data:
-                value: !input led5_color_when_off
-
-            - service: number.set_value
-              target:
-                entity_id: "number.{{ base_entity }}_defaultled5intensitywhenon"
-              data:
-                value: !input led5_intensity_when_on
-
-            - service: number.set_value
-              target:
-                entity_id: "number.{{ base_entity }}_defaultled5intensitywhenoff"
-              data:
-                value: !input led5_intensity_when_off
-
-            - service: number.set_value
-              target:
-                entity_id: "number.{{ base_entity }}_defaultled6colorwhenon"
-              data:
-                value: !input led6_color_when_on
-
-            - service: number.set_value
-              target:
-                entity_id: "number.{{ base_entity }}_defaultled6colorwhenoff"
-              data:
-                value: !input led6_color_when_off
-
-            - service: number.set_value
-              target:
-                entity_id: "number.{{ base_entity }}_defaultled6intensitywhenon"
-              data:
-                value: !input led6_intensity_when_on
-
-            - service: number.set_value
-              target:
-                entity_id: "number.{{ base_entity }}_defaultled6intensitywhenoff"
-              data:
-                value: !input led6_intensity_when_off
-
-            - service: number.set_value
-              target:
-                entity_id: "number.{{ base_entity }}_defaultled7colorwhenon"
-              data:
-                value: !input led7_color_when_on
-
-            - service: number.set_value
-              target:
-                entity_id: "number.{{ base_entity }}_defaultled7colorwhenoff"
-              data:
-                value: !input led7_color_when_off
-
-            - service: number.set_value
-              target:
-                entity_id: "number.{{ base_entity }}_defaultled7intensitywhenon"
-              data:
-                value: !input led7_intensity_when_on
-
-            - service: number.set_value
-              target:
-                entity_id: "number.{{ base_entity }}_defaultled7intensitywhenoff"
-              data:
-                value: !input led7_intensity_when_off
-
-        - service: number.set_value
-          target:
-            entity_id: "number.{{ base_entity }}_dimmingspeedupremote"
-          data:
-            value: !input dimming_speed_up_remote
-
-        - service: number.set_value
-          target:
-            entity_id: "number.{{ base_entity }}_dimmingspeeduplocal"
-          data:
-            value: !input dimming_speed_up_local
-
-        - service: number.set_value
-          target:
-            entity_id: "number.{{ base_entity }}_dimmingspeeddownremote"
-          data:
-            value: !input dimming_speed_down_remote
-
-        - service: number.set_value
-          target:
-            entity_id: "number.{{ base_entity }}_dimmingspeeddownlocal"
-          data:
-            value: !input dimming_speed_down_local
-
-        - service: number.set_value
-          target:
-            entity_id: "number.{{ base_entity }}_ramprateofftoonremote"
-          data:
-            value: !input ramp_rate_off_to_on_remote
-
-        - service: number.set_value
-          target:
-            entity_id: "number.{{ base_entity }}_ramprateofftoonlocal"
-          data:
-            value: !input ramp_rate_off_to_on_local
-
-        - service: number.set_value
-          target:
-            entity_id: "number.{{ base_entity }}_ramprateontooffremote"
-          data:
-            value: !input ramp_rate_on_to_off_remote
-
-        - service: number.set_value
-          target:
-            entity_id: "number.{{ base_entity }}_ramprateontoofflocal"
-          data:
-            value: !input ramp_rate_on_to_off_local
-
-        - service: number.set_value
-          target:
-            entity_id: "number.{{ base_entity }}_minimumlevel"
-          data:
-            value: !input minimum_level
-
-        - service: number.set_value
-          target:
-            entity_id: "number.{{ base_entity }}_maximumlevel"
-          data:
-            value: !input maximum_level
-
-        - service: number.set_value
-          target:
-            entity_id: "number.{{ base_entity }}_defaultlevellocal"
-          data:
-            value: !input default_level_local
-
-        - service: number.set_value
-          target:
-            entity_id: "number.{{ base_entity }}_defaultlevelremote"
-          data:
-            value: !input default_level_remote
-
-        - service: select.select_option
-          target:
-            entity_id: "select.{{ base_entity }}_buttondelay"
-          data:
-            option: !input button_delay
-
-        - service: select.select_option
-          target:
-            entity_id: "select.{{ base_entity }}_singletapbehavior"
-          data:
-            option: !input single_tap_behavior
-
-        - service: select.select_option
-          target:
-            entity_id: "select.{{ base_entity }}_doubletapuptoparam55"
-          data:
-            option: !input double_tap_up_to_param55
-
-        - service: select.select_option
-          target:
-            entity_id: "select.{{ base_entity }}_doubletapdowntoparam56"
-          data:
-            option: !input double_tap_down_to_param56
-
-        - service: number.set_value
-          target:
-            entity_id: "number.{{ base_entity }}_brightnesslevelfordoubletapup"
-          data:
-            value: !input brightness_level_for_double_tap_up
-
-        - service: number.set_value
-          target:
-            entity_id: "number.{{ base_entity }}_brightnesslevelfordoubletapdown"
-          data:
-            value: !input brightness_level_for_double_tap_down
-
-        - service: select.select_option
-          target:
-            entity_id: "select.{{ base_entity }}_doubletapclearnotifications"
-          data:
-            option: !input double_tap_clear_notifications
-
-        - service: select.select_option
-          target:
-            entity_id: "select.{{ base_entity }}_outputmode"
-          data:
-            option: !input output_mode
-
-        - service: select.select_option
-          target:
-            entity_id: "select.{{ base_entity }}_switchtype"
-          data:
-            option: !input switch_type
-
-        - service: select.select_option
-          target:
-            entity_id: "select.{{ base_entity }}_invertswitch"
-          data:
-            option: !input invert_switch
-
-        - service: select.select_option
-          target:
-            entity_id: "select.{{ base_entity }}_smartbulbmode"
-          data:
-            option: !input smart_bulb_mode
-
-        - service: select.select_option
-          target:
-            entity_id: "select.{{ base_entity }}_ledbarscaling"
-          data:
-            option: !input led_bar_scaling
-
-        - service: select.select_option
-          target:
-            entity_id: "select.{{ base_entity }}_onoffledmode"
-          data:
-            option: !input on_off_led_mode
-
-        - service: select.select_option
-          target:
-            entity_id: "select.{{ base_entity }}_firmwareupdateinprogressindicator"
-          data:
-            option: !input firmware_update_in_progress_indicator
-
-        - service: select.select_option
-          target:
-            entity_id: "select.{{ base_entity }}_relayclick"
-          data:
-            option: !input relay_click
-
-        - service: number.set_value
-          target:
-            entity_id: "number.{{ base_entity }}_stateafterpowerrestored"
-          data:
-            value: !input state_after_power_restored
-
-        - service: number.set_value
-          target:
-            entity_id: "number.{{ base_entity }}_autotimeroff"
-          data:
-            value: !input auto_timer_off
-
-        - service: number.set_value
-          target:
-            entity_id: "number.{{ base_entity }}_quickstarttime"
-          data:
-            value: !input quick_start_time
-
-        - service: number.set_value
-          target:
-            entity_id: "number.{{ base_entity }}_quickstartlevel"
-          data:
-            value: !input quick_start_level
-
-        - service: select.select_option
-          target:
-            entity_id: "select.{{ base_entity }}_localprotection"
-          data:
-            option: !input local_protection
-
-        - service: select.select_option
-          target:
-            entity_id: "select.{{ base_entity }}_bindingofftoonsynclevel"
-          data:
-            option: !input binding_off_to_on_sync_level
-
-        - service: select.select_option
-          target:
-            entity_id: "select.{{ base_entity }}_auxswitchuniquescenes"
-          data:
-            option: !input aux_switch_unique_scenes
-
-        - service: number.set_value
-          target:
-            entity_id: "number.{{ base_entity }}_activepowerreports"
-          data:
-            value: !input active_power_reports
-
-        - service: number.set_value
-          target:
-            entity_id: "number.{{ base_entity }}_periodicpowerandenergyreports"
-          data:
-            value: !input periodic_power_and_energy_reports
-
-        - service: number.set_value
-          target:
-            entity_id: "number.{{ base_entity }}_activeenergyreports"
-          data:
-            value: !input active_energy_reports
-
-        - service: select.select_option
-          target:
-            entity_id: "select.{{ base_entity }}_fancontrolmode"
-          data:
-            option: !input fan_control_mode
-
-        - service: number.set_value
-          target:
-            entity_id: "number.{{ base_entity }}_lowlevelforfancontrolmode"
-          data:
-            value: !input low_level_for_fan_control_mode
-
-        - service: number.set_value
-          target:
-            entity_id: "number.{{ base_entity }}_mediumlevelforfancontrolmode"
-          data:
-            value: !input medium_level_for_fan_control_mode
-
-        - service: number.set_value
-          target:
-            entity_id: "number.{{ base_entity }}_highlevelforfancontrolmode"
-          data:
-            value: !input high_level_for_fan_control_mode
-
-        - service: number.set_value
-          target:
-            entity_id: "number.{{ base_entity }}_ledcolorforfancontrolmode"
-          data:
-            value: !input led_color_for_fan_control_mode
-
-        - service: number.set_value
-          target:
-            entity_id: "number.{{ base_entity }}_fanledleveltype"
-          data:
-            value: !input fan_led_level_type
-
-        - service: select.select_option
-          target:
-            entity_id: "select.{{ base_entity }}_higheroutputinnonneutral"
-          data:
-            option: !input higher_output_in_non_neutral
-
-        - service: select.select_option
-          target:
-            entity_id: "select.{{ base_entity }}_loadlevelindicatortimeout"
-          data:
-            option: !input load_level_indicator_timeout
-
-        - delay:
-            milliseconds: 100
+                title: "🔍 VZM31-SN Preview: {{ device_name }}"
+                message: >
+                  {% if change_count | int > 0 %}
+                  **📝 {{ change_count }} changes would be applied:**
+
+                  {% for change in changes %}
+                  • {{ change }}
+                  {% endfor %}
+                  {% else %}
+                  ✅ **No changes needed** - device already has these settings
+                  {% endif %}
+
+                  ---
+                  *Preview Mode - No changes applied*
+
+                  To apply changes, disable Preview Mode and run again.
+                notification_id: "vzm31_preview_{{ base_entity }}"
+
+        # ==================== APPLY MODE ====================
+        - if:
+            - condition: template
+              value_template: "{{ not preview_mode }}"
+          then:
+            # All service calls go here
+              - service: number.set_value
+                target:
+                  entity_id: "number.{{ base_entity }}_ledcolorwhenon"
+                data:
+                  value: !input led_color_when_on
+
+              - service: number.set_value
+                target:
+                  entity_id: "number.{{ base_entity }}_ledcolorwhenoff"
+                data:
+                  value: !input led_color_when_off
+
+              - service: number.set_value
+                target:
+                  entity_id: "number.{{ base_entity }}_ledintensitywhenon"
+                data:
+                  value: !input led_intensity_when_on
+
+              - service: number.set_value
+                target:
+                  entity_id: "number.{{ base_entity }}_ledintensitywhenoff"
+                data:
+                  value: !input led_intensity_when_off
+
+              - if:
+                  - condition: template
+                    value_template: "{{ configure_individual_leds }}"
+                then:
+                  - service: number.set_value
+                    target:
+                      entity_id: "number.{{ base_entity }}_defaultled1colorwhenon"
+                    data:
+                      value: !input led1_color_when_on
+
+                  - service: number.set_value
+                    target:
+                      entity_id: "number.{{ base_entity }}_defaultled1colorwhenoff"
+                    data:
+                      value: !input led1_color_when_off
+
+                  - service: number.set_value
+                    target:
+                      entity_id: "number.{{ base_entity }}_defaultled1intensitywhenon"
+                    data:
+                      value: !input led1_intensity_when_on
+
+                  - service: number.set_value
+                    target:
+                      entity_id: "number.{{ base_entity }}_defaultled1intensitywhenoff"
+                    data:
+                      value: !input led1_intensity_when_off
+
+                  - service: number.set_value
+                    target:
+                      entity_id: "number.{{ base_entity }}_defaultled2colorwhenon"
+                    data:
+                      value: !input led2_color_when_on
+
+                  - service: number.set_value
+                    target:
+                      entity_id: "number.{{ base_entity }}_defaultled2colorwhenoff"
+                    data:
+                      value: !input led2_color_when_off
+
+                  - service: number.set_value
+                    target:
+                      entity_id: "number.{{ base_entity }}_defaultled2intensitywhenon"
+                    data:
+                      value: !input led2_intensity_when_on
+
+                  - service: number.set_value
+                    target:
+                      entity_id: "number.{{ base_entity }}_defaultled2intensitywhenoff"
+                    data:
+                      value: !input led2_intensity_when_off
+
+                  - service: number.set_value
+                    target:
+                      entity_id: "number.{{ base_entity }}_defaultled3colorwhenon"
+                    data:
+                      value: !input led3_color_when_on
+
+                  - service: number.set_value
+                    target:
+                      entity_id: "number.{{ base_entity }}_defaultled3colorwhenoff"
+                    data:
+                      value: !input led3_color_when_off
+
+                  - service: number.set_value
+                    target:
+                      entity_id: "number.{{ base_entity }}_defaultled3intensitywhenon"
+                    data:
+                      value: !input led3_intensity_when_on
+
+                  - service: number.set_value
+                    target:
+                      entity_id: "number.{{ base_entity }}_defaultled3intensitywhenoff"
+                    data:
+                      value: !input led3_intensity_when_off
+
+                  - service: number.set_value
+                    target:
+                      entity_id: "number.{{ base_entity }}_defaultled4colorwhenon"
+                    data:
+                      value: !input led4_color_when_on
+
+                  - service: number.set_value
+                    target:
+                      entity_id: "number.{{ base_entity }}_defaultled4colorwhenoff"
+                    data:
+                      value: !input led4_color_when_off
+
+                  - service: number.set_value
+                    target:
+                      entity_id: "number.{{ base_entity }}_defaultled4intensitywhenon"
+                    data:
+                      value: !input led4_intensity_when_on
+
+                  - service: number.set_value
+                    target:
+                      entity_id: "number.{{ base_entity }}_defaultled4intensitywhenoff"
+                    data:
+                      value: !input led4_intensity_when_off
+
+                  - service: number.set_value
+                    target:
+                      entity_id: "number.{{ base_entity }}_defaultled5colorwhenon"
+                    data:
+                      value: !input led5_color_when_on
+
+                  - service: number.set_value
+                    target:
+                      entity_id: "number.{{ base_entity }}_defaultled5colorwhenoff"
+                    data:
+                      value: !input led5_color_when_off
+
+                  - service: number.set_value
+                    target:
+                      entity_id: "number.{{ base_entity }}_defaultled5intensitywhenon"
+                    data:
+                      value: !input led5_intensity_when_on
+
+                  - service: number.set_value
+                    target:
+                      entity_id: "number.{{ base_entity }}_defaultled5intensitywhenoff"
+                    data:
+                      value: !input led5_intensity_when_off
+
+                  - service: number.set_value
+                    target:
+                      entity_id: "number.{{ base_entity }}_defaultled6colorwhenon"
+                    data:
+                      value: !input led6_color_when_on
+
+                  - service: number.set_value
+                    target:
+                      entity_id: "number.{{ base_entity }}_defaultled6colorwhenoff"
+                    data:
+                      value: !input led6_color_when_off
+
+                  - service: number.set_value
+                    target:
+                      entity_id: "number.{{ base_entity }}_defaultled6intensitywhenon"
+                    data:
+                      value: !input led6_intensity_when_on
+
+                  - service: number.set_value
+                    target:
+                      entity_id: "number.{{ base_entity }}_defaultled6intensitywhenoff"
+                    data:
+                      value: !input led6_intensity_when_off
+
+                  - service: number.set_value
+                    target:
+                      entity_id: "number.{{ base_entity }}_defaultled7colorwhenon"
+                    data:
+                      value: !input led7_color_when_on
+
+                  - service: number.set_value
+                    target:
+                      entity_id: "number.{{ base_entity }}_defaultled7colorwhenoff"
+                    data:
+                      value: !input led7_color_when_off
+
+                  - service: number.set_value
+                    target:
+                      entity_id: "number.{{ base_entity }}_defaultled7intensitywhenon"
+                    data:
+                      value: !input led7_intensity_when_on
+
+                  - service: number.set_value
+                    target:
+                      entity_id: "number.{{ base_entity }}_defaultled7intensitywhenoff"
+                    data:
+                      value: !input led7_intensity_when_off
+
+              - service: number.set_value
+                target:
+                  entity_id: "number.{{ base_entity }}_dimmingspeedupremote"
+                data:
+                  value: !input dimming_speed_up_remote
+
+              - service: number.set_value
+                target:
+                  entity_id: "number.{{ base_entity }}_dimmingspeeduplocal"
+                data:
+                  value: !input dimming_speed_up_local
+
+              - service: number.set_value
+                target:
+                  entity_id: "number.{{ base_entity }}_dimmingspeeddownremote"
+                data:
+                  value: !input dimming_speed_down_remote
+
+              - service: number.set_value
+                target:
+                  entity_id: "number.{{ base_entity }}_dimmingspeeddownlocal"
+                data:
+                  value: !input dimming_speed_down_local
+
+              - service: number.set_value
+                target:
+                  entity_id: "number.{{ base_entity }}_ramprateofftoonremote"
+                data:
+                  value: !input ramp_rate_off_to_on_remote
+
+              - service: number.set_value
+                target:
+                  entity_id: "number.{{ base_entity }}_ramprateofftoonlocal"
+                data:
+                  value: !input ramp_rate_off_to_on_local
+
+              - service: number.set_value
+                target:
+                  entity_id: "number.{{ base_entity }}_ramprateontooffremote"
+                data:
+                  value: !input ramp_rate_on_to_off_remote
+
+              - service: number.set_value
+                target:
+                  entity_id: "number.{{ base_entity }}_ramprateontoofflocal"
+                data:
+                  value: !input ramp_rate_on_to_off_local
+
+              - service: number.set_value
+                target:
+                  entity_id: "number.{{ base_entity }}_minimumlevel"
+                data:
+                  value: !input minimum_level
+
+              - service: number.set_value
+                target:
+                  entity_id: "number.{{ base_entity }}_maximumlevel"
+                data:
+                  value: !input maximum_level
+
+              - service: number.set_value
+                target:
+                  entity_id: "number.{{ base_entity }}_defaultlevellocal"
+                data:
+                  value: !input default_level_local
+
+              - service: number.set_value
+                target:
+                  entity_id: "number.{{ base_entity }}_defaultlevelremote"
+                data:
+                  value: !input default_level_remote
+
+              - service: select.select_option
+                target:
+                  entity_id: "select.{{ base_entity }}_buttondelay"
+                data:
+                  option: !input button_delay
+
+              - service: select.select_option
+                target:
+                  entity_id: "select.{{ base_entity }}_singletapbehavior"
+                data:
+                  option: !input single_tap_behavior
+
+              - service: select.select_option
+                target:
+                  entity_id: "select.{{ base_entity }}_doubletapuptoparam55"
+                data:
+                  option: !input double_tap_up_to_param55
+
+              - service: select.select_option
+                target:
+                  entity_id: "select.{{ base_entity }}_doubletapdowntoparam56"
+                data:
+                  option: !input double_tap_down_to_param56
+
+              - service: number.set_value
+                target:
+                  entity_id: "number.{{ base_entity }}_brightnesslevelfordoubletapup"
+                data:
+                  value: !input brightness_level_for_double_tap_up
+
+              - service: number.set_value
+                target:
+                  entity_id: "number.{{ base_entity }}_brightnesslevelfordoubletapdown"
+                data:
+                  value: !input brightness_level_for_double_tap_down
+
+              - service: select.select_option
+                target:
+                  entity_id: "select.{{ base_entity }}_doubletapclearnotifications"
+                data:
+                  option: !input double_tap_clear_notifications
+
+              - service: select.select_option
+                target:
+                  entity_id: "select.{{ base_entity }}_outputmode"
+                data:
+                  option: !input output_mode
+
+              - service: select.select_option
+                target:
+                  entity_id: "select.{{ base_entity }}_switchtype"
+                data:
+                  option: !input switch_type
+
+              - service: select.select_option
+                target:
+                  entity_id: "select.{{ base_entity }}_invertswitch"
+                data:
+                  option: !input invert_switch
+
+              - service: select.select_option
+                target:
+                  entity_id: "select.{{ base_entity }}_smartbulbmode"
+                data:
+                  option: !input smart_bulb_mode
+
+              - service: select.select_option
+                target:
+                  entity_id: "select.{{ base_entity }}_ledbarscaling"
+                data:
+                  option: !input led_bar_scaling
+
+              - service: select.select_option
+                target:
+                  entity_id: "select.{{ base_entity }}_onoffledmode"
+                data:
+                  option: !input on_off_led_mode
+
+              - service: select.select_option
+                target:
+                  entity_id: "select.{{ base_entity }}_firmwareupdateinprogressindicator"
+                data:
+                  option: !input firmware_update_in_progress_indicator
+
+              - service: select.select_option
+                target:
+                  entity_id: "select.{{ base_entity }}_relayclick"
+                data:
+                  option: !input relay_click
+
+              - service: number.set_value
+                target:
+                  entity_id: "number.{{ base_entity }}_stateafterpowerrestored"
+                data:
+                  value: !input state_after_power_restored
+
+              - service: number.set_value
+                target:
+                  entity_id: "number.{{ base_entity }}_autotimeroff"
+                data:
+                  value: !input auto_timer_off
+
+              - service: number.set_value
+                target:
+                  entity_id: "number.{{ base_entity }}_quickstarttime"
+                data:
+                  value: !input quick_start_time
+
+              - service: number.set_value
+                target:
+                  entity_id: "number.{{ base_entity }}_quickstartlevel"
+                data:
+                  value: !input quick_start_level
+
+              - service: select.select_option
+                target:
+                  entity_id: "select.{{ base_entity }}_localprotection"
+                data:
+                  option: !input local_protection
+
+              - service: select.select_option
+                target:
+                  entity_id: "select.{{ base_entity }}_bindingofftoonsynclevel"
+                data:
+                  option: !input binding_off_to_on_sync_level
+
+              - service: select.select_option
+                target:
+                  entity_id: "select.{{ base_entity }}_auxswitchuniquescenes"
+                data:
+                  option: !input aux_switch_unique_scenes
+
+              - service: number.set_value
+                target:
+                  entity_id: "number.{{ base_entity }}_activepowerreports"
+                data:
+                  value: !input active_power_reports
+
+              - service: number.set_value
+                target:
+                  entity_id: "number.{{ base_entity }}_periodicpowerandenergyreports"
+                data:
+                  value: !input periodic_power_and_energy_reports
+
+              - service: number.set_value
+                target:
+                  entity_id: "number.{{ base_entity }}_activeenergyreports"
+                data:
+                  value: !input active_energy_reports
+
+              - service: select.select_option
+                target:
+                  entity_id: "select.{{ base_entity }}_fancontrolmode"
+                data:
+                  option: !input fan_control_mode
+
+              - service: number.set_value
+                target:
+                  entity_id: "number.{{ base_entity }}_lowlevelforfancontrolmode"
+                data:
+                  value: !input low_level_for_fan_control_mode
+
+              - service: number.set_value
+                target:
+                  entity_id: "number.{{ base_entity }}_mediumlevelforfancontrolmode"
+                data:
+                  value: !input medium_level_for_fan_control_mode
+
+              - service: number.set_value
+                target:
+                  entity_id: "number.{{ base_entity }}_highlevelforfancontrolmode"
+                data:
+                  value: !input high_level_for_fan_control_mode
+
+              - service: number.set_value
+                target:
+                  entity_id: "number.{{ base_entity }}_ledcolorforfancontrolmode"
+                data:
+                  value: !input led_color_for_fan_control_mode
+
+              - service: number.set_value
+                target:
+                  entity_id: "number.{{ base_entity }}_fanledleveltype"
+                data:
+                  value: !input fan_led_level_type
+
+              - service: select.select_option
+                target:
+                  entity_id: "select.{{ base_entity }}_higheroutputinnonneutral"
+                data:
+                  option: !input higher_output_in_non_neutral
+
+              - service: select.select_option
+                target:
+                  entity_id: "select.{{ base_entity }}_loadlevelindicatortimeout"
+                data:
+                  option: !input load_level_indicator_timeout
+
+              - delay:
+                  milliseconds: 100
 
 mode: parallel
 max: 10
