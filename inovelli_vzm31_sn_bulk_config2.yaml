@@ -19,6 +19,15 @@ blueprint:
       selector:
         boolean: {}
 
+    notify_entity:
+      name: Notification Service (Optional)
+      description: Select a notify service (e.g., notify.mobile_app_phone). Leave empty to use persistent notifications (bell icon).
+      default: ""
+      selector:
+        entity:
+          filter:
+            - domain: notify
+
     # ==================== TARGET SELECTION ====================
     target_switches:
       name: Target Switches
@@ -840,6 +849,8 @@ variables:
   target_switches: !input target_switches
   configure_individual_leds: !input configure_individual_leds
   preview_mode: !input preview_mode
+  notify_entity: !input notify_entity
+  use_custom_notify: "{{ notify_entity != '' and notify_entity != none }}"
 
 sequence:
   - repeat:
@@ -1101,25 +1112,57 @@ sequence:
             - condition: template
               value_template: "{{ preview_mode }}"
           then:
-            - service: persistent_notification.create
-              data:
-                title: "🔍 VZM31-SN Preview: {{ device_name }}"
-                message: >
-                  {% if change_count | int > 0 %}
-                  **📝 {{ change_count }} changes would be applied:**
+            - choose:
+                # Use custom notify service if provided
+                - conditions:
+                    - condition: template
+                      value_template: "{{ use_custom_notify }}"
+                  sequence:
+                    - service: notify.send_message
+                      target:
+                        entity_id: "{{ notify_entity }}"
+                      data:
+                        title: "🔍 VZM31-SN Preview"
+                        message: >
+                          **Switch:** {{ device_name }}
+                          **Entity:** {{ repeat.item }}
 
-                  {% for change in changes %}
-                  • {{ change }}
-                  {% endfor %}
-                  {% else %}
-                  ✅ **No changes needed** - device already has these settings
-                  {% endif %}
+                          {% if change_count | int > 0 %}
+                          **📝 {{ change_count }} changes would be applied:**
 
-                  ---
-                  *Preview Mode - No changes applied*
+                          {% for change in changes %}
+                          • {{ change }}
+                          {% endfor %}
+                          {% else %}
+                          ✅ **No changes needed** - device already has these settings
+                          {% endif %}
 
-                  To apply changes, disable Preview Mode and run again.
-                notification_id: "vzm31_preview_{{ base_entity }}"
+                          ---
+                          *Preview Mode - No changes applied*
+              # Use persistent notification as fallback
+              default:
+                - service: persistent_notification.create
+                  data:
+                    title: "🔍 VZM31-SN Preview: {{ device_name }}"
+                    message: >
+                      **Switch:** {{ device_name }}
+                      **Entity:** {{ repeat.item }}
+
+                      {% if change_count | int > 0 %}
+                      **📝 {{ change_count }} changes would be applied:**
+
+                      {% for change in changes %}
+                      • {{ change }}
+                      {% endfor %}
+                      {% else %}
+                      ✅ **No changes needed** - device already has these settings
+                      {% endif %}
+
+                      ---
+                      *Preview Mode - No changes applied*
+
+                      To apply changes, disable Preview Mode and run again.
+                    notification_id: "vzm31_preview_{{ base_entity }}"
 
         # ==================== APPLY MODE ====================
         - if:
@@ -1595,6 +1638,57 @@ sequence:
 
               - delay:
                   milliseconds: 100
+
+              # ==================== APPLY MODE NOTIFICATION ====================
+              - choose:
+                  # Use custom notify service if provided
+                  - conditions:
+                      - condition: template
+                        value_template: "{{ use_custom_notify }}"
+                    sequence:
+                      - service: notify.send_message
+                        target:
+                          entity_id: "{{ notify_entity }}"
+                        data:
+                          title: "✅ VZM31-SN Configuration Applied"
+                          message: >
+                            **Switch:** {{ device_name }}
+                            **Entity:** {{ repeat.item }}
+
+                            {% if change_count | int > 0 %}
+                            **✅ {{ change_count }} changes were successfully applied:**
+
+                            {% for change in changes %}
+                            • {{ change }}
+                            {% endfor %}
+                            {% else %}
+                            ℹ️ **No changes applied** - device already had these settings
+                            {% endif %}
+
+                            ---
+                            *Configuration updated successfully*
+                # Use persistent notification as fallback
+                default:
+                  - service: persistent_notification.create
+                    data:
+                      title: "✅ VZM31-SN Applied: {{ device_name }}"
+                      message: >
+                        **Switch:** {{ device_name }}
+                        **Entity:** {{ repeat.item }}
+
+                        {% if change_count | int > 0 %}
+                        **✅ {{ change_count }} changes were successfully applied:**
+
+                        {% for change in changes %}
+                        • {{ change }}
+                        {% endfor %}
+                        {% else %}
+                        ℹ️ **No changes applied** - device already had these settings
+                        {% endif %}
+
+                        ---
+                        *Configuration updated successfully*
+                      notification_id: "vzm31_applied_{{ base_entity }}"
 
 mode: parallel
 max: 10
