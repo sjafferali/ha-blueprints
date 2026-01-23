@@ -1,0 +1,153 @@
+blueprint:
+  name: Advanced Motion Light
+  description: >-
+    Turn on lights when a binary occupancy sensor detects occupancy.
+    Supports optional automatic turn-off after a specified delay when occupancy ends.
+    Includes optional conditions for both turning lights on and off.
+  domain: automation
+  author: Claude
+  input:
+    occupancy_sensor:
+      name: Occupancy Sensor
+      description: The binary sensor that detects occupancy.
+      selector:
+        entity:
+          filter:
+            - domain: binary_sensor
+              device_class:
+                - occupancy
+                - motion
+                - presence
+          multiple: false
+
+    light_targets:
+      name: Lights
+      description: The lights to control when occupancy is detected.
+      selector:
+        target:
+          entity:
+            - domain: light
+
+    brightness_pct:
+      name: Brightness
+      description: The brightness level to set the lights to (percentage).
+      default: 100
+      selector:
+        number:
+          min: 1
+          max: 100
+          step: 1
+          unit_of_measurement: "%"
+          mode: slider
+
+    enable_auto_off:
+      name: Enable Auto Turn-Off
+      description: >-
+        Enable automatic turn-off of lights after occupancy ends.
+        If disabled, lights will remain on until manually turned off.
+      default: true
+      selector:
+        boolean: {}
+
+    no_motion_wait:
+      name: Turn-Off Delay
+      description: >-
+        Time to wait after occupancy ends before turning off the lights.
+        Only applies when "Enable Auto Turn-Off" is enabled.
+      default: 5
+      selector:
+        number:
+          min: 0
+          max: 60
+          step: 1
+          unit_of_measurement: minutes
+          mode: slider
+
+    turn_on_conditions:
+      name: Turn-On Conditions (Optional)
+      description: >-
+        Optional conditions that must be met for the lights to turn on.
+        If no conditions are provided, the lights will always turn on when occupancy is detected.
+      default: []
+      selector:
+        condition: {}
+
+    turn_off_conditions:
+      name: Turn-Off Conditions (Optional)
+      description: >-
+        Optional conditions that must be met for the lights to turn off.
+        If no conditions are provided, the lights will always turn off when the delay expires.
+        Only applies when "Enable Auto Turn-Off" is enabled.
+      default: []
+      selector:
+        condition: {}
+
+mode: restart
+max_exceeded: silent
+
+triggers:
+  - trigger: state
+    entity_id: !input occupancy_sensor
+    to: "on"
+    id: occupancy_detected
+  - trigger: state
+    entity_id: !input occupancy_sensor
+    to: "off"
+    id: occupancy_cleared
+
+variables:
+  enable_auto_off: !input enable_auto_off
+  turn_on_conditions: !input turn_on_conditions
+  turn_off_conditions: !input turn_off_conditions
+
+actions:
+  - choose:
+      # Handle occupancy detected
+      - conditions:
+          - condition: trigger
+            id: occupancy_detected
+        sequence:
+          - if:
+              - condition: template
+                value_template: "{{ turn_on_conditions | length == 0 }}"
+            then:
+              # No conditions provided - turn on lights
+              - action: light.turn_on
+                target: !input light_targets
+                data:
+                  brightness_pct: !input brightness_pct
+            else:
+              # Check if turn-on conditions are met
+              - if: !input turn_on_conditions
+                then:
+                  - action: light.turn_on
+                    target: !input light_targets
+                    data:
+                      brightness_pct: !input brightness_pct
+
+      # Handle occupancy cleared
+      - conditions:
+          - condition: trigger
+            id: occupancy_cleared
+          - condition: template
+            value_template: "{{ enable_auto_off }}"
+        sequence:
+          - delay:
+              minutes: !input no_motion_wait
+          # Verify occupancy is still cleared after delay
+          - condition: state
+            entity_id: !input occupancy_sensor
+            state: "off"
+          - if:
+              - condition: template
+                value_template: "{{ turn_off_conditions | length == 0 }}"
+            then:
+              # No conditions provided - turn off lights
+              - action: light.turn_off
+                target: !input light_targets
+            else:
+              # Check if turn-off conditions are met
+              - if: !input turn_off_conditions
+                then:
+                  - action: light.turn_off
+                    target: !input light_targets
