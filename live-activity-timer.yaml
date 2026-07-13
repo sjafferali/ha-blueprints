@@ -1,0 +1,291 @@
+blueprint:
+  name: "Live Activity: Timer Countdown"
+  author: sjafferali
+  description: >-
+    # ⏲️ Live Activity: Timer Countdown
+
+
+    Shows a [Live Activity](https://companion.home-assistant.io/docs/notifications/live-activities/)
+    with a native, self-ticking countdown whenever a Home Assistant `timer` helper runs.
+    Start the timer from anywhere (dashboard, voice, another automation) and the countdown
+    appears on your Lock Screen / Dynamic Island; pausing, resuming, finishing, and cancelling
+    are all handled.
+
+
+    The countdown uses the device-side `chronometer`, so it ticks live with zero update
+    pushes — this is the most battery- and rate-limit-friendly kind of Live Activity.
+
+
+    **Requirements:** Home Assistant 2026.7.0+; iOS 17.2+ with the companion app's Live
+    Activities enabled (currently a Labs feature in the TestFlight build), or Android 16+.
+  domain: automation
+  homeassistant:
+    min_version: "2026.7.0"
+  input:
+    notify_section:
+      name: Notification target
+      icon: mdi:cellphone
+      input:
+        notify_services:
+          name: Notify service(s)
+          description: >-
+            Mobile app notify service name(s), comma separated. The `notify.` prefix is
+            optional. Example: `mobile_app_samirs_iphone, mobile_app_daniels_iphone`
+          selector:
+            text: {}
+    timer_section:
+      name: Timer
+      icon: mdi:timer-outline
+      input:
+        timer_entity:
+          name: Timer
+          description: The timer helper to follow.
+          selector:
+            entity:
+              filter:
+                domain: timer
+        title:
+          name: Title
+          description: >-
+            Title of the activity. Templates allowed. Leave empty to use the timer's friendly
+            name.
+          default: ""
+          selector:
+            text: {}
+        running_message:
+          name: Running message
+          description: Shown next to the countdown while the timer runs. Templates allowed.
+          default: "Time remaining"
+          selector:
+            text: {}
+        paused_message:
+          name: Paused message
+          description: >-
+            Shown while the timer is paused. Templates allowed; the variable `remaining`
+            (e.g. `0:04:32`) is available.
+          default: "Paused — {{ remaining }} left"
+          selector:
+            text: {}
+        done_message:
+          name: Finished message
+          description: Shown when the timer finishes. Templates allowed.
+          default: "Time's up!"
+          selector:
+            text: {}
+        done_alert:
+          name: Also send a regular notification when finished
+          description: >-
+            Live Activity updates are silent. Enable this to additionally send a standard
+            notification (with sound) when the timer finishes.
+          default: true
+          selector:
+            boolean: {}
+        clear_delay:
+          name: Dismiss delay
+          description: How long the finished message stays on screen before the activity is dismissed.
+          default: 60
+          selector:
+            number:
+              min: 0
+              max: 3600
+              unit_of_measurement: seconds
+              mode: box
+    appearance_section:
+      name: Appearance (optional)
+      icon: mdi:palette
+      collapsed: true
+      input:
+        icon:
+          name: Icon
+          default: mdi:timer-outline
+          selector:
+            icon: {}
+        icon_color:
+          name: Icon color
+          description: Hex color for the icon, e.g. `#2196F3`. Leave empty for the default.
+          default: ""
+          selector:
+            text: {}
+        background_color:
+          name: Background color
+          description: Lock Screen card background, e.g. `#101820`. Leave empty for the default.
+          default: ""
+          selector:
+            text: {}
+        text_color:
+          name: Text color
+          description: Lock Screen text color, e.g. `#FFFFFF`. Leave empty for the default.
+          default: ""
+          selector:
+            text: {}
+        url:
+          name: Tap action URL
+          description: >-
+            Opened when the activity is tapped. A relative Home Assistant path such as
+            `/lovelace/kitchen`, or a full `https://` URL. Leave empty for the default.
+          default: ""
+          selector:
+            text: {}
+        tag:
+          name: Activity tag
+          description: >-
+            Unique identifier for this activity. Leave empty to derive one from the timer
+            entity. Must differ between automations created from this blueprint.
+          default: ""
+          selector:
+            text: {}
+
+mode: queued
+max: 10
+max_exceeded: silent
+
+variables:
+  timer_entity: !input timer_entity
+  notify_services_csv: !input notify_services
+  notify_services: >-
+    {{ notify_services_csv.split(',') | map('trim') | map('replace', 'notify.', '')
+       | reject('eq', '') | list }}
+  tag_input: !input tag
+  tag: "{{ tag_input if tag_input else 'la_' ~ (timer_entity | replace('.', '_')) }}"
+  title_input: !input title
+  title_rendered: >-
+    {{ title_input if title_input else (state_attr(timer_entity, 'friendly_name') or 'Timer') }}
+  remaining: "{{ state_attr(timer_entity, 'remaining') or '' }}"
+  finishes_at: >-
+    {{ as_timestamp(state_attr(timer_entity, 'finishes_at'), -1) | round(0) | int }}
+  running_rendered: !input running_message
+  paused_rendered: !input paused_message
+  done_rendered: !input done_message
+  done_alert: !input done_alert
+  clear_delay_s: !input clear_delay
+  icon: !input icon
+  icon_color: !input icon_color
+  background_color: !input background_color
+  text_color: !input text_color
+  url_path: !input url
+  t_id: "{{ trigger.id if trigger is defined else 'run' }}"
+  la_base: >-
+    {% set ns = namespace(d={'tag': tag, 'live_update': true}) %}
+    {% if icon %}{% set ns.d = ns.d | combine({'notification_icon': icon}) %}{% endif %}
+    {% if icon_color %}{% set ns.d = ns.d | combine({'notification_icon_color': icon_color, 'color': icon_color}) %}{% endif %}
+    {% if background_color %}{% set ns.d = ns.d | combine({'background_color': background_color}) %}{% endif %}
+    {% if text_color %}{% set ns.d = ns.d | combine({'text_color': text_color}) %}{% endif %}
+    {% if url_path %}{% set ns.d = ns.d | combine({'url': url_path}) %}{% endif %}
+    {{ ns.d }}
+  la_data_running: >-
+    {% set ns = namespace(d=la_base) %}
+    {% if finishes_at > 0 %}
+      {% set ns.d = ns.d | combine({'chronometer': true, 'when': finishes_at}) %}
+    {% endif %}
+    {{ ns.d }}
+
+triggers:
+  - trigger: event
+    event_type: timer.started
+    event_data:
+      entity_id: !input timer_entity
+    id: run
+  - trigger: event
+    event_type: timer.restarted
+    event_data:
+      entity_id: !input timer_entity
+    id: run
+  - trigger: event
+    event_type: timer.resumed
+    event_data:
+      entity_id: !input timer_entity
+    id: run
+  - trigger: event
+    event_type: timer.paused
+    event_data:
+      entity_id: !input timer_entity
+    id: paused
+  - trigger: event
+    event_type: timer.finished
+    event_data:
+      entity_id: !input timer_entity
+    id: finished
+  - trigger: event
+    event_type: timer.cancelled
+    event_data:
+      entity_id: !input timer_entity
+    id: cancelled
+
+actions:
+  - choose:
+      # Timer running: show the live countdown
+      - conditions:
+          - condition: template
+            value_template: "{{ t_id == 'run' }}"
+        sequence:
+          - repeat:
+              for_each: "{{ notify_services }}"
+              sequence:
+                - action: "notify.{{ repeat.item }}"
+                  data:
+                    title: "{{ title_rendered }}"
+                    message: "{{ running_rendered }}"
+                    data: "{{ la_data_running }}"
+      # Timer paused: freeze the display with the remaining time
+      - conditions:
+          - condition: template
+            value_template: "{{ t_id == 'paused' }}"
+        sequence:
+          - repeat:
+              for_each: "{{ notify_services }}"
+              sequence:
+                - action: "notify.{{ repeat.item }}"
+                  data:
+                    title: "{{ title_rendered }}"
+                    message: "{{ paused_rendered }}"
+                    data: "{{ la_base }}"
+      # Timer finished: final message, optional audible alert, then dismiss
+      - conditions:
+          - condition: template
+            value_template: "{{ t_id == 'finished' }}"
+        sequence:
+          - repeat:
+              for_each: "{{ notify_services }}"
+              sequence:
+                - action: "notify.{{ repeat.item }}"
+                  data:
+                    title: "{{ title_rendered }}"
+                    message: "{{ done_rendered }}"
+                    data: "{{ la_base }}"
+          - if:
+              - condition: template
+                value_template: "{{ done_alert }}"
+            then:
+              - repeat:
+                  for_each: "{{ notify_services }}"
+                  sequence:
+                    - action: "notify.{{ repeat.item }}"
+                      data:
+                        title: "{{ title_rendered }}"
+                        message: "{{ done_rendered }}"
+                        data: >-
+                          {{ {'tag': tag ~ '_alert'}
+                             | combine({'notification_icon': icon} if icon else {}) }}
+          - delay:
+              seconds: "{{ clear_delay_s | int }}"
+          - repeat:
+              for_each: "{{ notify_services }}"
+              sequence:
+                - action: "notify.{{ repeat.item }}"
+                  data:
+                    message: clear_notification
+                    data:
+                      tag: "{{ tag }}"
+      # Timer cancelled: dismiss quietly
+      - conditions:
+          - condition: template
+            value_template: "{{ t_id == 'cancelled' }}"
+        sequence:
+          - repeat:
+              for_each: "{{ notify_services }}"
+              sequence:
+                - action: "notify.{{ repeat.item }}"
+                  data:
+                    message: clear_notification
+                    data:
+                      tag: "{{ tag }}"

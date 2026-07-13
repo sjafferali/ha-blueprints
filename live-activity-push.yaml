@@ -1,0 +1,185 @@
+blueprint:
+  name: "Live Activity: Manual Push"
+  author: sjafferali
+  description: >-
+    # 🛠️ Live Activity: Manual Push
+
+
+    Creates a reusable script that starts, updates, and ends a
+    [Live Activity](https://companion.home-assistant.io/docs/notifications/live-activities/)
+    — for fully custom flows where the Entity Tracker and Timer Countdown blueprints don't
+    fit. Configure the target device(s), tag, and appearance once here; then call the script
+    from any automation, script, or dashboard button with just the fields that change.
+
+
+    **Start or update** (same call — the first one starts the activity):
+
+    ```yaml
+
+    - action: script.my_live_activity
+      data:
+        message: "Charging — 80%"
+        progress: 80
+        progress_max: 100
+    ```
+
+
+    **Show a countdown** (ticks on-device, no further pushes needed):
+
+    ```yaml
+
+    - action: script.my_live_activity
+      data:
+        message: "Preheating"
+        when: 600            # seconds from now
+        when_relative: true  # omit and pass a Unix timestamp instead if you prefer
+    ```
+
+
+    **End it:**
+
+    ```yaml
+
+    - action: script.my_live_activity
+      data:
+        la_action: end
+    ```
+
+
+    Optional fields on every call: `title`, `critical_text` (status bar chip), `url`
+    (tap action), `silent` (low-priority delivery), `alert` (set `true` to also send a
+    regular notification with sound).
+
+
+    **Requirements:** Home Assistant 2026.7.0+; iOS 17.2+ with the companion app's Live
+    Activities enabled (currently a Labs feature in the TestFlight build), or Android 16+.
+  domain: script
+  homeassistant:
+    min_version: "2026.7.0"
+  input:
+    notify_services:
+      name: Notify service(s)
+      description: >-
+        Mobile app notify service name(s), comma separated. The `notify.` prefix is optional.
+        Example: `mobile_app_samirs_iphone, mobile_app_daniels_iphone`
+      selector:
+        text: {}
+    activity_tag:
+      name: Activity tag
+      description: >-
+        Unique identifier for this activity (letters, numbers, hyphens, underscores). Must
+        differ between scripts created from this blueprint.
+      default: my_live_activity
+      selector:
+        text: {}
+    default_title:
+      name: Default title
+      description: Used when a call does not pass its own `title`.
+      default: Home Assistant
+      selector:
+        text: {}
+    appearance_section:
+      name: Appearance (optional)
+      icon: mdi:palette
+      collapsed: true
+      input:
+        icon:
+          name: Icon
+          default: mdi:home-assistant
+          selector:
+            icon: {}
+        icon_color:
+          name: Icon color
+          description: Hex color for the icon, e.g. `#2196F3`. Leave empty for the default.
+          default: ""
+          selector:
+            text: {}
+        background_color:
+          name: Background color
+          description: Lock Screen card background, e.g. `#101820`. Leave empty for the default.
+          default: ""
+          selector:
+            text: {}
+        text_color:
+          name: Text color
+          description: Lock Screen text color, e.g. `#FFFFFF`. Leave empty for the default.
+          default: ""
+          selector:
+            text: {}
+        progress_bar_color:
+          name: Progress bar color
+          description: Progress bar tint, e.g. `#4CAF50`. Leave empty for the default.
+          default: ""
+          selector:
+            text: {}
+
+mode: parallel
+max: 10
+
+sequence:
+  - variables:
+      cfg_services_csv: !input notify_services
+      cfg_services: >-
+        {{ cfg_services_csv.split(',') | map('trim') | map('replace', 'notify.', '')
+           | reject('eq', '') | list }}
+      cfg_tag: !input activity_tag
+      cfg_title: !input default_title
+      cfg_icon: !input icon
+      cfg_icon_color: !input icon_color
+      cfg_background_color: !input background_color
+      cfg_text_color: !input text_color
+      cfg_progress_bar_color: !input progress_bar_color
+      act: "{{ la_action | default('update') }}"
+      out_title: "{{ title | default(cfg_title) }}"
+      out_message: "{{ message | default('Working…') }}"
+      la_data: >-
+        {% set ns = namespace(d={'tag': cfg_tag, 'live_update': true}) %}
+        {% if cfg_icon %}{% set ns.d = ns.d | combine({'notification_icon': cfg_icon}) %}{% endif %}
+        {% if cfg_icon_color %}{% set ns.d = ns.d | combine({'notification_icon_color': cfg_icon_color, 'color': cfg_icon_color}) %}{% endif %}
+        {% if cfg_background_color %}{% set ns.d = ns.d | combine({'background_color': cfg_background_color}) %}{% endif %}
+        {% if cfg_text_color %}{% set ns.d = ns.d | combine({'text_color': cfg_text_color}) %}{% endif %}
+        {% if cfg_progress_bar_color %}{% set ns.d = ns.d | combine({'progress_bar_color': cfg_progress_bar_color}) %}{% endif %}
+        {% if progress is defined %}{% set ns.d = ns.d | combine({'progress': progress | int, 'progress_max': progress_max | default(100) | int}) %}{% endif %}
+        {% if when is defined %}{% set ns.d = ns.d | combine({'chronometer': true, 'when': when | int, 'when_relative': when_relative | default(false)}) %}{% endif %}
+        {% if critical_text is defined %}{% set ns.d = ns.d | combine({'critical_text': critical_text}) %}{% endif %}
+        {% if url is defined %}{% set ns.d = ns.d | combine({'url': url}) %}{% endif %}
+        {% if silent is defined and silent %}{% set ns.d = ns.d | combine({'silent': true}) %}{% endif %}
+        {{ ns.d }}
+  - choose:
+      # End: dismiss the activity
+      - conditions:
+          - condition: template
+            value_template: "{{ act in ['end', 'clear', 'dismiss'] }}"
+        sequence:
+          - repeat:
+              for_each: "{{ cfg_services }}"
+              sequence:
+                - action: "notify.{{ repeat.item }}"
+                  data:
+                    message: clear_notification
+                    data:
+                      tag: "{{ cfg_tag }}"
+    # Start or update the activity
+    default:
+      - repeat:
+          for_each: "{{ cfg_services }}"
+          sequence:
+            - action: "notify.{{ repeat.item }}"
+              data:
+                title: "{{ out_title }}"
+                message: "{{ out_message }}"
+                data: "{{ la_data }}"
+      - if:
+          - condition: template
+            value_template: "{{ alert | default(false) }}"
+        then:
+          - repeat:
+              for_each: "{{ cfg_services }}"
+              sequence:
+                - action: "notify.{{ repeat.item }}"
+                  data:
+                    title: "{{ out_title }}"
+                    message: "{{ out_message }}"
+                    data: >-
+                      {{ {'tag': cfg_tag ~ '_alert'}
+                         | combine({'notification_icon': cfg_icon} if cfg_icon else {}) }}

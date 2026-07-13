@@ -1,0 +1,500 @@
+blueprint:
+  name: "Live Activity: Entity Tracker"
+  author: sjafferali
+  description: >-
+    # 📱 Live Activity: Entity Tracker
+
+
+    Maintains a [Live Activity](https://companion.home-assistant.io/docs/notifications/live-activities/)
+    on your phone that follows an entity through its lifecycle — one automation replaces the
+    separate start / update / throttle / end automations the feature normally requires.
+
+
+    **How it works:** while the source entity's state is one of the *Active states*, a Live
+    Activity is shown (Lock Screen + Dynamic Island on iOS, live notification on Android) and
+    kept up to date. When the entity leaves the active states, a final message is shown and the
+    activity is dismissed.
+
+
+    **Optional extras:**
+
+    - **Progress bar** driven by a numeric sensor (updates are throttled to step boundaries so
+      iOS does not drop them).
+
+    - **Countdown timer** driven by a finish-time or time-remaining sensor, rendered natively
+      on the device (`chronometer`) so it ticks without any additional pushes.
+
+    - **Completion alert** — an ordinary notification with sound when the activity finishes,
+      since Live Activity updates are always silent.
+
+
+    **Requirements:** Home Assistant 2026.7.0+; iOS 17.2+ with the companion app's Live
+    Activities enabled (currently a Labs feature in the TestFlight build), or Android 16+.
+
+
+    **Example (washer):** source `sensor.washer_current_status`, active states
+    `running, washing, rinsing, spinning`, progress `sensor.washer_cycle_progress_percent`,
+    countdown `sensor.washer_remaining_time` (minutes remaining).
+  domain: automation
+  homeassistant:
+    min_version: "2026.7.0"
+  input:
+    notify_section:
+      name: Notification target
+      icon: mdi:cellphone
+      input:
+        notify_services:
+          name: Notify service(s)
+          description: >-
+            Mobile app notify service name(s), comma separated. The `notify.` prefix is
+            optional. Example: `mobile_app_samirs_iphone, mobile_app_daniels_iphone`
+          selector:
+            text: {}
+    tracking_section:
+      name: What to track
+      icon: mdi:radar
+      input:
+        source_entity:
+          name: Source entity
+          description: >-
+            The Live Activity is shown while this entity's state is one of the active states
+            below.
+          selector:
+            entity: {}
+        active_states:
+          name: Active states
+          description: >-
+            Comma-separated list of states (case-insensitive). While the source entity is in
+            any of these states the Live Activity is shown; when it leaves them the activity
+            ends.
+          default: "on, running, active, washing, drying, cleaning, cooking, heating, run"
+          selector:
+            text: {}
+    content_section:
+      name: Content
+      icon: mdi:card-text
+      input:
+        title:
+          name: Title
+          description: >-
+            Title of the activity. Templates allowed. Leave empty to use the source entity's
+            friendly name.
+          default: ""
+          selector:
+            text: {}
+        message:
+          name: Message
+          description: >-
+            Body text, re-rendered on every update. Templates allowed; the variables
+            `source_entity` and `source_state` are available.
+          default: "{{ source_state | replace('_', ' ') | title }}"
+          selector:
+            text:
+              multiline: true
+        critical_text:
+          name: Status bar text
+          description: >-
+            Short supplementary text shown in the status bar chip / Dynamic Island. Templates
+            allowed. Leave empty to omit.
+          default: ""
+          selector:
+            text: {}
+        url:
+          name: Tap action URL
+          description: >-
+            Opened when the activity is tapped. A relative Home Assistant path such as
+            `/lovelace/laundry`, or a full `https://` URL. Leave empty for the default.
+          default: ""
+          selector:
+            text: {}
+    progress_section:
+      name: Progress bar (optional)
+      icon: mdi:progress-helper
+      collapsed: true
+      input:
+        progress_entity:
+          name: Progress sensor
+          description: >-
+            Numeric sensor that drives the progress bar (for example a cycle percentage).
+            Leave empty for no progress bar. If more than one entity is selected, only the
+            first is used.
+          default: []
+          selector:
+            entity:
+              multiple: true
+              filter:
+                domain: sensor
+        progress_max:
+          name: Progress maximum
+          description: Value at which the bar is full.
+          default: 100
+          selector:
+            number:
+              min: 1
+              max: 1000000
+              mode: box
+        progress_step:
+          name: Update every N units
+          description: >-
+            A progress update is pushed only when the value crosses a multiple of this step.
+            Throttling matters — iOS delays or drops overly frequent Live Activity updates.
+            Set to 1 to push every change.
+          default: 5
+          selector:
+            number:
+              min: 1
+              max: 1000
+              mode: box
+    countdown_section:
+      name: Countdown timer (optional)
+      icon: mdi:timer-sand
+      collapsed: true
+      input:
+        countdown_entity:
+          name: Countdown sensor
+          description: >-
+            Sensor describing when the task finishes. Renders a native live countdown on the
+            device, which ticks on its own with no extra pushes. Leave empty for no countdown.
+            If more than one entity is selected, only the first is used.
+          default: []
+          selector:
+            entity:
+              multiple: true
+        countdown_type:
+          name: Countdown sensor type
+          default: timestamp
+          selector:
+            select:
+              options:
+                - label: "Timestamp — the sensor holds the date/time it finishes"
+                  value: timestamp
+                - label: "Minutes remaining"
+                  value: minutes
+                - label: "Seconds remaining"
+                  value: seconds
+        countdown_resync:
+          name: Re-sync threshold
+          description: >-
+            A countdown update is pushed only when the finish time shifts by more than this
+            many seconds (appliances constantly re-estimate; the on-device timer ticks on its
+            own between pushes).
+          default: 120
+          selector:
+            number:
+              min: 10
+              max: 3600
+              unit_of_measurement: seconds
+              mode: box
+    appearance_section:
+      name: Appearance (optional)
+      icon: mdi:palette
+      collapsed: true
+      input:
+        icon:
+          name: Icon
+          default: mdi:progress-clock
+          selector:
+            icon: {}
+        icon_color:
+          name: Icon color
+          description: Hex color for the icon, e.g. `#2196F3`. Leave empty for the default.
+          default: ""
+          selector:
+            text: {}
+        background_color:
+          name: Background color
+          description: Lock Screen card background, e.g. `#101820`. Leave empty for the default.
+          default: ""
+          selector:
+            text: {}
+        text_color:
+          name: Text color
+          description: Lock Screen text color, e.g. `#FFFFFF`. Leave empty for the default.
+          default: ""
+          selector:
+            text: {}
+        progress_bar_color:
+          name: Progress bar color
+          description: Progress bar tint, e.g. `#4CAF50`. Leave empty for the default.
+          default: ""
+          selector:
+            text: {}
+    completion_section:
+      name: Completion behavior
+      icon: mdi:flag-checkered
+      collapsed: true
+      input:
+        completion_behavior:
+          name: When the activity ends
+          default: final_then_dismiss
+          selector:
+            select:
+              options:
+                - label: "Show the final message, then dismiss"
+                  value: final_then_dismiss
+                - label: "Dismiss immediately"
+                  value: dismiss_now
+                - label: "Show the final message and leave it (expires on its own)"
+                  value: final_keep
+        completion_message:
+          name: Final message
+          description: Templates allowed; `source_entity` and `source_state` are available.
+          default: "Finished"
+          selector:
+            text: {}
+        completion_alert:
+          name: Also send a regular notification on completion
+          description: >-
+            Live Activity updates are silent. Enable this to additionally send a standard
+            notification (with sound) when the activity completes.
+          default: false
+          selector:
+            boolean: {}
+        clear_delay:
+          name: Dismiss delay
+          description: How long the final message stays on screen before the activity is dismissed.
+          default: 30
+          selector:
+            number:
+              min: 0
+              max: 3600
+              unit_of_measurement: seconds
+              mode: box
+    advanced_section:
+      name: Advanced (optional)
+      icon: mdi:cog
+      collapsed: true
+      input:
+        tag:
+          name: Activity tag
+          description: >-
+            Unique identifier for this activity (letters, numbers, hyphens, underscores).
+            Leave empty to derive one from the source entity. Must differ between automations
+            created from this blueprint.
+          default: ""
+          selector:
+            text: {}
+        silent:
+          name: Low-priority updates
+          description: "Deliver updates with reduced priority on iOS (`silent: true`)."
+          default: false
+          selector:
+            boolean: {}
+        additional_conditions:
+          name: Additional conditions
+          description: >-
+            Extra conditions that must pass for the activity to start or update. Ending and
+            dismissing the activity is never blocked by these.
+          default: []
+          selector:
+            condition: {}
+
+mode: queued
+max: 10
+max_exceeded: silent
+
+variables:
+  source_entity: !input source_entity
+  active_states_csv: !input active_states
+  active_states: >-
+    {{ active_states_csv.split(',') | map('trim') | map('lower') | reject('eq', '') | list }}
+  source_state: "{{ states(source_entity) | lower }}"
+  is_active: "{{ source_state in active_states }}"
+  t_id: "{{ trigger.id if trigger is defined else 'source' }}"
+  was_active: >-
+    {{ (trigger.from_state.state | lower) in active_states
+       if (trigger is defined and trigger.from_state is not none) else true }}
+  from_unavailable: >-
+    {{ (trigger.from_state.state | lower) in ['unknown', 'unavailable']
+       if (trigger is defined and trigger.from_state is not none) else false }}
+  notify_services_csv: !input notify_services
+  notify_services: >-
+    {{ notify_services_csv.split(',') | map('trim') | map('replace', 'notify.', '')
+       | reject('eq', '') | list }}
+  tag_input: !input tag
+  tag: "{{ tag_input if tag_input else 'la_' ~ (source_entity | replace('.', '_')) }}"
+  title_input: !input title
+  title_rendered: >-
+    {{ title_input if title_input else (state_attr(source_entity, 'friendly_name') or 'Status') }}
+  message_rendered: !input message
+  critical_rendered: !input critical_text
+  completion_rendered: !input completion_message
+  completion_behavior: !input completion_behavior
+  completion_alert: !input completion_alert
+  clear_delay_s: !input clear_delay
+  url_path: !input url
+  icon: !input icon
+  icon_color: !input icon_color
+  background_color: !input background_color
+  text_color: !input text_color
+  progress_bar_color: !input progress_bar_color
+  silent_updates: !input silent
+  progress_entities: !input progress_entity
+  progress_entity: "{{ progress_entities[0] if progress_entities | count > 0 else '' }}"
+  progress_max: !input progress_max
+  progress_step: !input progress_step
+  progress_value: >-
+    {{ (states(progress_entity) | float(-1)) | round(0) | int if progress_entity else -1 }}
+  countdown_entities: !input countdown_entity
+  countdown_entity: "{{ countdown_entities[0] if countdown_entities | count > 0 else '' }}"
+  countdown_type: !input countdown_type
+  countdown_resync: !input countdown_resync
+  countdown_when: >-
+    {% if not countdown_entity %}
+      -1
+    {% elif countdown_type == 'timestamp' %}
+      {{ as_timestamp(states(countdown_entity), -1) | round(0) | int }}
+    {% elif countdown_type == 'minutes' %}
+      {{ ((states(countdown_entity) | float(-1)) * 60) | round(0) | int }}
+    {% else %}
+      {{ (states(countdown_entity) | float(-1)) | round(0) | int }}
+    {% endif %}
+  la_base: >-
+    {% set ns = namespace(d={'tag': tag, 'live_update': true}) %}
+    {% if icon %}{% set ns.d = ns.d | combine({'notification_icon': icon}) %}{% endif %}
+    {% if icon_color %}{% set ns.d = ns.d | combine({'notification_icon_color': icon_color, 'color': icon_color}) %}{% endif %}
+    {% if background_color %}{% set ns.d = ns.d | combine({'background_color': background_color}) %}{% endif %}
+    {% if text_color %}{% set ns.d = ns.d | combine({'text_color': text_color}) %}{% endif %}
+    {% if progress_bar_color %}{% set ns.d = ns.d | combine({'progress_bar_color': progress_bar_color}) %}{% endif %}
+    {% if critical_rendered %}{% set ns.d = ns.d | combine({'critical_text': critical_rendered}) %}{% endif %}
+    {% if url_path %}{% set ns.d = ns.d | combine({'url': url_path}) %}{% endif %}
+    {% if silent_updates %}{% set ns.d = ns.d | combine({'silent': true}) %}{% endif %}
+    {{ ns.d }}
+  la_data: >-
+    {% set ns = namespace(d=la_base) %}
+    {% if progress_entity and progress_value >= 0 %}
+      {% set ns.d = ns.d | combine({'progress': progress_value, 'progress_max': progress_max | int}) %}
+    {% endif %}
+    {% if countdown_entity and countdown_when > 0 %}
+      {% set ns.d = ns.d | combine({'chronometer': true, 'when': countdown_when, 'when_relative': countdown_type != 'timestamp'}) %}
+    {% endif %}
+    {{ ns.d }}
+  la_data_final: >-
+    {% set ns = namespace(d=la_base) %}
+    {% if progress_entity %}
+      {% set ns.d = ns.d | combine({'progress': progress_max | int, 'progress_max': progress_max | int}) %}
+    {% endif %}
+    {{ ns.d }}
+
+triggers:
+  - trigger: state
+    entity_id: !input source_entity
+    to:
+    id: source
+  - trigger: state
+    entity_id: !input progress_entity
+    to:
+    id: progress
+  - trigger: state
+    entity_id: !input countdown_entity
+    to:
+    id: countdown
+
+actions:
+  - choose:
+      # Source is active: start or update the Live Activity
+      - conditions:
+          - condition: template
+            value_template: "{{ is_active }}"
+        sequence:
+          - condition: and
+            conditions: !input additional_conditions
+          # Throttle: progress updates only on step boundaries, countdown updates
+          # only when the finish time shifts beyond the re-sync threshold
+          - condition: template
+            value_template: >-
+              {% if t_id == 'progress' %}
+                {% set stepv = progress_step | int %}
+                {% set old = (trigger.from_state.state | float(-1)) | round(0) | int
+                   if (trigger is defined and trigger.from_state is not none) else -1 %}
+                {{ progress_value >= 0 and (stepv <= 1 or old < 0
+                   or (progress_value // stepv) != (old // stepv)
+                   or progress_value >= progress_max | int) }}
+              {% elif t_id == 'countdown' %}
+                {% set old = trigger.from_state.state
+                   if (trigger is defined and trigger.from_state is not none) else '' %}
+                {% set new = trigger.to_state.state
+                   if (trigger is defined and trigger.to_state is not none) else '' %}
+                {% if countdown_type == 'timestamp' %}
+                  {% set o = as_timestamp(old, -1) %}
+                  {% set n = as_timestamp(new, -1) %}
+                {% else %}
+                  {% set m = 60 if countdown_type == 'minutes' else 1 %}
+                  {% set o = (old | float(-1)) * m %}
+                  {% set n = (new | float(-1)) * m %}
+                {% endif %}
+                {{ n > 0 and (o <= 0 or ((n - o) | abs) > (countdown_resync | int)) }}
+              {% else %}
+                true
+              {% endif %}
+          - repeat:
+              for_each: "{{ notify_services }}"
+              sequence:
+                - action: "notify.{{ repeat.item }}"
+                  data:
+                    title: "{{ title_rendered }}"
+                    message: "{{ message_rendered }}"
+                    data: "{{ la_data }}"
+      # Source left the active states: final update, optional alert, dismiss
+      - conditions:
+          - condition: template
+            value_template: >-
+              {{ t_id == 'source' and not is_active
+                 and source_state not in ['unknown', 'unavailable'] and was_active }}
+        sequence:
+          - if:
+              - condition: template
+                value_template: "{{ completion_behavior != 'dismiss_now' }}"
+            then:
+              - repeat:
+                  for_each: "{{ notify_services }}"
+                  sequence:
+                    - action: "notify.{{ repeat.item }}"
+                      data:
+                        title: "{{ title_rendered }}"
+                        message: "{{ completion_rendered }}"
+                        data: "{{ la_data_final }}"
+          - if:
+              - condition: template
+                value_template: "{{ completion_alert }}"
+            then:
+              - repeat:
+                  for_each: "{{ notify_services }}"
+                  sequence:
+                    - action: "notify.{{ repeat.item }}"
+                      data:
+                        title: "{{ title_rendered }}"
+                        message: "{{ completion_rendered }}"
+                        data: >-
+                          {{ {'tag': tag ~ '_alert'}
+                             | combine({'notification_icon': icon} if icon else {}) }}
+          - if:
+              - condition: template
+                value_template: "{{ completion_behavior != 'final_keep' }}"
+            then:
+              - delay:
+                  seconds: "{{ 0 if completion_behavior == 'dismiss_now' else clear_delay_s | int }}"
+              - repeat:
+                  for_each: "{{ notify_services }}"
+                  sequence:
+                    - action: "notify.{{ repeat.item }}"
+                      data:
+                        message: clear_notification
+                        data:
+                          tag: "{{ tag }}"
+      # Source recovered from unavailable straight to an inactive state:
+      # dismiss any leftover activity without a completion message
+      - conditions:
+          - condition: template
+            value_template: >-
+              {{ t_id == 'source' and not is_active
+                 and source_state not in ['unknown', 'unavailable'] and from_unavailable }}
+        sequence:
+          - repeat:
+              for_each: "{{ notify_services }}"
+              sequence:
+                - action: "notify.{{ repeat.item }}"
+                  data:
+                    message: clear_notification
+                    data:
+                      tag: "{{ tag }}"
