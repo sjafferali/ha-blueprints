@@ -153,9 +153,10 @@ blueprint:
         countdown_entity:
           name: Countdown sensor
           description: >-
-            Sensor describing when the task finishes. Renders a native live countdown on the
-            device, which ticks on its own with no extra pushes. Leave empty for no countdown.
-            If more than one entity is selected, only the first is used.
+            Sensor describing when the task finishes, or a timer helper (its `finishes_at`
+            is used and the sensor type below is ignored). Renders a native live countdown on
+            the device, which ticks on its own with no extra pushes. Leave empty for no
+            countdown. If more than one entity is selected, only the first is used.
           default: []
           selector:
             entity:
@@ -342,6 +343,8 @@ variables:
   countdown_when: >-
     {% if not countdown_entity %}
       -1
+    {% elif countdown_entity.startswith('timer.') %}
+      {{ as_timestamp(state_attr(countdown_entity, 'finishes_at'), -1) | round(0) | int }}
     {% elif countdown_type == 'timestamp' %}
       {{ as_timestamp(states(countdown_entity), -1) | round(0) | int }}
     {% elif countdown_type == 'minutes' %}
@@ -366,7 +369,7 @@ variables:
       {% set ns.d = ns.d | combine({'progress': progress_value, 'progress_max': progress_max | int}) %}
     {% endif %}
     {% if countdown_entity and countdown_when > 0 %}
-      {% set ns.d = ns.d | combine({'chronometer': true, 'when': countdown_when, 'when_relative': countdown_type != 'timestamp'}) %}
+      {% set ns.d = ns.d | combine({'chronometer': true, 'when': countdown_when, 'when_relative': countdown_type != 'timestamp' and not countdown_entity.startswith('timer.')}) %}
     {% endif %}
     {{ ns.d }}
   la_data_final: >-
@@ -411,19 +414,23 @@ actions:
                    or (progress_value // stepv) != (old // stepv)
                    or progress_value >= progress_max | int) }}
               {% elif t_id == 'countdown' %}
-                {% set old = trigger.from_state.state
-                   if (trigger is defined and trigger.from_state is not none) else '' %}
-                {% set new = trigger.to_state.state
-                   if (trigger is defined and trigger.to_state is not none) else '' %}
-                {% if countdown_type == 'timestamp' %}
-                  {% set o = as_timestamp(old, -1) %}
-                  {% set n = as_timestamp(new, -1) %}
+                {% if countdown_entity.startswith('timer.') %}
+                  true
                 {% else %}
-                  {% set m = 60 if countdown_type == 'minutes' else 1 %}
-                  {% set o = (old | float(-1)) * m %}
-                  {% set n = (new | float(-1)) * m %}
+                  {% set old = trigger.from_state.state
+                     if (trigger is defined and trigger.from_state is not none) else '' %}
+                  {% set new = trigger.to_state.state
+                     if (trigger is defined and trigger.to_state is not none) else '' %}
+                  {% if countdown_type == 'timestamp' %}
+                    {% set o = as_timestamp(old, -1) %}
+                    {% set n = as_timestamp(new, -1) %}
+                  {% else %}
+                    {% set m = 60 if countdown_type == 'minutes' else 1 %}
+                    {% set o = (old | float(-1)) * m %}
+                    {% set n = (new | float(-1)) * m %}
+                  {% endif %}
+                  {{ n > 0 and (o <= 0 or ((n - o) | abs) > (countdown_resync | int)) }}
                 {% endif %}
-                {{ n > 0 and (o <= 0 or ((n - o) | abs) > (countdown_resync | int)) }}
               {% else %}
                 true
               {% endif %}
