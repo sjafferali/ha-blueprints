@@ -57,11 +57,23 @@ blueprint:
   homeassistant:
     min_version: "2026.7.0"
   input:
-    notify_services:
-      name: Notify service(s)
+    notify_devices:
+      name: Device(s)
       description: >-
-        Mobile app notify service name(s), comma separated. The `notify.` prefix is optional.
-        Example: `mobile_app_samirs_iphone, mobile_app_daniels_iphone`
+        Phones and tablets running the Home Assistant companion app. The matching
+        `notify.mobile_app_*` service is derived from each device's name.
+      default: []
+      selector:
+        device:
+          multiple: true
+          filter:
+            - integration: mobile_app
+    notify_services:
+      name: Additional notify service(s)
+      description: >-
+        Extra notify service name(s), comma separated, for targets that are not
+        companion-app devices (e.g. a notify group). The `notify.` prefix is optional.
+      default: ""
       selector:
         text: {}
     activity_tag:
@@ -118,10 +130,14 @@ max: 10
 
 sequence:
   - variables:
+      cfg_devices: !input notify_devices
       cfg_services_csv: !input notify_services
       cfg_services: >-
-        {{ cfg_services_csv.split(',') | map('trim') | map('replace', 'notify.', '')
-           | reject('eq', '') | list }}
+        {{ ((cfg_services_csv.split(',') | map('trim') | map('replace', 'notify.', '')
+             | reject('eq', '') | list)
+            + (cfg_devices | map('device_attr', 'name') | map('slugify')
+               | map('regex_replace', '^', 'mobile_app_') | list))
+           | unique | list }}
       cfg_tag: !input activity_tag
       cfg_title: !input default_title
       cfg_icon: !input icon

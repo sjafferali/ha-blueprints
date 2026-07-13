@@ -26,11 +26,23 @@ blueprint:
       name: Notification target
       icon: mdi:cellphone
       input:
-        notify_services:
-          name: Notify service(s)
+        notify_devices:
+          name: Device(s)
           description: >-
-            Mobile app notify service name(s), comma separated. The `notify.` prefix is
-            optional. Example: `mobile_app_samirs_iphone, mobile_app_daniels_iphone`
+            Phones and tablets running the Home Assistant companion app. The matching
+            `notify.mobile_app_*` service is derived from each device's name.
+          default: []
+          selector:
+            device:
+              multiple: true
+              filter:
+                - integration: mobile_app
+        notify_services:
+          name: Additional notify service(s)
+          description: >-
+            Extra notify service name(s), comma separated, for targets that are not
+            companion-app devices (e.g. a notify group). The `notify.` prefix is optional.
+          default: ""
           selector:
             text: {}
     timer_section:
@@ -141,10 +153,14 @@ max_exceeded: silent
 
 variables:
   timer_entity: !input timer_entity
+  notify_devices: !input notify_devices
   notify_services_csv: !input notify_services
   notify_services: >-
-    {{ notify_services_csv.split(',') | map('trim') | map('replace', 'notify.', '')
-       | reject('eq', '') | list }}
+    {{ ((notify_services_csv.split(',') | map('trim') | map('replace', 'notify.', '')
+         | reject('eq', '') | list)
+        + (notify_devices | map('device_attr', 'name') | map('slugify')
+           | map('regex_replace', '^', 'mobile_app_') | list))
+       | unique | list }}
   tag_input: !input tag
   tag: "{{ tag_input if tag_input else 'la_' ~ (timer_entity | replace('.', '_')) }}"
   title_input: !input title
