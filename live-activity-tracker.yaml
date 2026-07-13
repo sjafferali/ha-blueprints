@@ -392,6 +392,12 @@ triggers:
     entity_id: !input countdown_entity
     to:
     id: countdown
+  # Timer helpers keep state 'active' when adjusted; the finish time only moves
+  # via this attribute
+  - trigger: state
+    entity_id: !input countdown_entity
+    attribute: finishes_at
+    id: countdown
 
 actions:
   - choose:
