@@ -413,7 +413,7 @@ triggers:
   - trigger: state
     entity_id: !input countdown_entity
     attribute: finishes_at
-    id: countdown
+    id: countdown_attr
 
 actions:
   - choose:
@@ -435,6 +435,10 @@ actions:
                 {{ progress_value >= 0 and (stepv <= 1 or old < 0
                    or (progress_value // stepv) != (old // stepv)
                    or progress_value >= progress_max | int) }}
+              {% elif t_id == 'countdown_attr' %}
+                {{ trigger is defined and trigger.from_state is not none
+                   and trigger.to_state is not none
+                   and trigger.from_state.state == trigger.to_state.state }}
               {% elif t_id == 'countdown' %}
                 {% if countdown_entity.startswith('timer.') %}
                   true
