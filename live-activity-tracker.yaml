@@ -158,7 +158,7 @@ blueprint:
               max: 1000
               mode: box
     countdown_section:
-      name: Countdown timer (optional)
+      name: Live timer (optional)
       icon: mdi:timer-sand
       collapsed: true
       input:
@@ -168,13 +168,14 @@ blueprint:
             Sensor describing when the task finishes, or a timer helper (its `finishes_at`
             is used and the sensor type below is ignored). Renders a native live countdown on
             the device, which ticks on its own with no extra pushes. Leave empty for no
-            countdown. If more than one entity is selected, only the first is used.
+            countdown — or pick the count-up type below, which needs no sensor at all. If
+            more than one entity is selected, only the first is used.
           default: []
           selector:
             entity:
               multiple: true
         countdown_type:
-          name: Countdown sensor type
+          name: Timer type
           default: timestamp
           selector:
             select:
@@ -185,6 +186,8 @@ blueprint:
                   value: minutes
                 - label: "Seconds remaining"
                   value: seconds
+                - label: "Count up — elapsed time since the source entity became active (no sensor needed)"
+                  value: elapsed
         countdown_resync:
           name: Re-sync threshold
           description: >-
@@ -357,7 +360,10 @@ variables:
   countdown_type: !input countdown_type
   countdown_resync: !input countdown_resync
   countdown_when: >-
-    {% if not countdown_entity %}
+    {% if countdown_type == 'elapsed' %}
+      {{ as_timestamp(states[source_entity].last_changed, -1) | round(0) | int
+         if states[source_entity] is not none else -1 }}
+    {% elif not countdown_entity %}
       -1
     {% elif countdown_entity.startswith('timer.') %}
       {{ as_timestamp(state_attr(countdown_entity, 'finishes_at'), -1) | round(0) | int }}
@@ -384,8 +390,8 @@ variables:
     {% if progress_entity and progress_value >= 0 %}
       {% set ns.d = ns.d | combine({'progress': progress_value, 'progress_max': progress_max | int}) %}
     {% endif %}
-    {% if countdown_entity and countdown_when > 0 %}
-      {% set ns.d = ns.d | combine({'chronometer': true, 'when': countdown_when, 'when_relative': countdown_type != 'timestamp' and not countdown_entity.startswith('timer.')}) %}
+    {% if countdown_when > 0 %}
+      {% set ns.d = ns.d | combine({'chronometer': true, 'when': countdown_when, 'when_relative': countdown_type not in ['timestamp', 'elapsed'] and not countdown_entity.startswith('timer.')}) %}
     {% endif %}
     {{ ns.d }}
   la_data_final: >-
